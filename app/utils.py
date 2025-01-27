@@ -49,7 +49,7 @@ def add_registration(email, course_name, course_date):
 
 def load_courses(config_file="config.json"):
     """Loads course data from the config.json file."""
-    with open(config_file, "r") as f:
+    with open(config_file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data["courses"]
 

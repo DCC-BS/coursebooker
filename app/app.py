@@ -51,6 +51,13 @@ for group_name, course_list in grouped_courses.items():
         f"# **{group_name}**", expanded=(group_name == list(grouped_courses.keys())[0])
     ):  # Expand first group
         st.markdown(f"### Kurs: {group_name}")
+        st.markdown(
+            f"""
+            **Kursbeschreibung:** {course["description"]}\n
+            **Dauer:** {course["duration"]}h\n
+            **Ort:** {course["location"]}\n
+            """
+            )
         st.markdown("#### Verfügbare Daten")
         for course in course_list:
             course_date_str = course["date"]
