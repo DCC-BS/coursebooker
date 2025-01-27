@@ -1,0 +1,10 @@
+version: "3"
+services:
+  streamlit_muster:
+    restart: always
+    build: .
+    command: python -m streamlit run app.py --logger.level=debug
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - 8501:8501

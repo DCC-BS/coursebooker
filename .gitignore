@@ -1,0 +1,4 @@
+app/.streamlit/secrets.toml
+app/data/*
+.venv
+*.db
