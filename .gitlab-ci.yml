@@ -1,5 +1,5 @@
 variables:
-  SUBDOMAIN: streamlit
+  SUBDOMAIN: kurse
 
 stages:
   - test
@@ -7,7 +7,7 @@ stages:
 
 .deploy:
   script:
-    - cd /opt/apps/$CI_PROJECT_NAME
+    - cd /opt/apps/ki/$CI_PROJECT_NAME
     - git remote set-url origin $CI_REPOSITORY_URL
     - git fetch
     - git checkout $CI_COMMIT_BRANCH
@@ -45,7 +45,7 @@ deploy-to-prod:
 
 .stop:
   script:
-    - cd /opt/apps//$CI_PROJECT_NAME
+    - cd /opt/apps/ki/$CI_PROJECT_NAME
     - docker-compose down
   when: manual
 
