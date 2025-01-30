@@ -45,101 +45,172 @@ for course in courses:
 # User input section
 email = st.text_input("Deine E-Mail-Adresse:")
 
+# Initialize session state variables if they don't exist
+if 'selected_course' not in st.session_state:
+    st.session_state.selected_course = None
+if 'selected_date' not in st.session_state:
+    st.session_state.selected_date = None
+
 # Display course groups with expandable sections
 for group_name, course_list in grouped_courses.items():
     with st.expander(
         f"# **{group_name}**", expanded=(group_name == list(grouped_courses.keys())[0])
     ):  # Expand first group
         st.markdown(f"### Kurs: {group_name}")
+
+        # Access the first course in the list to display general information (assuming they are the same for all courses in the group)
+        course = course_list[0]
         st.markdown(
             f"""
             **Kursbeschreibung:** {course["description"]}\n
             **Dauer:** {course["duration"]}h\n
             **Ort:** {course["location"]}\n
             """
-            )
+        )
         st.markdown("#### Verfügbare Daten")
+        
+        date_options = []
         for course in course_list:
             course_date_str = course["date"]
             course_time_str = course["time"]
+            course_duration = course["duration"]
+            
+            # Calculate end time
+            start_datetime = datetime.datetime.strptime(f"{course_date_str} {course_time_str}", "%Y-%m-%d %H:%M")
+
+            # Check if the course is in the past
+            if start_datetime < datetime.datetime.now():
+                continue  # Skip courses in the past
+
+            end_datetime = start_datetime + datetime.timedelta(hours=course_duration)
 
             # Format the date and time for display
-            formatted_date_time = datetime.datetime.strptime(
-                f"{course_date_str} {course_time_str}", "%Y-%m-%d %H:%M"
-            ).strftime("%d.%m.%Y %H:%M")
+            formatted_start_time = start_datetime.strftime("%d.%m.%Y %H:%M")
+            formatted_end_time = end_datetime.strftime("%H:%M Uhr")
+            formatted_date_time = f"{formatted_start_time} - {formatted_end_time}"
 
-            label = f"{formatted_date_time} Uhr"
-            if st.button(label, key=f"{group_name}-{course_date_str}"):
-                if not email:
-                    st.warning("Bitte gib deine E-Mail-Adresse ein.")
-                elif not validate_email(email):
-                    st.error(
-                        "Ungültige E-Mail-Adresse. Bitte verwende das Format vorname.nachname@bs.ch."
-                    )
-                else:
-                    # Add registration to database
-                    add_registration(email, group_name, course_date_str)
+            date_options.append((formatted_date_time, course_date_str, course_time_str))
 
-                    # Create ICS file content
-                    ics_attachment = create_ics_event(course)
-                    name = email.split("@")[0]
-                    fist_name, second_name = name.split(".")
-                    fist_name = fist_name.title()
-                    second_name = second_name.title()
+        if not date_options:
+            st.write("Keine zukünftigen Termine für diesen Kurs verfügbar.")
+            continue
 
-                    # Email body (for user)
-                    user_email_body = f"""
-                    Hallo {fist_name} {second_name},
+        # Use a selectbox for date selection
+        selected_formatted_date, selected_course_date, selected_course_time = st.selectbox(
+            "Wähle ein Datum", 
+            date_options,
+            key=f"selectbox-{group_name}",
+            format_func=lambda x: x[0] # Display the formatted date in the selectbox
+        )
 
-                    Vielen Dank für Deine Anmeldung zum Kurs "{group_name}".
+        if st.button(f"Kurs Buchen: {selected_formatted_date}", key=f"book-{group_name}-{selected_course_date}"):
+            st.session_state.selected_course = group_name
+            st.session_state.selected_date = selected_course_date
+            st.session_state.selected_time = selected_course_time
+            st.rerun()
+            
 
-                    Kursdetails:
-                    - Name: {group_name}
-                    - Datum: {course_date_str}
-                    - Uhrzeit: {course_time_str}
-                    - Ort: {course["location"]}
-                    - MS Teams Link: {course["teams_link"]}
+# Booking logic (triggered when session state is updated)
+if st.session_state.selected_course and st.session_state.selected_date and st.session_state.selected_time:
+    if not email:
+        st.warning("Bitte gib deine E-Mail-Adresse ein.")
+        st.session_state.selected_course = None
+        st.session_state.selected_date = None
+        st.session_state.selected_time = None
+        
+    elif not validate_email(email):
+        st.error(
+            "Ungültige E-Mail-Adresse. Bitte verwende das Format vorname.nachname@bs.ch."
+        )
+        st.session_state.selected_course = None
+        st.session_state.selected_date = None
+        st.session_state.selected_time = None
+        
+    else:
+        # Find the selected course details
+        selected_course_details = next((c for c in courses if c["name"] == st.session_state.selected_course and c["date"] == st.session_state.selected_date), None)
 
-                    Im Anhang findest Du eine Kalendereinladung.
+        if selected_course_details:
+            # Add registration to database
+            add_registration(email, st.session_state.selected_course, st.session_state.selected_date)
 
-                    Wir freuen uns auf Deine Teilnahme!
+            # Create ICS file content
+            ics_attachment = create_ics_event(selected_course_details)
+            name = email.split("@")[0]
 
-                    Liebe Grüsse,
-                    DCC - Data Competence Center
-                    dcc@bs.ch
-                    """
-                    user_email_body = textwrap.dedent(user_email_body) # Remove leading whitespace
+            try:
+                fist_name, second_name = name.split(".")
+            except ValueError:
+                fist_name = name
+                second_name = ""
 
-                    # Send email to user
-                    send_email(
-                        email,
-                        f"Anmeldung zum Kurs: {group_name}",
-                        user_email_body,
-                        ics_attachment,
-                    )
+            fist_name = fist_name.title()
+            second_name = second_name.title()
+            course_time_str = selected_course_details["time"]
 
-                    # Email body (for notification)
-                    notification_email_body = f"""
-                    Neue Kursanmeldung:
+            # Calculate end time for email
+            start_datetime = datetime.datetime.strptime(f"{st.session_state.selected_date} {course_time_str}", "%Y-%m-%d %H:%M")
+            end_datetime = start_datetime + datetime.timedelta(hours=selected_course_details["duration"])
+            formatted_end_time = end_datetime.strftime("%H:%M Uhr")
+            
+            # Email body (for user)
+            user_email_body = f"""
+            Hallo {fist_name} {second_name},
 
-                    - E-Mail: {email}
-                    - Kurs: {group_name}
-                    - Datum: {course_date_str}
-                    """
+            Vielen Dank für Deine Anmeldung zum Kurs "{st.session_state.selected_course}".
 
-                    notification_email_body = textwrap.dedent(notification_email_body) # Remove leading whitespace
+            Kursdetails:
+            - Name: {st.session_state.selected_course}
+            - Datum: {st.session_state.selected_date}
+            - Uhrzeit: {course_time_str} - {formatted_end_time}
+            - Ort: {selected_course_details["location"]}
+            - MS Teams Link: {selected_course_details["teams_link"]}
 
+            Im Anhang findest Du eine Kalendereinladung.
 
-                    # Send notification email
-                    send_email(
-                        "yanick.schraner@bs.ch",
-                        "Neue Kursanmeldung",
-                        notification_email_body,
-                    )
+            Wir freuen uns auf Deine Teilnahme!
 
-                    st.success(
-                        f"Anmeldung zum Kurs '{group_name}' am {course_date_str} erfolgreich! Eine Bestätigungs-E-Mail mit Kalendereinladung wurde an {email} gesendet."
-                    )
+            Liebe Grüsse,
+            DCC - Data Competence Center
+            dcc@bs.ch
+            """
+            user_email_body = textwrap.dedent(user_email_body)  # Remove leading whitespace
+
+            # Send email to user
+            send_email(
+                email,
+                f"Anmeldung zum Kurs: {st.session_state.selected_course}",
+                user_email_body,
+                ics_attachment,
+            )
+
+            # Email body (for notification)
+            notification_email_body = f"""
+            Neue Kursanmeldung:
+
+            - E-Mail: {email}
+            - Kurs: {st.session_state.selected_course}
+            - Datum: {st.session_state.selected_date}
+            """
+
+            notification_email_body = textwrap.dedent(notification_email_body)  # Remove leading whitespace
+
+            # Send notification email
+            send_email(
+                "yanick.schraner@bs.ch",
+                "Neue Kursanmeldung",
+                notification_email_body,
+            )
+
+            st.success(
+                f"Anmeldung zum Kurs '{st.session_state.selected_course}' am {st.session_state.selected_date} erfolgreich! Eine Bestätigungs-E-Mail mit Kalendereinladung wurde an {email} gesendet."
+            )
+
+            # Reset session state after successful booking
+            st.session_state.selected_course = None
+            st.session_state.selected_date = None
+            st.session_state.selected_time = None
+            
 
 # Create a container for the logo
 logo_container = st.container()
