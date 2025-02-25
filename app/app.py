@@ -51,6 +51,8 @@ if 'selected_course' not in st.session_state:
 if 'selected_date' not in st.session_state:
     st.session_state.selected_date = None
 
+st.subheader("Verfügbare Kurse", divider="gray")
+
 # Display course groups with expandable sections
 for group_name, course_list in grouped_courses.items():
     with st.expander(f"# **{group_name}**", expanded=False):
