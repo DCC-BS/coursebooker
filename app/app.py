@@ -53,9 +53,7 @@ if 'selected_date' not in st.session_state:
 
 # Display course groups with expandable sections
 for group_name, course_list in grouped_courses.items():
-    with st.expander(
-        f"# **{group_name}**", expanded=(group_name == list(grouped_courses.keys())[0])
-    ):  # Expand first group
+    with st.expander(f"# **{group_name}**", expanded=False):
         st.markdown(f"### Kurs: {group_name}")
 
         # Access the first course in the list to display general information (assuming they are the same for all courses in the group)
