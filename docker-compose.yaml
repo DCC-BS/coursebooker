@@ -6,5 +6,6 @@ services:
     command: python -m streamlit run app.py --logger.level=debug
     volumes:
       - ./app:/usr/src/app
+      - ./data:/data
     ports:
       - 8502:8501

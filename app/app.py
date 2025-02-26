@@ -140,7 +140,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
             add_registration(email, st.session_state.selected_course, st.session_state.selected_date)
 
             # --- CSV Logic ---
-            csv_file_path = './data/registrations.csv'
+            csv_file_path = '/data/registrations.csv'
             
             # Check if the file exists, create it if it doesn't
             file_exists = os.path.isfile(csv_file_path)
