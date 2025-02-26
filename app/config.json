@@ -7,7 +7,8 @@
         "duration": 2,
         "description": "Die Veranstaltung soll den Austausch zu Datenwissenschaft und KI im Kanton Basel fördern. Kern der Veranstaltung sind Vorträge aus verschiedenen Bereichen der Verwaltung. Ein detailliertes Programm folgt.",
         "location": "Dufourstrasse 40, Multifunktionsraum",
-        "teams_link": ""
+        "teams_link": "",
+        "organizer_mail": "tobias.erhardt@bs.ch"
       }
     ]
   }

@@ -1,8 +1,7 @@
 import datetime
-
+import textwrap
 import streamlit as st
 from PIL import Image
-import textwrap
 from utils import (
     add_registration,
     create_database,
@@ -12,6 +11,8 @@ from utils import (
     send_email,
     validate_email,
 )
+import csv
+import os
 
 st.set_page_config(page_title="Kursbuchung", page_icon=":calendar:")
 
@@ -50,6 +51,8 @@ if 'selected_course' not in st.session_state:
     st.session_state.selected_course = None
 if 'selected_date' not in st.session_state:
     st.session_state.selected_date = None
+if 'selected_course_organizer' not in st.session_state:
+    st.session_state.selected_course_organizer = None
 
 st.subheader("Verfügbare Kurse", divider="gray")
 
@@ -60,6 +63,7 @@ for group_name, course_list in grouped_courses.items():
 
         # Access the first course in the list to display general information (assuming they are the same for all courses in the group)
         course = course_list[0]
+        organizer_mail = course['organizer_mail']
         st.markdown(
             f"""
             **Kursbeschreibung:** {course["description"]}\n
@@ -68,13 +72,13 @@ for group_name, course_list in grouped_courses.items():
             """
         )
         st.markdown("#### Verfügbare Daten")
-        
+
         date_options = []
         for course in course_list:
             course_date_str = course["date"]
             course_time_str = course["time"]
             course_duration = course["duration"]
-            
+
             # Calculate end time
             start_datetime = datetime.datetime.strptime(f"{course_date_str} {course_time_str}", "%Y-%m-%d %H:%M")
 
@@ -97,18 +101,19 @@ for group_name, course_list in grouped_courses.items():
 
         # Use a selectbox for date selection
         selected_formatted_date, selected_course_date, selected_course_time = st.selectbox(
-            "Wähle ein Datum", 
+            "Wähle ein Datum",
             date_options,
             key=f"selectbox-{group_name}",
-            format_func=lambda x: x[0] # Display the formatted date in the selectbox
+            format_func=lambda x: x[0]  # Display the formatted date in the selectbox
         )
 
         if st.button(f"Kurs Buchen: {selected_formatted_date}", key=f"book-{group_name}-{selected_course_date}"):
             st.session_state.selected_course = group_name
             st.session_state.selected_date = selected_course_date
             st.session_state.selected_time = selected_course_time
+            st.session_state.selected_course_organizer = organizer_mail
             st.rerun()
-            
+
 
 # Booking logic (triggered when session state is updated)
 if st.session_state.selected_course and st.session_state.selected_date and st.session_state.selected_time:
@@ -117,7 +122,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
         st.session_state.selected_course = None
         st.session_state.selected_date = None
         st.session_state.selected_time = None
-        
+
     elif not validate_email(email):
         st.error(
             "Ungültige E-Mail-Adresse. Bitte verwende das Format vorname.nachname@bs.ch."
@@ -125,7 +130,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
         st.session_state.selected_course = None
         st.session_state.selected_date = None
         st.session_state.selected_time = None
-        
+
     else:
         # Find the selected course details
         selected_course_details = next((c for c in courses if c["name"] == st.session_state.selected_course and c["date"] == st.session_state.selected_date), None)
@@ -133,6 +138,23 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
         if selected_course_details:
             # Add registration to database
             add_registration(email, st.session_state.selected_course, st.session_state.selected_date)
+
+            # --- CSV Logic ---
+            csv_file_path = './data/registrations.csv'
+            
+            # Check if the file exists, create it if it doesn't
+            file_exists = os.path.isfile(csv_file_path)
+            
+            with open(csv_file_path, mode='a', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                
+                # Write header row if the file is newly created
+                if not file_exists:
+                    writer.writerow(['email', 'course_name', 'course_date'])
+                
+                # Write the registration data
+                writer.writerow([email, st.session_state.selected_course, st.session_state.selected_date])
+            # --- End CSV Logic ---
 
             # Create ICS file content
             ics_attachment = create_ics_event(selected_course_details)
@@ -152,7 +174,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
             start_datetime = datetime.datetime.strptime(f"{st.session_state.selected_date} {course_time_str}", "%Y-%m-%d %H:%M")
             end_datetime = start_datetime + datetime.timedelta(hours=selected_course_details["duration"])
             formatted_end_time = end_datetime.strftime("%H:%M Uhr")
-            
+
             # Email body (for user)
             user_email_body = f"""
             Hallo {fist_name} {second_name},
@@ -197,7 +219,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
 
             # Send notification email
             send_email(
-                "yanick.schraner@bs.ch",
+                st.session_state.selected_course_organizer,
                 "Neue Kursanmeldung",
                 notification_email_body,
             )
@@ -210,7 +232,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
             st.session_state.selected_course = None
             st.session_state.selected_date = None
             st.session_state.selected_time = None
-            
+
 
 # Create a container for the logo
 logo_container = st.container()
