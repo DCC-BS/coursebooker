@@ -245,7 +245,7 @@ with logo_container:
             logo = Image.open("assets/logo.png")
 
             # Create the HTML for the clickable image link (target="_blank" opens in a new tab)
-            logo_html = f'<a href="https://data.bs" target="_blank"><img src="data:image/png;base64,{image_to_base64(logo)}" width="128"></a>'
+            logo_html = f'<a href="https://www.bs.ch/schwerpunkte/daten/databs" target="_blank"><img src="data:image/png;base64,{image_to_base64(logo)}" width="128"></a>'
 
             # Display the clickable image using st.markdown()
             st.markdown(logo_html, unsafe_allow_html=True)
