@@ -201,7 +201,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
             # Send email to user
             send_email(
                 email,
-                f"Anmeldung zum Kurs: {st.session_state.selected_course}",
+                f"Kursanmeldung: {st.session_state.selected_course}",
                 user_email_body,
                 ics_attachment,
             )
@@ -220,7 +220,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
             # Send notification email
             send_email(
                 st.session_state.selected_course_organizer,
-                "Neue Kursanmeldung",
+                f"Kursanmeldung: {st.session_state.selected_course}",
                 notification_email_body,
             )
 
