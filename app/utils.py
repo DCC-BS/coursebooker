@@ -116,7 +116,7 @@ def create_ics_event(course):
 
 def validate_email(email):
     """Validates if the email address is in the format firstname.lastname@bs.ch."""
-    pattern = r"^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@bs\.ch$"
+    pattern = r"^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@(?:bs\.ch|jsd\.bs\.ch|edubs\.ch|iwb\.ch|bvb\.ch)$"
     return re.match(pattern, email) is not None
 
 
