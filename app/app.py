@@ -125,7 +125,7 @@ if st.session_state.selected_course and st.session_state.selected_date and st.se
 
     elif not validate_email(email):
         st.error(
-            "Ungültige E-Mail-Adresse. Bitte verwende das Format vorname.nachname@bs.ch. Bei Fragen unterstützt Dich das Data Competence Center DCC via Telefon +41 61 267 87 17 oder E-Mail dcc@bs.ch"
+            "Ungültige E-Mail-Adresse. Bitte verwende eine E-Mail Adresse der kantonalen Verwaltung. Bei Fragen unterstützt Dich das Data Competence Center DCC via Telefon +41 61 267 87 17 oder E-Mail dcc@bs.ch"
         )
         st.session_state.selected_course = None
         st.session_state.selected_date = None
