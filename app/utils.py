@@ -100,8 +100,6 @@ def create_ics_event(course):
     dtend = dtstart + datetime.timedelta(hours=course["duration"])
 
     tz = pytz.timezone("Europe/Berlin")
-    dtstart = tz.localize(dtstart)
-    dtend = tz.localize(dtend)
 
     event.add("dtstart", dtstart)
     event.add("dtend", dtend)
