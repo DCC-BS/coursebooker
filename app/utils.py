@@ -106,7 +106,10 @@ def create_ics_event(course):
     event.add("dtstamp", datetime.datetime.now(tz))
 
     event["location"] = vText(course["location"])
-    event.add("description", f"MS Teams Meeting: {course['teams_link']}")
+    if course['teams_link'] and course['teams_link'] != "":
+        event.add("description", f"MS Teams Meeting: {course['teams_link']}")
+    else:
+        event.add("description", f"{course["name"]} - {course["location"]}")
 
     cal.add_component(event)
     return cal.to_ical()
