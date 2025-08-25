@@ -1,0 +1,102 @@
+import type { UpdateCourseInput } from "../../../shared/models/courses.model";
+import { getDatabase } from "../../services/database";
+
+export default defineEventHandler(async (event) => {
+    try {
+        const db = await getDatabase();
+        const courseId = getRouterParam(event, "id");
+
+        if (!courseId) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: "Course ID is required",
+            });
+        }
+
+        const body = (await readBody(event)) as UpdateCourseInput;
+
+        // Validate email format if provided
+        if (
+            body.organizer_mail &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.organizer_mail)
+        ) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: "Invalid email format for organizer_mail",
+            });
+        }
+
+        // Validate course type if provided
+        if (body.type && !["course", "event"].includes(body.type)) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: "Type must be either 'course' or 'event'",
+            });
+        }
+
+        // Validate sessions if provided
+        if (body.sessions) {
+            for (const session of body.sessions) {
+                if (session.lessons) {
+                    for (const lesson of session.lessons) {
+                        if (lesson.start && lesson.end) {
+                            const startDate = new Date(lesson.start);
+                            const endDate = new Date(lesson.end);
+
+                            if (
+                                Number.isNaN(startDate.getTime()) ||
+                                Number.isNaN(endDate.getTime())
+                            ) {
+                                throw createError({
+                                    statusCode: 400,
+                                    statusMessage:
+                                        "Invalid date format in lessons",
+                                });
+                            }
+
+                            if (startDate >= endDate) {
+                                throw createError({
+                                    statusCode: 400,
+                                    statusMessage:
+                                        "Lesson start time must be before end time",
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const updatedCourse = await db.updateCourse(courseId, body);
+
+        if (!updatedCourse) {
+            throw createError({
+                statusCode: 404,
+                statusMessage: "Course not found",
+            });
+        }
+
+        return {
+            success: true,
+            course: updatedCourse,
+        };
+    } catch (error) {
+        if (error && typeof error === "object" && "statusCode" in error) {
+            throw error;
+        }
+
+        if (error instanceof Error) {
+            if (error.message.includes("already exists")) {
+                throw createError({
+                    statusCode: 409,
+                    statusMessage: error.message,
+                });
+            }
+        }
+
+        throw createError({
+            statusCode: 500,
+            statusMessage: "Internal server error",
+        });
+    }
+});

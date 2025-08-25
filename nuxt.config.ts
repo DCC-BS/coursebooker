@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    compatibilityDate: '2024-11-01',
+    compatibilityDate: "2024-11-01",
     build: {
         analyze: false,
     },
@@ -16,22 +16,22 @@ export default defineNuxtConfig({
     // Define app head configuration
     app: {
         head: {
-            titleTemplate: 'CourseBooker',
+            titleTemplate: "CourseBooker",
             htmlAttrs: {
-                lang: 'de',
+                lang: "de",
             },
             meta: [
-                { charset: 'utf-8' },
+                { charset: "utf-8" },
                 {
-                    name: 'viewport',
-                    content: 'width=device-width, initial-scale=1',
+                    name: "viewport",
+                    content: "width=device-width, initial-scale=1",
                 },
                 {
-                    name: 'apple-mobile-web-app-title',
-                    content: 'CourseBooker',
+                    name: "apple-mobile-web-app-title",
+                    content: "CourseBooker",
                 },
-                { name: 'application-name', content: 'CourseBooker' },
-                { name: 'msapplication-config', content: '/browserconfig.xml' },
+                { name: "application-name", content: "CourseBooker" },
+                { name: "msapplication-config", content: "/browserconfig.xml" },
             ],
         },
     },
@@ -39,14 +39,14 @@ export default defineNuxtConfig({
         colorMode: false,
     },
     modules: [
-        '@nuxt/ui',
-        '@nuxtjs/i18n',
-        '@dcc-bs/common-ui.bs.js',
-        '@dcc-bs/logger.bs.js',
+        "@nuxt/ui",
+        "@nuxtjs/i18n",
+        "@dcc-bs/logger.bs.js",
         "@dcc-bs/feedback-control.bs.js",
+        "@scalar/nuxt",
     ],
     devtools: { enabled: true },
-    css: ['~/assets/css/main.css'],
+    css: ["~/assets/css/main.css"],
     "feedback-control.bs.js": {
         repo: "Feedback",
         owner: "DCC-BS",
@@ -69,5 +69,15 @@ export default defineNuxtConfig({
         ],
         defaultLocale: "de",
         strategy: "no_prefix",
+    },
+    $development: {
+        nitro: {
+            experimental: {
+                openAPI: true,
+            },
+        },
+    },
+    scalar: {
+        darkMode: true,
     },
 });

@@ -22,3 +22,9 @@ logs
 .env
 .env.*
 !.env.example
+
+# Database files
+data/
+*.db
+*.sqlite
+*.sqlite3
