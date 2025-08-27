@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Course, CourseType } from '~/shared/models/courses.model';
+import type { Course, Session } from '~/../shared/models';
 
 // Page meta
 definePageMeta({
@@ -27,13 +27,14 @@ const { data: course, pending, error, refresh } = await useFetch<Course>(`/api/c
 
 // Form data - initialize with course data
 const form = reactive({
-    type: 'course' as CourseType,
+    type: 'course',
     title: '',
     description: '',
     organizer_name: '',
     organizer_mail: '',
-    teams_link: ''
-});
+    teams_link: '',
+    sessions: [] as Session[],
+} as Course);
 
 // Watch for course data and populate form
 watch(course, (newCourse) => {

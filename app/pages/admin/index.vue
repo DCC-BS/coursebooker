@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Course } from "~~/shared/models";
+
 // Set page meta
 definePageMeta({
     layout: false,
@@ -6,7 +8,7 @@ definePageMeta({
 });
 
 // Fetch statistics
-const { data: stats } = await $fetch('/api/courses/stats').catch(() => ({ data: null }));
+const courses = await $fetch<Course[]>('/api/courses');
 
 useHead({
     title: 'Admin Dashboard - CourseBooker'
@@ -45,7 +47,7 @@ useHead({
                                         Total Courses
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
-                                        {{ stats?.totalCourses || 0 }}
+                                        {{ courses.length || 0 }}
                                     </dd>
                                 </dl>
                             </div>
@@ -73,7 +75,8 @@ useHead({
                                         Total Sessions
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
-                                        {{ stats?.totalSessions || 0 }}
+                                        {{courses.reduce((acc, course) => acc + (course.sessions?.length || 0), 0) || 0
+                                        }}
                                     </dd>
                                 </dl>
                             </div>
@@ -101,7 +104,8 @@ useHead({
                                         Total Lessons
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
-                                        {{ stats?.totalLessons || 0 }}
+                                        {{courses.reduce((acc, course) => acc + (course.sessions?.length || 0), 0) || 0
+                                        }}
                                     </dd>
                                 </dl>
                             </div>
@@ -148,7 +152,7 @@ useHead({
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <UButton to="/admin/courses" color="white" block>
+                                <UButton to="/admin/courses" color="neutral" block>
                                     View All Courses
                                 </UButton>
                             </div>

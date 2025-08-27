@@ -1,7 +1,10 @@
-import { getDatabase } from "../../services/database";
+import { useDb } from "~~/server/composables/db.composable";
+import { coursesTable } from "~/../shared/schema";
+import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-    const db = await getDatabase();
+    const { db } = useDb();
+
     const courseId = getRouterParam(event, "id");
 
     if (!courseId) {
@@ -11,7 +14,16 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    const course = await db.getCourseById(courseId);
+    const course = await db.query.coursesTable.findFirst({
+        where: eq(coursesTable.id, courseId),
+        with: {
+            sessions: {
+                with: {
+                    lessons: true,
+                },
+            },
+        },
+    });
 
     if (!course) {
         throw createError({
@@ -20,8 +32,5 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    return {
-        course,
-        id: courseId,
-    };
+    return course;
 });

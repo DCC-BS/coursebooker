@@ -1,42 +1,50 @@
-import { getDatabase } from "../../services/database";
+import { useDb } from "~~/server/composables/db.composable";
+import { z } from "zod";
+import { like, and, gte, lte } from "drizzle-orm";
+import { coursesTable, lessonsTable } from "~~/shared/schema";
+
+const filterSchema = z.object({
+    from: z.coerce.date().optional(),
+    to: z.coerce.date().optional(),
+    organizer: z.string().optional(),
+    search: z.string().optional(),
+    sort: z.enum(["asc", "desc"]).default("asc"),
+    offset: z.number().min(1).optional(),
+    limit: z.number().min(1).default(10),
+});
 
 export default defineEventHandler(async (event) => {
-    const db = await getDatabase();
+    const { db } = useDb();
     const query = getQuery(event);
 
-    // Build filters object
-    const filters = {
-        fromDate: query.from as string | undefined,
-        toDate: query.to as string | undefined,
-        organizer: query.organizer as string | undefined,
-        search: query.search as string | undefined,
-        sortOrder: (query.sort as "asc" | "desc") || "asc",
-        page: Number.parseInt(query.page as string) || 1,
-        limit: Number.parseInt(query.limit as string) || 10,
-    };
+    const filters = filterSchema.parse(query);
 
-    // Get total count for pagination (without limit)
-    const totalFilters = {
-        fromDate: filters.fromDate,
-        toDate: filters.toDate,
-        organizer: filters.organizer,
-        search: filters.search,
-        sortOrder: filters.sortOrder,
-    };
-
-    const [courses, allCourses] = await Promise.all([
-        db.getAllCourses(filters),
-        db.getAllCourses(totalFilters),
-    ]);
-
-    const total = allCourses.length;
-    const totalPages = Math.ceil(total / filters.limit);
-
-    return {
-        courses,
-        total,
-        page: filters.page,
+    const courses = await db.query.coursesTable.findMany({
         limit: filters.limit,
-        totalPages,
-    };
+        offset: filters.offset,
+        where: and(
+            like(coursesTable.title, `%${filters.search || ""}%`),
+            like(coursesTable.organizer_name, `%${filters.organizer || ""}%`),
+        ),
+        with: {
+            sessions: {
+                with: {
+                    lessons: {
+                        where: and(
+                            gte(
+                                lessonsTable.start,
+                                filters.from ?? new Date(-8640000000000000),
+                            ),
+                            lte(
+                                lessonsTable.end,
+                                filters.to ?? new Date(8640000000000000),
+                            ),
+                        ),
+                    },
+                },
+            },
+        },
+    });
+
+    return courses;
 });

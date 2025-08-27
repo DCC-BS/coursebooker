@@ -1,7 +1,9 @@
-import { getDatabase } from "../../services/database";
+import { eq } from "drizzle-orm";
+import { useDb } from "~~/server/composables/db.composable";
+import { coursesTable } from "~~/shared/schema";
 
 export default defineEventHandler(async (event) => {
-    const db = await getDatabase();
+    const { db } = useDb();
     const courseId = getRouterParam(event, "id");
 
     if (!courseId) {
@@ -11,28 +13,20 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    // Get course before deletion for response
-    const course = await db.getCourseById(courseId);
+    const deleted = await db
+        .delete(coursesTable)
+        .where(eq(coursesTable.id, courseId))
+        .returning();
 
-    if (!course) {
+    if (deleted.length < 1) {
         throw createError({
             statusCode: 404,
             statusMessage: "Course not found",
         });
     }
 
-    const deleted = await db.deleteCourse(courseId);
-
-    if (!deleted) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: "Failed to delete course",
-        });
-    }
-
     return {
         success: true,
         message: "Course deleted successfully",
-        course,
     };
 });
