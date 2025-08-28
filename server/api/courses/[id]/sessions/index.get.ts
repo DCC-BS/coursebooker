@@ -1,30 +1,24 @@
-// import { getDatabase } from "../../../../services/database";
+import { eq } from "drizzle-orm";
+import { useDb } from "~~/server/composables/db.composable";
+import { sessionsTable } from "~~/shared/schema";
 
-// export default defineEventHandler(async (event) => {
-//     const db = await getDatabase();
-//     const courseId = getRouterParam(event, "id");
+export default defineEventHandler(async (event) => {
+    const { db } = useDb();
+    const courseId = getRouterParam(event, "id");
 
-//     if (!courseId) {
-//         throw createError({
-//             statusCode: 400,
-//             statusMessage: "Course ID is required",
-//         });
-//     }
+    if (!courseId) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: "Course ID is required",
+        });
+    }
 
-//     // Check if course exists
-//     const courseExists = await db.courseExists(courseId);
-//     if (!courseExists) {
-//         throw createError({
-//             statusCode: 404,
-//             statusMessage: "Course not found",
-//         });
-//     }
+    const sessions = db.query.sessionsTable.findMany({
+        where: eq(sessionsTable.courseId, courseId),
+        with: {
+            lessons: true,
+        },
+    });
 
-//     const sessions = await db.getSessionsByCourseId(courseId);
-
-//     return {
-//         sessions,
-//         courseId,
-//         total: sessions.length,
-//     };
-// });
+    return sessions;
+});

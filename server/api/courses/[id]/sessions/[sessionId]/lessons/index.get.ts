@@ -1,43 +1,29 @@
-// import { useDb } from "~~/server/composables/db.composable";
+import { and, eq } from "drizzle-orm";
+import { useDb } from "~~/server/composables/db.composable";
+import { lessonsTable } from "~~/shared/schema";
 
-// export default defineEventHandler(async (event) => {
-//     const { db } = useDb();
-//     const courseId = getRouterParam(event, "id");
-//     const sessionId = getRouterParam(event, "sessionId");
+export default defineEventHandler(async (event) => {
+    const { db } = useDb();
+    const courseId = getRouterParam(event, "id");
+    const sessionId = getRouterParam(event, "sessionId");
 
-//     if (!courseId) {
-//         throw createError({
-//             statusCode: 400,
-//             statusMessage: "Course ID is required",
-//         });
-//     }
+    if (!courseId) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: "Course ID is required",
+        });
+    }
 
-//     if (!sessionId) {
-//         throw createError({
-//             statusCode: 400,
-//             statusMessage: "Session ID is required",
-//         });
-//     }
+    if (!sessionId) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: "Session ID is required",
+        });
+    }
 
-//     // // Check if course exists
-//     // const courseExists = await db.courseExists(courseId);
-//     // if (!courseExists) {
-//     //     throw createError({
-//     //         statusCode: 404,
-//     //         statusMessage: "Course not found",
-//     //     });
-//     // }
+    const lessons = await db.query.lessonsTable.findMany({
+        where: and(eq(lessonsTable.sessionId, sessionId)),
+    });
 
-//     // // Check if session exists
-//     // const sessionExists = await db.sessionExists(sessionId);
-//     // if (!sessionExists) {
-//     //     throw createError({
-//     //         statusCode: 404,
-//     //         statusMessage: "Session not found",
-//     //     });
-//     // }
-
-//     // const lessons = await db.getLessonsBySessionId(sessionId);
-
-//     return {};
-// });
+    return lessons;
+});

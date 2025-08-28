@@ -25,8 +25,5 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    return {
-        success: true,
-        message: "Course deleted successfully",
-    };
+    return deleted;
 });

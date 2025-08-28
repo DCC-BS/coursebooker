@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Course, CoursesData } from '~/../shared/models/courses.model';
+import type { Course } from '~~/shared/models';
 import AdminHeader from '~/components/admin/AdminHeader.vue';
 import AdminCourseCard from '~/components/admin/AdminCourseCard.vue';
 
@@ -24,13 +24,13 @@ const typeOptions = [
 ];
 
 // Fetch courses
-const { data: coursesData, pending, refresh } = await useFetch<CoursesData>('/api/courses');
+const { data: coursesData, pending, refresh } = await useFetch<Course[]>('/api/courses');
 
 // Computed filtered courses
 const filteredCourses = computed(() => {
-    if (!coursesData.value?.courses) return [];
+    if (!coursesData.value) return [];
 
-    let filtered = coursesData.value.courses;
+    let filtered = coursesData.value;
 
     // Filter by search query
     if (searchQuery.value) {
@@ -110,7 +110,8 @@ useHead({
                     <UInput v-model="searchQuery" placeholder="Search courses..." icon="i-heroicons-magnifying-glass"
                         size="lg" />
                 </div>
-                <USelect v-model="typeFilter" :options="typeOptions" placeholder="Filter by type" size="lg" />
+                <USelectMenu v-model="typeFilter" :items="typeOptions" value-key="value" placeholder="Filter by type"
+                    size="lg" />
             </div>
 
             <!-- Courses Grid -->
@@ -138,28 +139,31 @@ useHead({
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <UModal v-model="showDeleteModal">
-            <UCard>
-                <template #header>
-                    <h3 class="text-lg font-semibold">Delete Course</h3>
-                </template>
+        <UModal v-model:open="showDeleteModal">
+            <template #content>
+                <UCard>
+                    <template #header>
+                        <h3 class="text-lg font-semibold">Delete Course</h3>
+                    </template>
 
-                <p class="text-gray-600">
-                    Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title }}</span>"?
-                    This action cannot be undone and will also delete all associated sessions and lessons.
-                </p>
+                    <p class="text-gray-600">
+                        Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
+                        }}</span>"?
+                        This action cannot be undone and will also delete all associated sessions and lessons.
+                    </p>
 
-                <template #footer>
-                    <div class="flex justify-end gap-3">
-                        <UButton color="gray" @click="showDeleteModal = false">
-                            Cancel
-                        </UButton>
-                        <UButton color="red" :loading="deleting" @click="confirmDelete">
-                            Delete Course
-                        </UButton>
-                    </div>
-                </template>
-            </UCard>
+                    <template #footer>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="secondary" @click="showDeleteModal = false">
+                                Cancel
+                            </UButton>
+                            <UButton color="error" :loading="deleting" @click="confirmDelete">
+                                Delete Course
+                            </UButton>
+                        </div>
+                    </template>
+                </UCard>
+            </template>
         </UModal>
     </div>
 </template>

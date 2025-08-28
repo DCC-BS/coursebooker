@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Course, CourseType } from '~/../shared/models/courses.model';
-import type { CourseSession } from '~/../shared/models/session.model';
+import type { Course, CourseType, Session } from '~~/shared/models';
 import AdminHeader from '~/components/admin/AdminHeader.vue';
 import AdminSessionForm from '~/components/admin/AdminSessionForm.vue';
 
@@ -27,7 +26,7 @@ const form = reactive({
     organizer_name: '',
     organizer_mail: '',
     teams_link: '',
-    sessions: [] as (CourseSession & { tempId: string })[]
+    sessions: [] as (Session & { tempId: string })[]
 });
 
 // Computed

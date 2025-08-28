@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui';
 import type { Course } from '~/../shared/models/courses.model';
 
 interface Props {
@@ -21,30 +22,30 @@ const totalLessons = computed(() => {
 });
 
 // Dropdown actions
-const actions = [
-    [{
+const actions = [[
+    {
         label: 'Edit Course',
         icon: 'i-heroicons-pencil-square',
         click: () => emit('edit', props.course)
-    }],
-    [{
+    },
+    {
         label: 'Manage Sessions',
         icon: 'i-heroicons-calendar-days',
         to: `/admin/courses/${props.course.id}/sessions`
-    }],
-    [{
+    },
+    {
         label: 'Duplicate Course',
         icon: 'i-heroicons-document-duplicate',
         click: () => {
             // TODO: Implement duplicate functionality
         }
-    }],
-    [{
+    },
+    {
         label: 'Delete Course',
         icon: 'i-heroicons-trash',
         click: () => emit('delete', props.course)
     }]
-];
+] as DropdownMenuItem[][];
 </script>
 
 <template>
@@ -54,8 +55,8 @@ const actions = [
             <div class="flex items-start justify-between mb-4">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
-                        <UBadge :color="course.type === 'course' ? 'blue' : 'green'" size="sm">
-                            {{ course.type.charAt(0).toUpperCase() ?? '' + course.type.slice(1) }}
+                        <UBadge :color="course.type === 'course' ? 'primary' : 'secondary'" size="sm">
+                            {{ course.type.toUpperCase() ?? '' + course.type.slice(1) }}
                         </UBadge>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">
@@ -67,23 +68,23 @@ const actions = [
                 </div>
 
                 <!-- Actions Dropdown -->
-                <UDropdown :items="actions">
-                    <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" size="sm" />
-                </UDropdown>
+                <UDropdownMenu :items="actions">
+                    <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="sm" />
+                </UDropdownMenu>
             </div>
 
             <!-- Course Details -->
             <div class="space-y-2 mb-4">
                 <div class="flex items-center text-sm text-gray-600">
-                    <UIcon name="i-heroicons-user" class="h-4 w-4 mr-2" />
+                    <UIcon name="i-lucide-user" class="h-4 w-4 mr-2" />
                     {{ course.organizer_name }}
                 </div>
                 <div class="flex items-center text-sm text-gray-600">
-                    <UIcon name="i-heroicons-envelope" class="h-4 w-4 mr-2" />
+                    <UIcon name="i-lucide-mail" class="h-4 w-4 mr-2" />
                     {{ course.organizer_mail }}
                 </div>
                 <div v-if="course.teams_link" class="flex items-center text-sm text-gray-600">
-                    <UIcon name="i-heroicons-video-camera" class="h-4 w-4 mr-2" />
+                    <UIcon name="i-lucide-video" class="h-4 w-4 mr-2" />
                     Teams Link Available
                 </div>
             </div>

@@ -29,8 +29,5 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    return {
-        success: true,
-        updated_fields: updatedCourse[0],
-    };
+    return updatedCourse;
 });

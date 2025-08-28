@@ -1,4 +1,4 @@
-import { coursesTable, type sessionsTable, type lessonsTable } from "../schema";
+import { coursesTable, sessionsTable, lessonsTable } from "../schema";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -14,6 +14,7 @@ export type Course = typeof coursesTable.$inferSelect & {
 
 export type CreateCourse = typeof coursesTable.$inferInsert;
 export type UpdateCourse = Partial<CreateCourse>;
+
 export const createCourseSchema = createInsertSchema(coursesTable, {
     organizer_mail: z.email(),
 });
@@ -24,5 +25,11 @@ export const updateCourseSchema = createUpdateSchema(coursesTable, {
 export type CreateSession = typeof sessionsTable.$inferInsert;
 export type UpdateSession = Partial<CreateSession>;
 
+export const createSessionSchema = createInsertSchema(sessionsTable);
+export const updateSessionSchema = createUpdateSchema(sessionsTable);
+
 export type CreateLesson = typeof lessonsTable.$inferInsert;
 export type UpdateLesson = Partial<CreateLesson>;
+
+export const createLessonSchema = createInsertSchema(lessonsTable);
+export const updateLessonSchema = createUpdateSchema(lessonsTable);
