@@ -1,3 +1,4 @@
+import { randomUUIDv7 } from "bun";
 import { useDb } from "~~/server/composables/db.composable";
 import { createSessionSchema } from "~~/shared/models";
 import { sessionsTable } from "~~/shared/schema";
@@ -15,6 +16,7 @@ export default defineEventHandler(async (event) => {
 
     // Check if course exists
     const body = createSessionSchema.parse(await readBody(event));
+    body.id = randomUUIDv7();
 
     const session = await db.insert(sessionsTable).values({
         ...body,

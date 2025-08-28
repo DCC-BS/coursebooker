@@ -25,24 +25,24 @@ const totalLessons = computed(() => {
 const actions = [[
     {
         label: 'Edit Course',
-        icon: 'i-heroicons-pencil-square',
+        icon: 'i-lucide-square-pen',
         click: () => emit('edit', props.course)
     },
     {
         label: 'Manage Sessions',
-        icon: 'i-heroicons-calendar-days',
+        icon: 'i-lucide-calendar-days',
         to: `/admin/courses/${props.course.id}/sessions`
     },
     {
         label: 'Duplicate Course',
-        icon: 'i-heroicons-document-duplicate',
+        icon: 'i-lucide-copy',
         click: () => {
             // TODO: Implement duplicate functionality
         }
     },
     {
         label: 'Delete Course',
-        icon: 'i-heroicons-trash',
+        icon: 'i-lucide-trash-2',
         click: () => emit('delete', props.course)
     }]
 ] as DropdownMenuItem[][];

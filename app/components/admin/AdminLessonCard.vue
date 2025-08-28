@@ -20,12 +20,12 @@ const emit = defineEmits<{
 const actions = [
     [{
         label: 'Edit Lesson',
-        icon: 'i-heroicons-pencil-square',
+        icon: 'i-lucide-square-pen',
         click: () => emit('edit', props.lesson)
     }],
     [{
         label: 'Delete Lesson',
-        icon: 'i-heroicons-trash',
+        icon: 'i-lucide-trash-2',
         click: () => emit('delete', props.lesson)
     }]
 ];
@@ -69,17 +69,17 @@ function formatDuration(start: Date, end: Date): string {
                 Lesson {{ lessonNumber }}
             </span>
             <UDropdown :items="actions">
-                <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" size="xs" />
+                <UButton color="gray" variant="ghost" icon="i-lucide-ellipsis-vertical" size="xs" />
             </UDropdown>
         </div>
 
         <div class="space-y-1 text-xs text-gray-600">
             <div class="flex items-center">
-                <UIcon name="i-heroicons-clock" class="h-3 w-3 mr-1" />
+                <UIcon name="i-lucide-clock" class="h-3 w-3 mr-1" />
                 {{ formatDateTime(lesson.start) }}
             </div>
             <div class="flex items-center">
-                <UIcon name="i-heroicons-arrow-right" class="h-3 w-3 mr-1" />
+                <UIcon name="i-lucide-arrow-right" class="h-3 w-3 mr-1" />
                 {{ formatDateTime(lesson.end) }}
             </div>
             <div class="text-primary-600 font-medium">

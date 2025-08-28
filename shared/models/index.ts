@@ -12,24 +12,29 @@ export type Course = typeof coursesTable.$inferSelect & {
     sessions: Session[];
 };
 
-export type CreateCourse = typeof coursesTable.$inferInsert;
+export type CreateCourse = Omit<typeof coursesTable.$inferInsert, "id">;
 export type UpdateCourse = Partial<CreateCourse>;
 
 export const createCourseSchema = createInsertSchema(coursesTable, {
     organizer_mail: z.email(),
+    id: z.string().max(0).optional().default(""),
 });
 export const updateCourseSchema = createUpdateSchema(coursesTable, {
     organizer_mail: z.email().optional(),
 });
 
-export type CreateSession = typeof sessionsTable.$inferInsert;
+export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id">;
 export type UpdateSession = Partial<CreateSession>;
 
-export const createSessionSchema = createInsertSchema(sessionsTable);
+export const createSessionSchema = createInsertSchema(sessionsTable, {
+    id: z.string().max(0).optional().default(""),
+});
 export const updateSessionSchema = createUpdateSchema(sessionsTable);
 
 export type CreateLesson = typeof lessonsTable.$inferInsert;
 export type UpdateLesson = Partial<CreateLesson>;
 
-export const createLessonSchema = createInsertSchema(lessonsTable);
+export const createLessonSchema = createInsertSchema(lessonsTable, {
+    id: z.string().max(0).optional().default(""),
+});
 export const updateLessonSchema = createUpdateSchema(lessonsTable);

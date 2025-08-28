@@ -70,7 +70,7 @@ async function submitForm() {
             description: form.description.trim(),
             organizer_name: form.organizer_name.trim(),
             organizer_mail: form.organizer_mail.trim(),
-            teams_link: form.teams_link.trim() || undefined
+            teams_link: form.teams_link?.trim() || undefined
         };
 
         // Update via API
@@ -81,10 +81,6 @@ async function submitForm() {
 
         // Refresh course data
         await refresh();
-
-        // Redirect to course list with success message
-        await navigateTo('/admin/courses');
-
     } catch (error) {
         console.error('Error updating course:', error);
         // Show error toast
@@ -134,7 +130,7 @@ useHead({
 
             <div v-else-if="error" class="bg-white shadow rounded-lg p-6">
                 <div class="text-center">
-                    <UIcon name="i-heroicons-exclamation-triangle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
+                    <UIcon name="i-lucide-triangle-alert" class="h-12 w-12 text-red-500 mx-auto mb-4" />
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Course Not Found</h3>
                     <p class="text-gray-600 mb-4">The course you're looking for doesn't exist or has been deleted.</p>
                     <UButton to="/admin/courses" color="primary">
@@ -155,8 +151,8 @@ useHead({
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Course Type
                         </label>
-                        <USelect v-model="form.type" :options="typeOptions" placeholder="Select course type" size="lg"
-                            required />
+                        <USelect v-model="form.type" :items="typeOptions" value-key="value"
+                            placeholder="Select course type" size="lg" required />
                     </div>
 
                     <!-- Course Title -->
@@ -172,8 +168,8 @@ useHead({
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Description *
                         </label>
-                        <UTextarea v-model="form.description" placeholder="Describe what this course covers..." rows="4"
-                            resize required />
+                        <UTextarea v-model="form.description" placeholder="Describe what this course covers..."
+                            :rows="4" resize required />
                     </div>
 
                     <!-- Organizer Information -->
@@ -205,13 +201,13 @@ useHead({
                     <!-- Form Actions -->
                     <div class="flex justify-between pt-6 border-t border-gray-200">
                         <div>
-                            <UButton type="button" color="red" variant="outline" icon="i-heroicons-trash"
+                            <UButton type="button" color="error" variant="outline" icon="i-lucide-trash-2"
                                 @click="showDeleteModal = true">
                                 Delete Course
                             </UButton>
                         </div>
                         <div class="flex space-x-4">
-                            <UButton type="button" color="gray" @click="$router.back()">
+                            <UButton type="button" color="neutral" @click="$router.back()">
                                 Cancel
                             </UButton>
                             <UButton type="submit" color="primary" :loading="submitting" :disabled="!isFormValid">
@@ -230,8 +226,7 @@ useHead({
                         <p class="text-sm text-gray-600 mt-1">Manage sessions and lessons for this course separately.
                         </p>
                     </div>
-                    <UButton :to="`/admin/courses/${course.id}/sessions`" color="primary"
-                        icon="i-heroicons-calendar-days">
+                    <UButton :to="`/admin/courses/${course.id}/sessions`" color="primary" icon="i-lucide-calendar-days">
                         Manage Sessions
                     </UButton>
                 </div>
@@ -239,28 +234,30 @@ useHead({
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <UModal v-model="showDeleteModal">
-            <UCard>
-                <template #header>
-                    <h3 class="text-lg font-semibold">Delete Course</h3>
-                </template>
+        <UModal v-model:open="showDeleteModal">
+            <template #content>
+                <UCard>
+                    <template #header>
+                        <h3 class="text-lg font-semibold">Delete Course</h3>
+                    </template>
 
-                <p class="text-gray-600">
-                    Are you sure you want to delete "<span class="font-semibold">{{ course?.title }}</span>"?
-                    This action cannot be undone and will also delete all associated sessions and lessons.
-                </p>
+                    <p class="text-gray-600">
+                        Are you sure you want to delete "<span class="font-semibold">{{ course?.title }}</span>"?
+                        This action cannot be undone and will also delete all associated sessions and lessons.
+                    </p>
 
-                <template #footer>
-                    <div class="flex justify-end gap-3">
-                        <UButton color="gray" @click="showDeleteModal = false">
-                            Cancel
-                        </UButton>
-                        <UButton color="red" :loading="deleting" @click="deleteCourse">
-                            Delete Course
-                        </UButton>
-                    </div>
-                </template>
-            </UCard>
+                    <template #footer>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="neutral" @click="showDeleteModal = false">
+                                Cancel
+                            </UButton>
+                            <UButton color="error" :loading="deleting" @click="deleteCourse">
+                                Delete Course
+                            </UButton>
+                        </div>
+                    </template>
+                </UCard>
+            </template>
         </UModal>
     </div>
 </template>

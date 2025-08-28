@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { CourseSession } from '~/../shared/models/session.model';
-import type { Lesson } from '~/../shared/models/lession.model';
+import type { Session, Lesson } from '~/../shared/models';
 
 interface Props {
-    session: CourseSession;
+    session: Session;
     sessionNumber: number;
     courseId: string;
 }
@@ -12,26 +11,26 @@ const props = defineProps<Props>();
 
 // Emits
 const emit = defineEmits<{
-    edit: [session: CourseSession];
-    delete: [session: CourseSession];
-    'add-lesson': [session: CourseSession];
+    edit: [session: Session];
+    delete: [session: Session];
+    'add-lesson': [session: Session];
 }>();
 
 // Dropdown actions
 const actions = [
     [{
         label: 'Edit Session',
-        icon: 'i-heroicons-pencil-square',
+        icon: 'i-lucide-square-pen',
         click: () => emit('edit', props.session)
-    }],
-    [{
+    },
+    {
         label: 'Manage Lessons',
-        icon: 'i-heroicons-clock',
+        icon: 'i-lucide-clock',
         click: () => emit('add-lesson', props.session)
-    }],
-    [{
+    },
+    {
         label: 'Delete Session',
-        icon: 'i-heroicons-trash',
+        icon: 'i-lucide-trash-2',
         click: () => emit('delete', props.session)
     }]
 ];
@@ -73,20 +72,20 @@ async function deleteLesson(lesson: Lesson) {
 
                 <div class="space-y-1 text-sm text-gray-600">
                     <div v-if="session.location" class="flex items-center">
-                        <UIcon name="i-heroicons-map-pin" class="h-4 w-4 mr-2" />
+                        <UIcon name="i-lucide-map-pin" class="h-4 w-4 mr-2" />
                         {{ session.location }}
                     </div>
                     <div v-if="session.teams_link" class="flex items-center">
-                        <UIcon name="i-heroicons-video-camera" class="h-4 w-4 mr-2" />
+                        <UIcon name="i-lucide-video" class="h-4 w-4 mr-2" />
                         Teams Meeting Available
                     </div>
                 </div>
             </div>
 
             <!-- Actions Dropdown -->
-            <UDropdown :items="actions">
-                <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" size="sm" />
-            </UDropdown>
+            <UDropdownMenu :items="actions">
+                <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="sm" />
+            </UDropdownMenu>
         </div>
 
         <!-- Lessons List -->
@@ -102,7 +101,7 @@ async function deleteLesson(lesson: Lesson) {
         </div>
 
         <div v-else class="text-center py-6 border-t border-gray-200 mt-4">
-            <UIcon name="i-heroicons-clock" class="h-8 w-8 text-gray-300 mx-auto mb-2" />
+            <UIcon name="i-lucide-clock" class="h-8 w-8 text-gray-300 mx-auto mb-2" />
             <p class="text-sm text-gray-500 mb-3">No lessons in this session yet</p>
             <UButton size="sm" color="primary" variant="outline" @click="$emit('add-lesson', session)">
                 Add First Lesson
@@ -112,7 +111,7 @@ async function deleteLesson(lesson: Lesson) {
         <!-- Quick Actions -->
         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
             <div class="flex space-x-2">
-                <UButton size="xs" color="gray" variant="ghost" @click="$emit('edit', session)">
+                <UButton size="xs" color="neutral" variant="ghost" @click="$emit('edit', session)">
                     Edit Session
                 </UButton>
                 <UButton size="xs" color="primary" variant="ghost" @click="$emit('add-lesson', session)">

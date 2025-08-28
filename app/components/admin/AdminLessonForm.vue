@@ -63,7 +63,7 @@ function formatDuration(start: Date, end: Date): string {
             <span class="text-sm font-medium text-gray-700">
                 Lesson {{ lessonNumber }}
             </span>
-            <UButton color="red" variant="ghost" icon="i-heroicons-trash" size="xs" @click="$emit('delete')">
+            <UButton color="error" variant="ghost" icon="i-lucide-trash-1" size="xs" @click="$emit('delete')">
                 Remove
             </UButton>
         </div>

@@ -24,7 +24,7 @@ useHead({
                         <h1 class="text-3xl font-bold text-gray-900">CourseBooker Admin</h1>
                     </div>
                     <div class="flex space-x-4">
-                        <UButton to="/admin/courses" color="primary" size="lg" icon="i-heroicons-academic-cap">
+                        <UButton to="/admin/courses" color="primary" size="lg" icon="i-lucide-graduation-cap">
                             Manage Courses
                         </UButton>
                     </div>
@@ -39,7 +39,7 @@ useHead({
                     <div class="p-5">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <UIcon name="i-heroicons-academic-cap" class="h-6 w-6 text-gray-400" />
+                                <UIcon name="i-lucide-graduation-cap" class="h-6 w-6 text-gray-400" />
                             </div>
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
@@ -67,7 +67,7 @@ useHead({
                     <div class="p-5">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <UIcon name="i-heroicons-calendar-days" class="h-6 w-6 text-gray-400" />
+                                <UIcon name="i-lucide-calendar-days" class="h-6 w-6 text-gray-400" />
                             </div>
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
@@ -96,7 +96,7 @@ useHead({
                     <div class="p-5">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <UIcon name="i-heroicons-clock" class="h-6 w-6 text-gray-400" />
+                                <UIcon name="i-lucide-clock" class="h-6 w-6 text-gray-400" />
                             </div>
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
@@ -128,7 +128,7 @@ useHead({
                     <div class="bg-white overflow-hidden shadow rounded-lg">
                         <div class="p-6">
                             <div class="flex items-center">
-                                <UIcon name="i-heroicons-plus-circle" class="h-8 w-8 text-primary-500" />
+                                <UIcon name="i-lucide-circle-plus" class="h-8 w-8 text-primary-500" />
                                 <div class="ml-4">
                                     <h3 class="text-lg font-medium text-gray-900">Create New Course</h3>
                                     <p class="text-sm text-gray-500">Add a new course with sessions and lessons</p>
@@ -145,7 +145,7 @@ useHead({
                     <div class="bg-white overflow-hidden shadow rounded-lg">
                         <div class="p-6">
                             <div class="flex items-center">
-                                <UIcon name="i-heroicons-document-text" class="h-8 w-8 text-primary-500" />
+                                <UIcon name="i-lucide-file-text" class="h-8 w-8 text-primary-500" />
                                 <div class="ml-4">
                                     <h3 class="text-lg font-medium text-gray-900">Manage Existing</h3>
                                     <p class="text-sm text-gray-500">Edit or delete existing courses</p>

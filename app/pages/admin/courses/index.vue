@@ -99,7 +99,7 @@ useHead({
                     <h2 class="text-2xl font-bold text-gray-900">Courses</h2>
                     <p class="text-gray-600">Manage all your courses, sessions, and lessons</p>
                 </div>
-                <UButton to="/admin/courses/create" color="primary" size="lg" icon="i-heroicons-plus">
+                <UButton to="/admin/courses/create" color="primary" size="lg" icon="i-lucide-plus">
                     Create Course
                 </UButton>
             </div>
@@ -107,8 +107,7 @@ useHead({
             <!-- Search and Filters -->
             <div class="mb-6 flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                    <UInput v-model="searchQuery" placeholder="Search courses..." icon="i-heroicons-magnifying-glass"
-                        size="lg" />
+                    <UInput v-model="searchQuery" placeholder="Search courses..." icon="i-lucide-search" size="lg" />
                 </div>
                 <USelectMenu v-model="typeFilter" :items="typeOptions" value-key="value" placeholder="Filter by type"
                     size="lg" />
@@ -124,7 +123,7 @@ useHead({
             </div>
 
             <div v-else-if="filteredCourses.length === 0" class="text-center py-12">
-                <UIcon name="i-heroicons-academic-cap" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <UIcon name="i-lucide-graduation-cap" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No courses found</h3>
                 <p class="text-gray-500 mb-6">Get started by creating your first course.</p>
                 <UButton to="/admin/courses/create" color="primary">
@@ -148,7 +147,7 @@ useHead({
 
                     <p class="text-gray-600">
                         Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                        }}</span>"?
+                            }}</span>"?
                         This action cannot be undone and will also delete all associated sessions and lessons.
                     </p>
 
