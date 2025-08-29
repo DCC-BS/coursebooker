@@ -10,16 +10,10 @@ definePageMeta({
 // Get route params
 const route = useRoute();
 const courseId = route.params.id as string;
+const currentSession = ref<Session>();
 
 // State
 const showSessionModal = ref(false);
-
-// New session form
-const newSession = reactive({
-    location: '',
-    teams_link: '',
-    courseId: courseId
-} as CreateSession);
 
 // Fetch course data
 const { data: course, pending, error, refresh } = await useFetch<Course>(`/api/courses/${courseId}`);
@@ -34,14 +28,13 @@ const totalLessons = computed(() => {
 
 // Methods
 function addSession() {
-    newSession.location = '';
-    newSession.teams_link = '';
+    currentSession.value = undefined;
     showSessionModal.value = true;
 }
 
 function editSession(session: Session) {
-    // Navigate to session edit page
-    navigateTo(`/admin/courses/${courseId}/sessions/${session.id}/edit`);
+    currentSession.value = session;
+    showSessionModal.value = true;
 }
 
 async function deleteSession(session: Session) {
@@ -140,7 +133,8 @@ useHead({
                         <div v-else class="space-y-6">
                             <AdminSessionCard v-for="(session, index) in course.sessions" :key="session.id"
                                 :session="session" :session-number="index + 1" :course-id="course.id"
-                                @edit="editSession" @delete="deleteSession" @add-lesson="addLessonToSession" />
+                                @edit="editSession" @delete="deleteSession" @add-lesson="addLessonToSession"
+                                @changed="refresh" />
                         </div>
                     </div>
                 </div>
@@ -150,7 +144,8 @@ useHead({
         <!-- Add Session Modal -->
         <UModal v-model:open="showSessionModal">
             <template #content>
-                <AdminSessionForm :course-id="courseId" @cancel="showSessionModal = false" @update="(_) => refresh()" />
+                <AdminSessionForm :course-id="courseId" :session="currentSession" @cancel="showSessionModal = false"
+                    @update="(_) => { refresh(); showSessionModal = false }" />
             </template>
         </UModal>
     </div>

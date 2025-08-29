@@ -11,17 +11,17 @@ definePageMeta({
 
 // Reactive data
 const searchQuery = ref('');
-const typeFilter = ref('');
+const typeFilter = ref('all' as 'all' | 'course' | 'event');
 const showDeleteModal = ref(false);
 const courseToDelete = ref<Course | null>(null);
 const deleting = ref(false);
 
 // Type filter options
-const typeOptions = [
-    { label: 'All Types', value: '' },
+const typeOptions = ref([
+    { label: 'All Types', value: 'all' },
     { label: 'Course', value: 'course' },
     { label: 'Event', value: 'event' }
-];
+]);
 
 // Fetch courses
 const { data: coursesData, pending, refresh } = await useFetch<Course[]>('/api/courses');
@@ -43,7 +43,7 @@ const filteredCourses = computed(() => {
     }
 
     // Filter by type
-    if (typeFilter.value) {
+    if (typeFilter.value && typeFilter.value !== 'all') {
         filtered = filtered.filter(course => course.type === typeFilter.value);
     }
 
@@ -147,7 +147,7 @@ useHead({
 
                     <p class="text-gray-600">
                         Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                            }}</span>"?
+                        }}</span>"?
                         This action cannot be undone and will also delete all associated sessions and lessons.
                     </p>
 

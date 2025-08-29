@@ -43,7 +43,6 @@ export default defineNuxtConfig({
         "@nuxtjs/i18n",
         "@dcc-bs/logger.bs.js",
         "@dcc-bs/feedback-control.bs.js",
-        "@scalar/nuxt",
     ],
     devtools: { enabled: true },
     css: ["~/assets/css/main.css"],
@@ -69,15 +68,5 @@ export default defineNuxtConfig({
         ],
         defaultLocale: "de",
         strategy: "no_prefix",
-    },
-    $development: {
-        nitro: {
-            experimental: {
-                openAPI: true,
-            },
-        },
-    },
-    scalar: {
-        darkMode: true,
     },
 });

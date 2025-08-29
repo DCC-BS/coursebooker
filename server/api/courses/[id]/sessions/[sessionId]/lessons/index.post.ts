@@ -1,4 +1,4 @@
-import { randomUUIDv7 } from "bun";
+import { v7 as uuidv7 } from "uuid";
 import { useDb } from "~~/server/composables/db.composable";
 import { createLessonSchema } from "~~/shared/models";
 import { lessonsTable } from "~~/shared/schema";
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const body = createLessonSchema.parse(await readBody(event));
-    body.id = randomUUIDv7();
+    body.id = uuidv7();
     const lesson = await db.insert(lessonsTable).values(body).returning();
 
     return lesson;

@@ -30,10 +30,12 @@ export const createSessionSchema = createInsertSchema(sessionsTable, {
 });
 export const updateSessionSchema = createUpdateSchema(sessionsTable);
 
-export type CreateLesson = typeof lessonsTable.$inferInsert;
+export type CreateLesson = Omit<typeof lessonsTable.$inferInsert, "id">;
 export type UpdateLesson = Partial<CreateLesson>;
 
 export const createLessonSchema = createInsertSchema(lessonsTable, {
     id: z.string().max(0).optional().default(""),
+    start: z.coerce.date(),
+    end: z.coerce.date(),
 });
 export const updateLessonSchema = createUpdateSchema(lessonsTable);

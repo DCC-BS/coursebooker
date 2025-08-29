@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui';
-import type { Course } from '~/../shared/models/courses.model';
+import type { Course } from '~~/shared/models';
 
 interface Props {
     course: Course;
@@ -26,7 +26,7 @@ const actions = [[
     {
         label: 'Edit Course',
         icon: 'i-lucide-square-pen',
-        click: () => emit('edit', props.course)
+        onSelect: () => emit('edit', props.course)
     },
     {
         label: 'Manage Sessions',
@@ -36,16 +36,17 @@ const actions = [[
     {
         label: 'Duplicate Course',
         icon: 'i-lucide-copy',
-        click: () => {
+        onSelect: () => {
             // TODO: Implement duplicate functionality
         }
     },
     {
         label: 'Delete Course',
         icon: 'i-lucide-trash-2',
-        click: () => emit('delete', props.course)
+        onSelect: () => emit('delete', props.course)
     }]
 ] as DropdownMenuItem[][];
+
 </script>
 
 <template>
@@ -113,7 +114,7 @@ const actions = [[
         <!-- Quick Actions Footer -->
         <div class="bg-gray-50 px-6 py-3 flex justify-between items-center rounded-b-lg">
             <div class="flex space-x-2">
-                <UButton size="xs" color="gray" variant="ghost" @click="$emit('edit', course)">
+                <UButton size="xs" color="neutral" variant="ghost" @click="$emit('edit', course)">
                     Edit
                 </UButton>
                 <UButton size="xs" color="primary" variant="ghost" :to="`/admin/courses/${course.id}/sessions`">

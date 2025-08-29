@@ -1,54 +1,148 @@
 <script setup lang="ts">
-import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
-import type { MaskInputOptions } from 'maska';
-import { vMaska } from 'maska/vue';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import * as z from 'zod';
+import { type CreateLesson, type Lesson, type UpdateLesson, createLessonSchema, updateLessonSchema } from '~~/shared/models';
 
-// interface Props {
+const props = defineProps<{
+    courseId: string,
+    sessionId: string,
+    lesson?: Lesson
+}>();
 
-// }
+const emit = defineEmits<{
+    created: [];
+    updated: [];
+}>();
 
-// const props = defineProps<Props>();
+const feedback = useUserFeedback();
+const isSubmitting = ref(false);
 
-const df = new DateFormatter('en-US', {
-    dateStyle: 'medium'
-})
+const schema = z.object({
+    start: z.date().min(new Date(), { error: "Start Date must be in the future" }),
+    end: z.date()
+}).refine((data) => data.end > data.start, { error: "End Date must be after Start Date", path: ['end'] });
 
-const date = shallowRef(new CalendarDate(2022, 1, 10));
-const time = ref('10:00');
+type Schema = z.output<typeof schema>;
 
-watch(time, (newTime) => {
-    let [hours, minutes] = newTime.split(':').map(Number);
+const state = reactive<Schema>({
+    start: new Date(),
+    end: new Date(Date.now() + 1 * 60 * 60 * 1000)
+});
 
-    if (!hours || !minutes) {
+watch(() => props.lesson, (newLesson) => {
+    if (newLesson) {
+        state.start = new Date(newLesson.start);
+        state.end = new Date(newLesson.end);
+    }
+}, { immediate: true });
+
+function endFromDuration(duration: string) {
+    const parts = duration.match(/(\d+)\s*(m|h)/g);
+    if (!parts) {
+        console.error("Invalid duration format");
+        feedback.showError({ title: "Invalid duration format" });
         return;
     }
 
-    console.log(hours, minutes);
+    let totalMinutes = 0;
 
-    hours = clamp(hours, 0, 23);
-    minutes = clamp(minutes, 0, 59);
+    for (const part of parts) {
+        const match = part.match(/(\d+)\s*(m|h)/);
+        if (!match) {
+            console.error("Invalid duration format");
+            feedback.showError({ title: "Invalid duration format" });
+            return;
+        }
 
-    time.value = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-});
+        const value = parseInt(match[1], 10);
+        const unit = match[2];
 
-function clamp(value: number, min: number, max: number) {
-    return Math.min(Math.max(value, min), max);
+        if (unit === "m") {
+            totalMinutes += value;
+        } else if (unit === "h") {
+            totalMinutes += value * 60;
+        }
+    }
+
+    state.end = new Date(state.start.getTime() + totalMinutes * 60 * 1000);
 }
 
+function onSubmit(event: FormSubmitEvent<Schema>) {
+    if (props.lesson) {
+        updateLesson(event.data);
+    } else {
+        createLesson(event.data);
+    }
+}
+
+async function createLesson(data: Schema) {
+    isSubmitting.value = true;
+
+    const lesson = {
+        sessionId: props.sessionId,
+        start: data.start,
+        end: data.end
+    } as CreateLesson;
+
+    await $fetch(`/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons`, {
+        method: 'POST',
+        body: createLessonSchema.parse(lesson)
+    }).then(() => {
+        feedback.showSuccess({ title: "Lesson created successfully" });
+        emit('created');
+    }).catch((error) => {
+        console.error(error);
+        feedback.showError({ title: "Failed to create lesson" });
+    }).finally(() => {
+        isSubmitting.value = false;
+    });
+}
+
+async function updateLesson(data: Schema) {
+    if (!props.lesson) {
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    const lesson = {
+        start: data.start,
+        end: data.end
+    } as UpdateLesson;
+
+    await $fetch<Lesson>(`/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons/${props.lesson.id}`, {
+        method: 'PUT',
+        body: updateLessonSchema.parse(lesson)
+    }).then(() => {
+        feedback.showSuccess({ title: "Lesson updated successfully" });
+        emit('updated');
+    }).catch((error) => {
+        console.error(error);
+        feedback.showError({ title: "Failed to update lesson" });
+    }).finally(() => {
+        isSubmitting.value = false;
+    });
+}
 </script>
 
 <template>
-    <div>
-        <UPopover>
-            <UButton color="neutral" variant="subtle" icon="i-lucide-calendar">
-                {{ date ? df.format(date.toDate(getLocalTimeZone())) : 'Select a date' }}
-            </UButton>
+    <UForm :state="state" :schema="schema" @submit="onSubmit" class="flex gap-2 items-start">
+        <UFormField label="Start Time" name="start">
+            <DateTime v-model="state.start" />
+        </UFormField>
+        <UFormField label="End Time" name="end">
+            <UPopover>
+                <DateTime v-model="state.end" />
+                <template #content>
+                    <div class="flex flex-col p-2">
+                        <span>Duration of the event. (m for minutes, h for hours)</span>
+                        <UInput @change="(v) => endFromDuration(v.target!.value as string)" placeholder="1h 30m" />
+                    </div>
+                </template>
+            </UPopover>
 
-            <template #content>
-                <UCalendar v-model="date" class="p-2" />
-            </template>
-        </UPopover>
+        </UFormField>
 
-        <UInput v-maska="'##:##'" placeholder="HH:MM" icon="i-lucide-clock" v-model="time" />
-    </div>
+        <UButton :loading="isSubmitting" type="submit" icon="i-lucide-plus" class="mt-6">Add</UButton>
+    </UForm>
 </template>

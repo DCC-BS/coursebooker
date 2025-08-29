@@ -46,8 +46,6 @@ function createSession() {
         courseId: state.courseId,
     } as CreateSession;
 
-    console.log('Creating session with body:', body);
-
     $fetch<Session>(`/api/courses/${props.courseId}/sessions/`, {
         method: 'POST',
         body,
@@ -73,8 +71,8 @@ function updateSession() {
         teams_link: state.teams_link,
     } as UpdateSession;
 
-    $fetch<Session>(`/ api / courses / ${props.courseId} / sessions / ${props.session.id}`, {
-        method: 'PUT',
+    $fetch<Session>(`/api/courses/${props.courseId}/sessions/${props.session.id}`, {
+        method: 'PATCH',
         body,
     }).then((updatedSession) => {
         emit('update', updatedSession);
@@ -108,7 +106,7 @@ function updateSession() {
                     Cancel
                 </UButton>
                 <UButton type="submit" color="primary" :loading="creating">
-                    Create Session
+                    {{ props.session ? 'Update Session' : 'Create Session' }}
                 </UButton>
             </div>
         </UForm>

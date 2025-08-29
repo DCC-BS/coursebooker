@@ -31,10 +31,6 @@ const emptyFormData = {
 
 const formData = ref({ ...emptyFormData });
 
-watch(formData, (newVal) => {
-    console.log('Form Data Updated:', newVal);
-}, { immediate: true, deep: true });
-
 // Computed
 const isFormValid = computed(() => {
     return formData.value.title.trim() !== '' &&
