@@ -26,5 +26,5 @@ export default defineEventHandler(async (event) => {
     body.id = uuidv7();
     const lesson = await db.insert(lessonsTable).values(body).returning();
 
-    return lesson;
+    return lesson[0];
 });

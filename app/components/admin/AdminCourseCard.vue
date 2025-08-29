@@ -12,6 +12,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
     edit: [course: Course];
     delete: [course: Course];
+    duplicate: [course: Course];
 }>();
 
 // Computed values
@@ -36,9 +37,7 @@ const actions = [[
     {
         label: 'Duplicate Course',
         icon: 'i-lucide-copy',
-        onSelect: () => {
-            // TODO: Implement duplicate functionality
-        }
+        onSelect: () => emit('duplicate', props.course)
     },
     {
         label: 'Delete Course',

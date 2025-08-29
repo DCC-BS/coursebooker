@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import type { Course } from '~~/shared/models';
+import type { Session, Course, CreateCourse, CreateLesson, CreateSession } from '~~/shared/models';
 import AdminHeader from '~/components/admin/AdminHeader.vue';
 import AdminCourseCard from '~/components/admin/AdminCourseCard.vue';
+import { ca } from 'zod/v4/locales';
 
 // Page meta
 definePageMeta({
     layout: false,
     title: 'Manage Courses'
 });
+
+const feedback = useUserFeedback();
 
 // Reactive data
 const searchQuery = ref('');
@@ -58,6 +61,52 @@ function editCourse(course: Course) {
 function deleteCourse(course: Course) {
     courseToDelete.value = course;
     showDeleteModal.value = true;
+}
+
+async function duplicateCourse(course: Course) {
+    const body = {
+        ...course,
+        title: `${course.title} (Copy)`,
+        id: undefined // Let the backend assign a new ID
+    } as CreateCourse;
+
+    try {
+        const newCourse = await $fetch<Course>('/api/courses', {
+            method: 'POST',
+            body
+        })
+
+        for (const session of course.sessions) {
+            const newSession = await $fetch<Session>(`/api/courses/${newCourse.id}/sessions`, {
+                method: 'POST',
+                body: {
+                    ...session,
+                    courseId: newCourse.id,
+                    id: undefined // Let the backend assign a new ID
+                } as CreateSession
+            });
+
+            for (const lesson of session.lessons) {
+                await $fetch(`/api/courses/${newCourse.id}/sessions/${newSession.id}/lessons`, {
+                    method: 'POST',
+                    body: {
+                        ...lesson,
+                        sessionId: newSession.id,
+                        id: undefined // Let the backend assign a new ID
+                    } as CreateLesson
+                });
+            }
+        }
+
+        feedback.showSuccess({ title: 'Course duplicated successfully' });
+    }
+    catch (error) {
+        console.error('Error duplicating course:', error);
+        feedback.showError({ title: 'Failed to duplicate course', description: error.message });
+    }
+    finally {
+        refresh();
+    }
 }
 
 async function confirmDelete() {
@@ -133,7 +182,7 @@ useHead({
 
             <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <AdminCourseCard v-for="course in filteredCourses" :key="course.id" :course="course" @edit="editCourse"
-                    @delete="deleteCourse" />
+                    @delete="deleteCourse" @duplicate="duplicateCourse" />
             </div>
         </div>
 
@@ -147,7 +196,7 @@ useHead({
 
                     <p class="text-gray-600">
                         Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                        }}</span>"?
+                            }}</span>"?
                         This action cannot be undone and will also delete all associated sessions and lessons.
                     </p>
 

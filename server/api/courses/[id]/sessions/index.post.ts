@@ -18,10 +18,13 @@ export default defineEventHandler(async (event) => {
     const body = createSessionSchema.parse(await readBody(event));
     body.id = uuidv7();
 
-    const session = await db.insert(sessionsTable).values({
-        ...body,
-        courseId,
-    });
+    const session = await db
+        .insert(sessionsTable)
+        .values({
+            ...body,
+            courseId,
+        })
+        .returning();
 
-    return session;
+    return session[0];
 });
