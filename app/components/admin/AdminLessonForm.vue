@@ -1,96 +1,54 @@
 <script setup lang="ts">
-import type { Lesson } from '~/../shared/models/lession.model';
+import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
+import type { MaskInputOptions } from 'maska';
+import { vMaska } from 'maska/vue';
 
-interface Props {
-    lesson: Lesson & { tempId: string };
-    lessonNumber: number;
-}
+// interface Props {
 
-const props = defineProps<Props>();
+// }
 
-const emit = defineEmits<{
-    update: [lesson: Lesson & { tempId: string }];
-    delete: [];
-}>();
+// const props = defineProps<Props>();
 
-function formatDateTimeLocal(date: Date): string {
-    const d = new Date(date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().slice(0, 16);
-}
+const df = new DateFormatter('en-US', {
+    dateStyle: 'medium'
+})
 
-function updateStartTime(value: string) {
-    const updatedLesson = {
-        ...props.lesson,
-        start: new Date(value)
-    };
-    emit('update', updatedLesson);
-}
+const date = shallowRef(new CalendarDate(2022, 1, 10));
+const time = ref('10:00');
 
-function updateEndTime(value: string) {
-    const updatedLesson = {
-        ...props.lesson,
-        end: new Date(value)
-    };
-    emit('update', updatedLesson);
-}
+watch(time, (newTime) => {
+    let [hours, minutes] = newTime.split(':').map(Number);
 
-function formatDuration(start: Date, end: Date): string {
-    const startTime = new Date(start);
-    const endTime = new Date(end);
-    const diffMs = endTime.getTime() - startTime.getTime();
-
-    if (diffMs <= 0) {
-        return 'Invalid duration';
+    if (!hours || !minutes) {
+        return;
     }
 
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    console.log(hours, minutes);
 
-    if (hours === 0) {
-        return `${minutes} minutes`;
-    } else if (minutes === 0) {
-        return `${hours} hour${hours > 1 ? 's' : ''}`;
-    } else {
-        return `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minutes`;
-    }
+    hours = clamp(hours, 0, 23);
+    minutes = clamp(minutes, 0, 59);
+
+    time.value = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+});
+
+function clamp(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min), max);
 }
+
 </script>
 
 <template>
-    <div class="bg-gray-50 border border-gray-200 rounded p-3">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-gray-700">
-                Lesson {{ lessonNumber }}
-            </span>
-            <UButton color="error" variant="ghost" icon="i-lucide-trash-1" size="xs" @click="$emit('delete')">
-                Remove
+    <div>
+        <UPopover>
+            <UButton color="neutral" variant="subtle" icon="i-lucide-calendar">
+                {{ date ? df.format(date.toDate(getLocalTimeZone())) : 'Select a date' }}
             </UButton>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <!-- Start Time -->
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                    Start Time
-                </label>
-                <UInput :model-value="formatDateTimeLocal(lesson.start)" @update:model-value="updateStartTime($event)"
-                    type="datetime-local" size="sm" />
-            </div>
+            <template #content>
+                <UCalendar v-model="date" class="p-2" />
+            </template>
+        </UPopover>
 
-            <!-- End Time -->
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                    End Time
-                </label>
-                <UInput :model-value="formatDateTimeLocal(lesson.end)" @update:model-value="updateEndTime($event)"
-                    type="datetime-local" size="sm" />
-            </div>
-        </div>
-
-        <!-- Duration Display -->
-        <div class="mt-2 text-xs text-gray-500">
-            Duration: {{ formatDuration(lesson.start, lesson.end) }}
-        </div>
+        <UInput v-maska="'##:##'" placeholder="HH:MM" icon="i-lucide-clock" v-model="time" />
     </div>
 </template>

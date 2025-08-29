@@ -100,13 +100,17 @@ async function deleteLesson(lesson: Lesson) {
             </div>
         </div>
 
-        <div v-else class="text-center py-6 border-t border-gray-200 mt-4">
+        <div>
+            <AdminLessonForm />
+        </div>
+
+        <!-- <div v-else class="text-center py-6 border-t border-gray-200 mt-4">
             <UIcon name="i-lucide-clock" class="h-8 w-8 text-gray-300 mx-auto mb-2" />
             <p class="text-sm text-gray-500 mb-3">No lessons in this session yet</p>
             <UButton size="sm" color="primary" variant="outline" @click="$emit('add-lesson', session)">
                 Add First Lesson
             </UButton>
-        </div>
+        </div> -->
 
         <!-- Quick Actions -->
         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">

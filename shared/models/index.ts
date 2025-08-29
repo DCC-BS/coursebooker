@@ -1,7 +1,6 @@
 import { coursesTable, sessionsTable, lessonsTable } from "../schema";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
-import { z } from "zod/v4";
-
+import * as z from "zod";
 export type Lesson = typeof lessonsTable.$inferSelect;
 
 export type Session = typeof sessionsTable.$inferSelect & {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Lesson } from '~/../shared/models/lession.model';
+import type { DropdownMenuItem } from '@nuxt/ui';
+import type { Lesson } from '~/../shared/models';
 
 interface Props {
     lesson: Lesson;
@@ -22,13 +23,13 @@ const actions = [
         label: 'Edit Lesson',
         icon: 'i-lucide-square-pen',
         click: () => emit('edit', props.lesson)
-    }],
-    [{
+    },
+    {
         label: 'Delete Lesson',
         icon: 'i-lucide-trash-2',
         click: () => emit('delete', props.lesson)
     }]
-];
+] as DropdownMenuItem[][];
 
 // Utility functions
 function formatDateTime(date: Date): string {
@@ -54,11 +55,11 @@ function formatDuration(start: Date, end: Date): string {
 
     if (hours === 0) {
         return `${minutes}m`;
-    } else if (minutes === 0) {
+    } if (minutes === 0) {
         return `${hours}h`;
-    } else {
-        return `${hours}h ${minutes}m`;
     }
+
+    return `${hours}h ${minutes}m`;
 }
 </script>
 
@@ -68,9 +69,9 @@ function formatDuration(start: Date, end: Date): string {
             <span class="text-sm font-medium text-gray-700">
                 Lesson {{ lessonNumber }}
             </span>
-            <UDropdown :items="actions">
-                <UButton color="gray" variant="ghost" icon="i-lucide-ellipsis-vertical" size="xs" />
-            </UDropdown>
+            <UDropdownMenu :items="actions">
+                <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="xs" />
+            </UDropdownMenu>
         </div>
 
         <div class="space-y-1 text-xs text-gray-600">

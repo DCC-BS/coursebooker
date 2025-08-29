@@ -12,8 +12,7 @@ const route = useRoute();
 const courseId = route.params.id as string;
 
 // State
-const showAddSessionModal = ref(false);
-const creating = ref(false);
+const showSessionModal = ref(false);
 
 // New session form
 const newSession = reactive({
@@ -37,28 +36,7 @@ const totalLessons = computed(() => {
 function addSession() {
     newSession.location = '';
     newSession.teams_link = '';
-    showAddSessionModal.value = true;
-}
-
-async function createSession() {
-    creating.value = true;
-    try {
-        const body = {
-            location: newSession.location,
-            teams_link: newSession.teams_link || undefined,
-            courseId: newSession.courseId
-        } as CreateSession;
-
-        await $fetch(`/api/courses/${courseId}/sessions`, {
-            method: 'POST',
-            body
-        });
-
-        showAddSessionModal.value = false;
-        await refresh();
-    } catch (error) {
-        console.error('Error creating session:', error);
-    }
+    showSessionModal.value = true;
 }
 
 function editSession(session: Session) {
@@ -170,41 +148,9 @@ useHead({
         </div>
 
         <!-- Add Session Modal -->
-        <UModal v-model:open="showAddSessionModal">
+        <UModal v-model:open="showSessionModal">
             <template #content>
-                <UCard>
-                    <template #header>
-                        <h3 class="text-lg font-semibold">Add New Session</h3>
-                    </template>
-
-                    <form @submit.prevent="createSession" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Location
-                            </label>
-                            <UInput v-model="newSession.location" placeholder="Enter session location" size="lg" />
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Teams Link (Optional)
-                            </label>
-                            <UInput v-model="newSession.teams_link" placeholder="https://teams.microsoft.com/..."
-                                size="lg" />
-                        </div>
-                    </form>
-
-                    <template #footer>
-                        <div class="flex justify-end gap-3">
-                            <UButton type="button" color="neutral" @click="showAddSessionModal = false">
-                                Cancel
-                            </UButton>
-                            <UButton type="submit" color="primary" :loading="creating" @click="createSession">
-                                Create Session
-                            </UButton>
-                        </div>
-                    </template>
-                </UCard>
+                <AdminSessionForm :course-id="courseId" @cancel="showSessionModal = false" @update="(_) => refresh()" />
             </template>
         </UModal>
     </div>
