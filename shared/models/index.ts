@@ -1,5 +1,9 @@
 import { coursesTable, sessionsTable, lessonsTable } from "../schema";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import {
+    createInsertSchema,
+    createUpdateSchema,
+    createSelectSchema,
+} from "drizzle-zod";
 import * as z from "zod";
 export type Lesson = typeof lessonsTable.$inferSelect;
 
@@ -13,6 +17,23 @@ export type Course = typeof coursesTable.$inferSelect & {
 
 export type CreateCourse = Omit<typeof coursesTable.$inferInsert, "id">;
 export type UpdateCourse = Partial<CreateCourse>;
+
+export const lessonSchema = createSelectSchema(lessonsTable, {
+    start: z.coerce.date(),
+    end: z.coerce.date(),
+});
+
+export const sessionSchema = createSelectSchema(sessionsTable).extend({
+    lessons: z.array(lessonSchema),
+});
+
+export const courseSchema = createSelectSchema(coursesTable, {
+    organizer_mail: z.email(),
+}).extend({
+    sessions: z.array(sessionSchema),
+});
+
+export const coursesSchema = z.array(courseSchema);
 
 export const createCourseSchema = createInsertSchema(coursesTable, {
     organizer_mail: z.email(),
