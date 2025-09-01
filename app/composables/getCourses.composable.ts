@@ -1,6 +1,6 @@
 import { type Course, coursesSchema } from "~~/shared/models";
 
-export function useCourse() {
+export function useCourses() {
     const courses: Ref<Course[]> = ref<Course[]>([]);
     const isPending = ref(true);
 
@@ -14,6 +14,7 @@ export function useCourse() {
                 const json = await response.json();
                 const parsed = coursesSchema.parse(json);
                 courses.value = parsed;
+                return;
             }
 
             console.error("Failed to load courses:", response.statusText);
