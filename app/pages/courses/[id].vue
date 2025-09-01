@@ -83,7 +83,7 @@ const formatTime = (date: Date | string) => {
                                 {{ course.title }}
                             </h1>
                             <p class="text-xl text-blue-100 leading-relaxed max-w-3xl">
-                                {{ course.description }}
+                                <MDC :value="course.description"></MDC>
                             </p>
                         </div>
 
