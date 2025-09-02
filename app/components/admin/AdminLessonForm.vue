@@ -169,9 +169,8 @@ async function updateLesson(data: Schema) {
                     </div>
                 </template>
             </UPopover>
-
         </UFormField>
 
-        <UButton :loading="isSubmitting" type="submit" icon="i-lucide-plus" class="mt-6">Add</UButton>
+        <UButton :loading="isSubmitting" type="submit" icon="i-lucide-plus" class="mt-6">Add Lesson</UButton>
     </UForm>
 </template>
