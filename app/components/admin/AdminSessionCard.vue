@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Session, Lesson } from '~/../shared/models';
+import type { Lesson, Session } from "~/../shared/models";
 
 interface Props {
     session: Session;
@@ -12,37 +12,42 @@ const feedback = useUserFeedback();
 
 // Emits
 const emit = defineEmits<{
-    changed: [],
+    changed: [];
     edit: [session: Session];
     delete: [session: Session];
-    'add-lesson': [session: Session];
+    "add-lesson": [session: Session];
 }>();
 
 // Dropdown actions
 const actions = [
-    [{
-        label: 'Edit Session',
-        icon: 'i-lucide-square-pen',
-        onSelect: () => emit('edit', props.session)
-    },
-    {
-        label: 'Delete Session',
-        icon: 'i-lucide-trash-2',
-        onSelect: () => emit('delete', props.session)
-    }]
+    [
+        {
+            label: "Edit Session",
+            icon: "i-lucide-square-pen",
+            onSelect: () => emit("edit", props.session),
+        },
+        {
+            label: "Delete Session",
+            icon: "i-lucide-trash-2",
+            onSelect: () => emit("delete", props.session),
+        },
+    ],
 ];
 
 // Methods
 async function deleteLesson(lesson: Lesson) {
     try {
-        await $fetch(`/api/courses/${props.courseId}/sessions/${props.session.id}/lessons/${lesson.id}`, {
-            method: 'DELETE'
-        });
-        emit('changed');
+        await $fetch(
+            `/api/courses/${props.courseId}/sessions/${props.session.id}/lessons/${lesson.id}`,
+            {
+                method: "DELETE",
+            },
+        );
+        emit("changed");
         feedback.showSuccess({ title: "Lesson deleted successfully" });
     } catch (error) {
         feedback.showError({ title: "Failed to delete lesson" });
-        console.error('Error deleting lesson:', error);
+        console.error("Error deleting lesson:", error);
     }
 }
 </script>

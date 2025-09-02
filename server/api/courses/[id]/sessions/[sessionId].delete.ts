@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
+import { defineAdminResponseHandler } from "~~/server/utils/adminAccess";
 import { sessionsTable } from "~~/shared/schema";
 
-export default defineEventHandler(async (event) => {
+export default defineAdminResponseHandler(async (event) => {
     const { db } = useDb();
     const courseId = getRouterParam(event, "id");
     const sessionId = getRouterParam(event, "sessionId");

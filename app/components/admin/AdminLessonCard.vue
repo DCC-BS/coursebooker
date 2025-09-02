@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui';
-import type { Lesson } from '~/../shared/models';
+import type { DropdownMenuItem } from "@nuxt/ui";
+import type { Lesson } from "~/../shared/models";
 
 interface Props {
     lesson: Lesson;
@@ -19,25 +19,27 @@ const emit = defineEmits<{
 
 // Dropdown actions
 const actions = [
-    [{
-        label: 'Edit Lesson',
-        icon: 'i-lucide-square-pen',
-        onSelect: () => emit('edit', props.lesson)
-    },
-    {
-        label: 'Delete Lesson',
-        icon: 'i-lucide-trash-2',
-        onSelect: () => emit('delete', props.lesson)
-    }]
+    [
+        {
+            label: "Edit Lesson",
+            icon: "i-lucide-square-pen",
+            onSelect: () => emit("edit", props.lesson),
+        },
+        {
+            label: "Delete Lesson",
+            icon: "i-lucide-trash-2",
+            onSelect: () => emit("delete", props.lesson),
+        },
+    ],
 ] as DropdownMenuItem[][];
 
 // Utility functions
 function formatDateTime(date: Date): string {
-    return new Date(date).toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+    return new Date(date).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
     });
 }
 
@@ -47,7 +49,7 @@ function formatDuration(start: Date, end: Date): string {
     const diffMs = endTime.getTime() - startTime.getTime();
 
     if (diffMs <= 0) {
-        return 'Invalid';
+        return "Invalid";
     }
 
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -55,7 +57,8 @@ function formatDuration(start: Date, end: Date): string {
 
     if (hours === 0) {
         return `${minutes}m`;
-    } if (minutes === 0) {
+    }
+    if (minutes === 0) {
         return `${hours}h`;
     }
 

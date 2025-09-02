@@ -1,45 +1,48 @@
 <script setup lang="ts">
-import { motion, AnimatePresence } from "motion-v";
+import { AnimatePresence, motion } from "motion-v";
 
 const { courses, isPending, error } = useCourses();
 
 // Search and filter state
-const searchQuery = ref('');
-const selectedDate = ref('');
-const selectedDay = ref('');
-const selectedTimeRange = ref('');
+const searchQuery = ref("");
+const selectedDate = ref("");
+const selectedDay = ref("");
+const selectedTimeRange = ref("");
 
 // Filter options
 const daysOfWeek = [
-    { value: '', label: 'All Days' },
-    { value: '0', label: 'Sunday' },
-    { value: '1', label: 'Monday' },
-    { value: '2', label: 'Tuesday' },
-    { value: '3', label: 'Wednesday' },
-    { value: '4', label: 'Thursday' },
-    { value: '5', label: 'Friday' },
-    { value: '6', label: 'Saturday' }
+    { value: "", label: "All Days" },
+    { value: "0", label: "Sunday" },
+    { value: "1", label: "Monday" },
+    { value: "2", label: "Tuesday" },
+    { value: "3", label: "Wednesday" },
+    { value: "4", label: "Thursday" },
+    { value: "5", label: "Friday" },
+    { value: "6", label: "Saturday" },
 ];
 
 const timeRanges = [
-    { value: '', label: 'All Times' },
-    { value: 'morning', label: 'Morning (6:00 - 12:00)' },
-    { value: 'afternoon', label: 'Afternoon (12:00 - 18:00)' },
-    { value: 'evening', label: 'Evening (18:00 - 24:00)' }
+    { value: "", label: "All Times" },
+    { value: "morning", label: "Morning (6:00 - 12:00)" },
+    { value: "afternoon", label: "Afternoon (12:00 - 18:00)" },
+    { value: "evening", label: "Evening (18:00 - 24:00)" },
 ];
 
 // Helper function to check if a lesson is in a specific time range
-function isLessonInTimeRange(lesson: { start: Date }, timeRange: string): boolean {
+function isLessonInTimeRange(
+    lesson: { start: Date },
+    timeRange: string,
+): boolean {
     if (!timeRange) return true;
 
     const hour = lesson.start.getHours();
 
     switch (timeRange) {
-        case 'morning':
+        case "morning":
             return hour >= 6 && hour < 12;
-        case 'afternoon':
+        case "afternoon":
             return hour >= 12 && hour < 18;
-        case 'evening':
+        case "evening":
             return hour >= 18 && hour <= 23;
         default:
             return true;
@@ -55,7 +58,7 @@ function isLessonOnDay(lesson: { start: Date }, day: string): boolean {
 // Helper function to check if a lesson is on a specific date
 function isLessonOnDate(lesson: { start: Date }, date: string): boolean {
     if (!date) return true;
-    const lessonDate = lesson.start.toISOString().split('T')[0];
+    const lessonDate = lesson.start.toISOString().split("T")[0];
     return lessonDate === date;
 }
 
@@ -63,27 +66,38 @@ function isLessonOnDate(lesson: { start: Date }, date: string): boolean {
 const filteredCourses = computed(() => {
     if (!courses.value) return [];
 
-    return courses.value.filter(course => {
+    return courses.value.filter((course) => {
         // Search filter (title and description)
-        const matchesSearch = !searchQuery.value ||
-            course.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            course.description.toLowerCase().includes(searchQuery.value.toLowerCase());
+        const matchesSearch =
+            !searchQuery.value ||
+            course.title
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase()) ||
+            course.description
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase());
 
         if (!matchesSearch) return false;
 
         // Check if course has sessions that match the filters
-        const hasMatchingSessions = course.sessions.some(session => {
-            return session.lessons.some(lesson => {
+        const hasMatchingSessions = course.sessions.some((session) => {
+            return session.lessons.some((lesson) => {
                 const matchesDate = isLessonOnDate(lesson, selectedDate.value);
                 const matchesDay = isLessonOnDay(lesson, selectedDay.value);
-                const matchesTime = isLessonInTimeRange(lesson, selectedTimeRange.value);
+                const matchesTime = isLessonInTimeRange(
+                    lesson,
+                    selectedTimeRange.value,
+                );
 
                 return matchesDate && matchesDay && matchesTime;
             });
         });
 
         // If no filters are applied, show all courses
-        const noFiltersApplied = !selectedDate.value && !selectedDay.value && !selectedTimeRange.value;
+        const noFiltersApplied =
+            !selectedDate.value &&
+            !selectedDay.value &&
+            !selectedTimeRange.value;
 
         return noFiltersApplied || hasMatchingSessions;
     });
@@ -91,10 +105,10 @@ const filteredCourses = computed(() => {
 
 // Clear all filters
 function clearFilters() {
-    searchQuery.value = '';
-    selectedDate.value = '';
-    selectedDay.value = '';
-    selectedTimeRange.value = '';
+    searchQuery.value = "";
+    selectedDate.value = "";
+    selectedDay.value = "";
+    selectedTimeRange.value = "";
 }
 </script>
 

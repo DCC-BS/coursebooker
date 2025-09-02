@@ -1,7 +1,8 @@
+import { relations } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { coursesTable } from "./courses.schema";
 import { lessonsTable } from "./lessons.schema";
-import { relations } from "drizzle-orm";
+import { usersToSessionsTable } from "./usersToSessions.schema";
 
 export const sessionsTable = sqliteTable("sessions", {
     id: text().primaryKey().notNull(),
@@ -21,4 +22,8 @@ export const SessionHasOneCourse = relations(sessionsTable, ({ one }) => ({
 
 export const SessionHasManyLessons = relations(sessionsTable, ({ many }) => ({
     lessons: many(lessonsTable),
+}));
+
+export const sessionHasManyUsers = relations(sessionsTable, ({ many }) => ({
+    registrations: many(usersToSessionsTable),
 }));

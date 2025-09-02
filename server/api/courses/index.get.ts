@@ -1,7 +1,8 @@
-import { useDb } from "~~/server/composables/db.composable";
+import { and, gte, like, lte } from "drizzle-orm";
 import { z } from "zod";
-import { like, and, gte, lte } from "drizzle-orm";
+import { useDb } from "~~/server/composables/db.composable";
 import { coursesTable, lessonsTable } from "~~/shared/schema";
+import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 
 const filterSchema = z.object({
     from: z.coerce.date().optional(),
@@ -18,6 +19,8 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event);
 
     const filters = filterSchema.parse(query);
+
+    const withUsers = await getWithUsers(event);
 
     const courses = await db.query.coursesTable.findMany({
         limit: filters.limit,
@@ -41,6 +44,7 @@ export default defineEventHandler(async (event) => {
                             ),
                         ),
                     },
+                    registrations: withUsers,
                 },
             },
         },

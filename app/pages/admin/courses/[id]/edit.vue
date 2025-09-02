@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Course, Session } from '~/../shared/models';
+import type { Course, Session } from "~/../shared/models";
 
 // Page meta
 definePageMeta({
-    layout: false,
-    title: 'Edit Course'
+    layout: "admin",
+    title: "Edit Course",
 });
 
 // Get route params
@@ -18,42 +18,53 @@ const showDeleteModal = ref(false);
 
 // Course type options
 const typeOptions = [
-    { label: 'Course', value: 'course' },
-    { label: 'Event', value: 'event' }
+    { label: "Course", value: "course" },
+    { label: "Event", value: "event" },
 ];
 
 // Fetch course data
-const { data: course, pending, error, refresh } = await useFetch<Course>(`/api/courses/${courseId}`);
+const {
+    data: course,
+    pending,
+    error,
+    refresh,
+} = await useFetch<Course>(`/api/courses/${courseId}`);
 
 // Form data - initialize with course data
 const form = reactive({
-    type: 'course',
-    title: '',
-    description: '',
-    organizer_name: '',
-    organizer_mail: '',
-    teams_link: '',
+    type: "course",
+    title: "",
+    description: "",
+    organizer_name: "",
+    organizer_mail: "",
+    teams_link: "",
     sessions: [] as Session[],
 } as Course);
 
 // Watch for course data and populate form
-watch(course, (newCourse) => {
-    if (newCourse) {
-        form.type = newCourse.type;
-        form.title = newCourse.title;
-        form.description = newCourse.description;
-        form.organizer_name = newCourse.organizer_name;
-        form.organizer_mail = newCourse.organizer_mail;
-        form.teams_link = newCourse.teams_link || '';
-    }
-}, { immediate: true });
+watch(
+    course,
+    (newCourse) => {
+        if (newCourse) {
+            form.type = newCourse.type;
+            form.title = newCourse.title;
+            form.description = newCourse.description;
+            form.organizer_name = newCourse.organizer_name;
+            form.organizer_mail = newCourse.organizer_mail;
+            form.teams_link = newCourse.teams_link || "";
+        }
+    },
+    { immediate: true },
+);
 
 // Computed
 const isFormValid = computed(() => {
-    return form.title.trim() !== '' &&
-        form.description.trim() !== '' &&
-        form.organizer_name.trim() !== '' &&
-        form.organizer_mail.trim() !== '';
+    return (
+        form.title.trim() !== "" &&
+        form.description.trim() !== "" &&
+        form.organizer_name.trim() !== "" &&
+        form.organizer_mail.trim() !== ""
+    );
 });
 
 // Methods
@@ -70,19 +81,19 @@ async function submitForm() {
             description: form.description.trim(),
             organizer_name: form.organizer_name.trim(),
             organizer_mail: form.organizer_mail.trim(),
-            teams_link: form.teams_link?.trim() || undefined
+            teams_link: form.teams_link?.trim() || undefined,
         };
 
         // Update via API
         await $fetch(`/api/courses/${courseId}`, {
-            method: 'PATCH',
-            body: updateData
+            method: "PATCH",
+            body: updateData,
         });
 
         // Refresh course data
         await refresh();
     } catch (error) {
-        console.error('Error updating course:', error);
+        console.error("Error updating course:", error);
         // Show error toast
     } finally {
         submitting.value = false;
@@ -95,14 +106,13 @@ async function deleteCourse() {
     deleting.value = true;
     try {
         await $fetch(`/api/courses/${courseId}`, {
-            method: 'DELETE'
+            method: "DELETE",
         });
 
         // Redirect to course list
-        await navigateTo('/admin/courses');
-
+        await navigateTo("/admin/courses");
     } catch (error) {
-        console.error('Error deleting course:', error);
+        console.error("Error deleting course:", error);
         // Show error toast
     } finally {
         deleting.value = false;
@@ -111,7 +121,11 @@ async function deleteCourse() {
 }
 
 useHead({
-    title: computed(() => course.value ? `Edit ${course.value.title} - Admin` : 'Edit Course - Admin')
+    title: computed(() =>
+        course.value
+            ? `Edit ${course.value.title} - Admin`
+            : "Edit Course - Admin",
+    ),
 });
 </script>
 

@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@nuxt/ui';
-import * as z from 'zod';
-import { type CreateLesson, type Lesson, type UpdateLesson, createLessonSchema, updateLessonSchema } from '~~/shared/models';
+import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from "zod";
+import {
+    type CreateLesson,
+    createLessonSchema,
+    type Lesson,
+    type UpdateLesson,
+    updateLessonSchema,
+} from "~~/shared/models";
 
 const props = defineProps<{
-    courseId: string,
-    sessionId: string,
-    lesson?: Lesson
+    courseId: string;
+    sessionId: string;
+    lesson?: Lesson;
 }>();
 
 const emit = defineEmits<{
@@ -17,24 +23,35 @@ const emit = defineEmits<{
 const feedback = useUserFeedback();
 const isSubmitting = ref(false);
 
-const schema = z.object({
-    start: z.date().min(new Date(), { error: "Start Date must be in the future" }),
-    end: z.date()
-}).refine((data) => data.end > data.start, { error: "End Date must be after Start Date", path: ['end'] });
+const schema = z
+    .object({
+        start: z
+            .date()
+            .min(new Date(), { error: "Start Date must be in the future" }),
+        end: z.date(),
+    })
+    .refine((data) => data.end > data.start, {
+        error: "End Date must be after Start Date",
+        path: ["end"],
+    });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     start: new Date(),
-    end: new Date(Date.now() + 1 * 60 * 60 * 1000)
+    end: new Date(Date.now() + 1 * 60 * 60 * 1000),
 });
 
-watch(() => props.lesson, (newLesson) => {
-    if (newLesson) {
-        state.start = new Date(newLesson.start);
-        state.end = new Date(newLesson.end);
-    }
-}, { immediate: true });
+watch(
+    () => props.lesson,
+    (newLesson) => {
+        if (newLesson) {
+            state.start = new Date(newLesson.start);
+            state.end = new Date(newLesson.end);
+        }
+    },
+    { immediate: true },
+);
 
 function endFromDuration(duration: string) {
     const parts = duration.match(/(\d+)\s*(m|h)/g);
@@ -54,7 +71,7 @@ function endFromDuration(duration: string) {
             return;
         }
 
-        const value = parseInt(match[1], 10);
+        const value = Number.parseInt(match[1], 10);
         const unit = match[2];
 
         if (unit === "m") {
@@ -81,21 +98,27 @@ async function createLesson(data: Schema) {
     const lesson = {
         sessionId: props.sessionId,
         start: data.start,
-        end: data.end
+        end: data.end,
     } as CreateLesson;
 
-    await $fetch(`/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons`, {
-        method: 'POST',
-        body: createLessonSchema.parse(lesson)
-    }).then(() => {
-        feedback.showSuccess({ title: "Lesson created successfully" });
-        emit('created');
-    }).catch((error) => {
-        console.error(error);
-        feedback.showError({ title: "Failed to create lesson" });
-    }).finally(() => {
-        isSubmitting.value = false;
-    });
+    await $fetch(
+        `/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons`,
+        {
+            method: "POST",
+            body: createLessonSchema.parse(lesson),
+        },
+    )
+        .then(() => {
+            feedback.showSuccess({ title: "Lesson created successfully" });
+            emit("created");
+        })
+        .catch((error) => {
+            console.error(error);
+            feedback.showError({ title: "Failed to create lesson" });
+        })
+        .finally(() => {
+            isSubmitting.value = false;
+        });
 }
 
 async function updateLesson(data: Schema) {
@@ -107,21 +130,27 @@ async function updateLesson(data: Schema) {
 
     const lesson = {
         start: data.start,
-        end: data.end
+        end: data.end,
     } as UpdateLesson;
 
-    await $fetch<Lesson>(`/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons/${props.lesson.id}`, {
-        method: 'PUT',
-        body: updateLessonSchema.parse(lesson)
-    }).then(() => {
-        feedback.showSuccess({ title: "Lesson updated successfully" });
-        emit('updated');
-    }).catch((error) => {
-        console.error(error);
-        feedback.showError({ title: "Failed to update lesson" });
-    }).finally(() => {
-        isSubmitting.value = false;
-    });
+    await $fetch<Lesson>(
+        `/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons/${props.lesson.id}`,
+        {
+            method: "PUT",
+            body: updateLessonSchema.parse(lesson),
+        },
+    )
+        .then(() => {
+            feedback.showSuccess({ title: "Lesson updated successfully" });
+            emit("updated");
+        })
+        .catch((error) => {
+            console.error(error);
+            feedback.showError({ title: "Failed to update lesson" });
+        })
+        .finally(() => {
+            isSubmitting.value = false;
+        });
 }
 </script>
 

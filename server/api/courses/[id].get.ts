@@ -1,6 +1,7 @@
-import { useDb } from "~~/server/composables/db.composable";
-import { coursesTable } from "~/../shared/schema";
 import { eq } from "drizzle-orm";
+import { coursesTable } from "~/../shared/schema";
+import { useDb } from "~~/server/composables/db.composable";
+import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDb();
@@ -14,12 +15,15 @@ export default defineEventHandler(async (event) => {
         });
     }
 
+    const withUsers = await getWithUsers(event);
+
     const course = await db.query.coursesTable.findFirst({
         where: eq(coursesTable.id, courseId),
         with: {
             sessions: {
                 with: {
                     lessons: true,
+                    users: withUsers,
                 },
             },
         },

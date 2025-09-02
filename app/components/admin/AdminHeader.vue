@@ -2,8 +2,8 @@
 const props = defineProps({
     title: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
 });
 </script>
 

@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import type { Course } from "~~/shared/models";
-
 // Set page meta
 definePageMeta({
-    layout: false,
-    title: 'Admin Dashboard'
+    layout: "admin",
+    title: "Admin Dashboard",
 });
 
 // Fetch statistics
-const courses = await $fetch<Course[]>('/api/courses');
+const { courses, isPending } = useCourses();
 
 useHead({
-    title: 'Admin Dashboard - CourseBooker'
+    title: "Admin Dashboard - CourseBooker",
 });
 </script>
 
@@ -32,7 +30,10 @@ useHead({
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div v-if="isPending || !courses">
+            <LoadingView text="Loading courses..." />
+        </div>
+        <div v-else class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Courses Card -->
                 <div class="bg-white overflow-hidden shadow rounded-lg">
@@ -47,7 +48,7 @@ useHead({
                                         Total Courses
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
-                                        {{ courses.length || 0 }}
+                                        {{ courses.length ?? 0 }}
                                     </dd>
                                 </dl>
                             </div>

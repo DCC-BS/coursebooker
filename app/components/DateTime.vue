@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { CalendarDate, DateFormatter } from '@internationalized/date';
-import { vMaska } from 'maska/vue';
-import { da } from 'zod/v4/locales';
+import { CalendarDate, DateFormatter } from "@internationalized/date";
+import { vMaska } from "maska/vue";
+import { da } from "zod/v4/locales";
 
 const { emitFormBlur, emitFormChange } = useFormField();
 
 const model = defineModel<Date>({ required: true });
 
-const df = new DateFormatter('de-CH', {
-    dateStyle: 'medium'
+const df = new DateFormatter("de-CH", {
+    dateStyle: "medium",
 });
 
 function fromDate(date: Date) {
@@ -20,12 +20,12 @@ function fromDate(date: Date) {
 }
 
 const date = shallowRef(fromDate(model.value));
-const time = ref('10:00');
+const time = ref("10:00");
 const hours = ref(10);
 const minutes = ref(0);
 
 function onTimeBlur() {
-    const [h, m] = time.value.split(':').map(Number);
+    const [h, m] = time.value.split(":").map(Number);
 
     if (h === undefined || m === undefined) {
         return;
@@ -34,42 +34,49 @@ function onTimeBlur() {
     hours.value = clamp(h, 0, 23);
     minutes.value = clamp(m, 0, 59);
 
-    time.value = `${String(hours.value).padStart(2, '0')}:${String(minutes.value).padStart(2, '0')}`;
+    time.value = `${String(hours.value).padStart(2, "0")}:${String(minutes.value).padStart(2, "0")}`;
 
     emitFormBlur();
     emitFormChange();
 }
 
-watch(() => [date.value, hours.value, minutes.value], () => {
-    if (!date.value) return;
+watch(
+    () => [date.value, hours.value, minutes.value],
+    () => {
+        if (!date.value) return;
 
-    model.value = new Date(
-        date.value.year,
-        date.value.month,
-        date.value.day,
-        hours.value,
-        minutes.value
-    );
+        model.value = new Date(
+            date.value.year,
+            date.value.month,
+            date.value.day,
+            hours.value,
+            minutes.value,
+        );
 
-    emitFormChange();
-});
+        emitFormChange();
+    },
+);
 
-watch(model, (newModel) => {
-    const newDate = fromDate(newModel);
+watch(
+    model,
+    (newModel) => {
+        const newDate = fromDate(newModel);
 
-    if (date.value.compare(newDate) !== 0) {
-        date.value = newDate;
-    }
+        if (date.value.compare(newDate) !== 0) {
+            date.value = newDate;
+        }
 
-    const h = newModel.getHours();
-    const m = newModel.getMinutes();
+        const h = newModel.getHours();
+        const m = newModel.getMinutes();
 
-    if (hours.value !== h || minutes.value !== m) {
-        hours.value = h;
-        minutes.value = m;
-        time.value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
-}, { immediate: true });
+        if (hours.value !== h || minutes.value !== m) {
+            hours.value = h;
+            minutes.value = m;
+            time.value = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+        }
+    },
+    { immediate: true },
+);
 
 function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { motion } from 'motion-v';
+import { motion } from "motion-v";
 
 const props = defineProps<{
-  message: string;
+    message: string;
 }>();
 </script>
 

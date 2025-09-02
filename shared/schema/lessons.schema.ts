@@ -1,6 +1,6 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { sessionsTable } from "./sessions.schema";
 import { relations } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sessionsTable } from "./sessions.schema";
 
 export const lessonsTable = sqliteTable("lessons", {
     id: text().primaryKey().notNull(),

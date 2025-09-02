@@ -3,10 +3,14 @@ const route = useRoute();
 const courseId = route.params.id as string;
 
 if (!courseId) {
-    throw new Error('Course ID is required');
+    throw new Error("Course ID is required");
 }
 
-const { course, isPending, error } = useCourse(courseId);
+const { course, isPending: isCoursePending, error: courseError } = useCourse(courseId);
+const { me, isPending: isMePending, error: meError, refresh: refreshMe } = useMe();
+
+const isPending = computed(() => isCoursePending.value || isMePending.value);
+const error = computed(() => courseError.value ?? meError.value);
 
 // Computed values
 const totalLessons = computed(() => {
@@ -19,36 +23,20 @@ const totalLessons = computed(() => {
 const upcomingLessons = computed(() => {
     if (!course.value) return [];
     const now = new Date();
-    const lessons = course.value.sessions.flatMap(session =>
-        session.lessons.map(lesson => ({
+    const lessons = course.value.sessions.flatMap((session) =>
+        session.lessons.map((lesson) => ({
             ...lesson,
             sessionLocation: session.location,
-            sessionTeamsLink: session.teams_link || course.value?.teams_link
-        }))
+            sessionTeamsLink: session.teams_link || course.value?.teams_link,
+        })),
     );
     return lessons
-        .filter(lesson => new Date(lesson.start) > now)
-        .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+        .filter((lesson) => new Date(lesson.start) > now)
+        .sort(
+            (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+        )
         .slice(0, 3);
 });
-
-const formatDate = (date: Date | string) => {
-    return new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    }).format(new Date(date));
-};
-
-const formatTime = (date: Date | string) => {
-    return new Intl.DateTimeFormat('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-    }).format(new Date(date));
-};
 </script>
 
 <template>
@@ -64,7 +52,7 @@ const formatTime = (date: Date | string) => {
         </div>
 
         <!-- Course Content -->
-        <div v-else-if="course" class="container mx-auto px-4 py-8 max-w-7xl">
+        <div v-else-if="course && me" class="container mx-auto px-4 py-8 max-w-7xl">
             <!-- Hero Section -->
             <div
                 class="relative overflow-hidden bg-gradient-to-r from-blue-400 to-cyan-600 rounded-3xl shadow-2xl mb-8">
@@ -161,55 +149,8 @@ const formatTime = (date: Date | string) => {
                             <div v-else class="space-y-6">
                                 <div v-for="(session, index) in course.sessions" :key="session.id"
                                     class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-                                    <div class="flex items-start justify-between mb-4">
-                                        <div class="flex items-center">
-                                            <div
-                                                class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4">
-                                                {{ index + 1 }}
-                                            </div>
-                                            <div>
-                                                <h3 class="text-lg font-semibold text-gray-900">Session {{ index + 1 }}
-                                                </h3>
-                                                <div v-if="session.location"
-                                                    class="flex items-center text-sm text-gray-600 mt-1">
-                                                    <UIcon name="i-lucide-map-pin" class="h-4 w-4 mr-1" />
-                                                    {{ session.location }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <UBadge color="success" size="sm">
-                                            {{ session.lessons.length }} {{ session.lessons.length === 1 ? 'Lesson' :
-                                                'Lessons' }}
-                                        </UBadge>
-                                    </div>
-
-                                    <!-- Session Lessons -->
-                                    <div v-if="session.lessons.length > 0" class="ml-12 space-y-3">
-                                        <div v-for="lesson in session.lessons" :key="lesson.id"
-                                            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                            <div class="flex items-center">
-                                                <UIcon name="i-lucide-clock" class="h-4 w-4 text-gray-400 mr-3" />
-                                                <div>
-                                                    <div class="font-medium text-gray-900">
-                                                        {{ formatDate(lesson.start) }}
-                                                    </div>
-                                                    <div class="text-sm text-gray-600">
-                                                        {{ formatTime(lesson.start) }} - {{ formatTime(lesson.end) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Session Teams Link -->
-                                    <div v-if="session.teams_link" class="ml-12 mt-4">
-                                        <a :href="session.teams_link" target="_blank"
-                                            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 transition-colors">
-                                            <UIcon name="i-lucide-video" class="h-4 w-4 mr-1" />
-                                            Join Session Meeting
-                                            <UIcon name="i-lucide-external-link" class="h-3 w-3 ml-1" />
-                                        </a>
-                                    </div>
+                                    <SessionView :index="index" :session="session" :courseId="course.id" :user="me"
+                                        :refresh-user="refreshMe" />
                                 </div>
                             </div>
                         </div>

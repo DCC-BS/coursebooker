@@ -1,53 +1,61 @@
 <script setup lang="ts">
-import type { Session, Course, CreateCourse, CreateLesson, CreateSession } from '~~/shared/models';
-import AdminHeader from '~/components/admin/AdminHeader.vue';
-import AdminCourseCard from '~/components/admin/AdminCourseCard.vue';
-import { ca } from 'zod/v4/locales';
+import AdminCourseCard from "~/components/admin/AdminCourseCard.vue";
+import AdminHeader from "~/components/admin/AdminHeader.vue";
+import type {
+    Course,
+    CreateCourse,
+    CreateLesson,
+    CreateSession,
+    Session,
+} from "~~/shared/models";
 
 // Page meta
 definePageMeta({
-    layout: false,
-    title: 'Manage Courses'
+    layout: "admin",
+    title: "Manage Courses",
 });
 
 const feedback = useUserFeedback();
 
 // Reactive data
-const searchQuery = ref('');
-const typeFilter = ref('all' as 'all' | 'course' | 'event');
+const searchQuery = ref("");
+const typeFilter = ref("all" as "all" | "course" | "event");
 const showDeleteModal = ref(false);
 const courseToDelete = ref<Course | null>(null);
 const deleting = ref(false);
 
 // Type filter options
 const typeOptions = ref([
-    { label: 'All Types', value: 'all' },
-    { label: 'Course', value: 'course' },
-    { label: 'Event', value: 'event' }
+    { label: "All Types", value: "all" },
+    { label: "Course", value: "course" },
+    { label: "Event", value: "event" },
 ]);
 
 // Fetch courses
-const { data: coursesData, pending, refresh } = await useFetch<Course[]>('/api/courses');
+const { courses, isPending, refresh } = useCourses(true);
 
 // Computed filtered courses
 const filteredCourses = computed(() => {
-    if (!coursesData.value) return [];
+    if (!courses.value) return [];
 
-    let filtered = coursesData.value;
+    let filtered = courses.value;
 
     // Filter by search query
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        filtered = filtered.filter(course =>
-            course.title.toLowerCase().includes(query) ||
-            course.description.toLowerCase().includes(query) ||
-            course.organizer_name.toLowerCase().includes(query)
+        filtered = filtered.filter(
+            (course) =>
+                course.title.toLowerCase().includes(query) ||
+                course.description.toLowerCase().includes(query) ||
+                course.organizer_name.toLowerCase().includes(query),
         );
     }
 
     // Filter by type
-    if (typeFilter.value && typeFilter.value !== 'all') {
-        filtered = filtered.filter(course => course.type === typeFilter.value);
+    if (typeFilter.value && typeFilter.value !== "all") {
+        filtered = filtered.filter(
+            (course) => course.type === typeFilter.value,
+        );
     }
 
     return filtered;
@@ -67,44 +75,51 @@ async function duplicateCourse(course: Course) {
     const body = {
         ...course,
         title: `${course.title} (Copy)`,
-        id: undefined // Let the backend assign a new ID
+        id: undefined, // Let the backend assign a new ID
     } as CreateCourse;
 
     try {
-        const newCourse = await $fetch<Course>('/api/courses', {
-            method: 'POST',
-            body
-        })
+        const newCourse = await $fetch<Course>("/api/courses", {
+            method: "POST",
+            body,
+        });
 
         for (const session of course.sessions) {
-            const newSession = await $fetch<Session>(`/api/courses/${newCourse.id}/sessions`, {
-                method: 'POST',
-                body: {
-                    ...session,
-                    courseId: newCourse.id,
-                    id: undefined // Let the backend assign a new ID
-                } as CreateSession
-            });
+            const newSession = await $fetch<Session>(
+                `/api/courses/${newCourse.id}/sessions`,
+                {
+                    method: "POST",
+                    body: {
+                        ...session,
+                        courseId: newCourse.id,
+                        id: undefined, // Let the backend assign a new ID
+                    } as CreateSession,
+                },
+            );
 
             for (const lesson of session.lessons) {
-                await $fetch(`/api/courses/${newCourse.id}/sessions/${newSession.id}/lessons`, {
-                    method: 'POST',
-                    body: {
-                        ...lesson,
-                        sessionId: newSession.id,
-                        id: undefined // Let the backend assign a new ID
-                    } as CreateLesson
-                });
+                await $fetch(
+                    `/api/courses/${newCourse.id}/sessions/${newSession.id}/lessons`,
+                    {
+                        method: "POST",
+                        body: {
+                            ...lesson,
+                            sessionId: newSession.id,
+                            id: undefined, // Let the backend assign a new ID
+                        } as CreateLesson,
+                    },
+                );
             }
         }
 
-        feedback.showSuccess({ title: 'Course duplicated successfully' });
-    }
-    catch (error) {
-        console.error('Error duplicating course:', error);
-        feedback.showError({ title: 'Failed to duplicate course', description: error.message });
-    }
-    finally {
+        feedback.showSuccess({ title: "Course duplicated successfully" });
+    } catch (error) {
+        console.error("Error duplicating course:", error);
+        feedback.showError({
+            title: "Failed to duplicate course",
+            description: error.message,
+        });
+    } finally {
         refresh();
     }
 }
@@ -115,7 +130,7 @@ async function confirmDelete() {
     deleting.value = true;
     try {
         await $fetch(`/api/courses/${courseToDelete.value.id}`, {
-            method: 'DELETE'
+            method: "DELETE",
         });
 
         showDeleteModal.value = false;
@@ -125,7 +140,7 @@ async function confirmDelete() {
         // Show success toast
         // You might want to add a toast notification here
     } catch (error) {
-        console.error('Error deleting course:', error);
+        console.error("Error deleting course:", error);
         // Show error toast
     } finally {
         deleting.value = false;
@@ -133,7 +148,7 @@ async function confirmDelete() {
 }
 
 useHead({
-    title: 'Manage Courses - Admin'
+    title: "Manage Courses - Admin",
 });
 </script>
 
@@ -163,7 +178,7 @@ useHead({
             </div>
 
             <!-- Courses Grid -->
-            <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-if="isPending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="i in 6" :key="i" class="bg-white rounded-lg shadow p-6">
                     <USkeleton class="h-6 w-3/4 mb-4" />
                     <USkeleton class="h-4 w-full mb-2" />
@@ -196,7 +211,7 @@ useHead({
 
                     <p class="text-gray-600">
                         Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                            }}</span>"?
+                        }}</span>"?
                         This action cannot be undone and will also delete all associated sessions and lessons.
                     </p>
 

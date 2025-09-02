@@ -13,6 +13,7 @@
         "db:studio": "drizzle-kit studio"
     },
     "dependencies": {
+        "@dcc-bs/authentication.bs.js": "git+https://github.com/DCC-BS/authentication.bs.js.git#v0.2.4",
         "@dcc-bs/common-ui.bs.js": "git+https://github.com/DCC-BS/common-ui.bs.js.git#v1.0.5",
         "@dcc-bs/dependency-injection.bs.js": "git+https://github.com/DCC-BS/dependency-injection.bs.js.git#v0.0.15",
         "@dcc-bs/feedback-control.bs.js": "git+https://github.com/DCC-BS/feedback-control.bs.js.git#v0.1.4",
@@ -21,12 +22,14 @@
         "@nuxt/ui": "latest",
         "@nuxtjs/i18n": "latest",
         "@nuxtjs/mdc": "0.17.3",
+        "@sidebase/nuxt-auth": "1.0.2",
         "@types/better-sqlite3": "^7.6.13",
         "better-sqlite3": "^12.2.0",
         "drizzle-orm": "^0.44.5",
         "drizzle-zod": "^0.8.3",
         "maska": "^3.2.0",
         "motion-v": "^1.7.1",
+        "next-auth": "4.21.1",
         "nuxt": "4.0.3",
         "uuid": "^11.1.0",
         "vue": "latest",

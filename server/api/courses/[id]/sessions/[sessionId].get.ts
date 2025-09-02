@@ -1,11 +1,14 @@
 import { and, eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
 import { sessionsTable } from "~~/shared/schema";
+import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDb();
     const courseId = getRouterParam(event, "id");
     const sessionId = getRouterParam(event, "sessionId");
+
+    const withUsers = await getWithUsers(event);
 
     if (!courseId) {
         throw createError({
@@ -28,6 +31,7 @@ export default defineEventHandler(async (event) => {
         ),
         with: {
             lessons: true,
+            users: withUsers,
         },
     });
 

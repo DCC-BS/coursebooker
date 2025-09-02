@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Course, CreateSession, Session } from '~/../shared/models';
+import type { Course, CreateSession, Session } from "~/../shared/models";
 
 // Page meta
 definePageMeta({
-    layout: false,
-    title: 'Manage Sessions'
+    layout: "admin",
+    title: "Manage Sessions",
 });
 
 // Get route params
@@ -16,7 +16,12 @@ const currentSession = ref<Session>();
 const showSessionModal = ref(false);
 
 // Fetch course data
-const { data: course, pending, error, refresh } = await useFetch<Course>(`/api/courses/${courseId}`);
+const {
+    data: course,
+    pending,
+    error,
+    refresh,
+} = await useFetch<Course>(`/api/courses/${courseId}`);
 
 // Computed
 const totalLessons = computed(() => {
@@ -40,13 +45,12 @@ function editSession(session: Session) {
 async function deleteSession(session: Session) {
     try {
         await $fetch(`/api/courses/${courseId}/sessions/${session.id}`, {
-            method: 'DELETE'
+            method: "DELETE",
         });
 
         await refresh();
-
     } catch (error) {
-        console.error('Error deleting session:', error);
+        console.error("Error deleting session:", error);
     }
 }
 
@@ -56,7 +60,11 @@ function addLessonToSession(session: Session) {
 }
 
 useHead({
-    title: computed(() => course.value ? `Manage Sessions - ${course.value.title}` : 'Manage Sessions')
+    title: computed(() =>
+        course.value
+            ? `Manage Sessions - ${course.value.title}`
+            : "Manage Sessions",
+    ),
 });
 </script>
 

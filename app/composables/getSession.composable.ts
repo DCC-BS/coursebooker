@@ -1,39 +1,46 @@
-import { sessionSchema, type Session } from "~~/shared/models";
+import z from "zod";
+import { sessionSchema, sessionToUsersSchema } from "~~/shared/models";
 
-export function useSession(courseId: string, sessionId: string) {
-    const session = ref<Session>();
-    const isPending = ref(true);
+export function useSession(courseId: string, sessionId: string, admin = false) {
+    const schema = admin
+        ? sessionSchema.extend({ registrations: z.array(sessionToUsersSchema) })
+        : sessionSchema;
 
-    const error = ref<string>();
-
-    async function load(): Promise<void> {
-        try {
-            const response = await fetch(
-                `/api/courses/${courseId}/sessions/${sessionId}`,
-            );
-
-            if (response.ok) {
-                const json = await response.json();
-                const parsed = sessionSchema.parse(json);
-                session.value = parsed;
-                return;
-            }
-
-            console.error("Failed to load session:", response.statusText);
-            error.value = "Failed to load session";
-        } catch (e: unknown) {
-            console.error("Failed to load session:", e);
-            error.value = "Failed to load session";
-        } finally {
-            isPending.value = false;
-        }
-    }
-
-    load();
+    const { data, error, isPending } = useSchemaFetch(
+        `/api/courses/${courseId}/sessions/${sessionId}?withUsers=${admin}`,
+        schema,
+    );
 
     return {
-        session,
+        session: data,
         isPending,
         error,
+    };
+}
+
+export function useSetSession(courseId: string, sessionId: string) {
+    async function registerForSession(userMail: string | "me") {
+        await $fetch(
+            `/api/courses/${courseId}/sessions/${sessionId}/register`,
+            {
+                method: "POST",
+                body: JSON.stringify({ userEmail: userMail }),
+            },
+        );
+    }
+
+    async function unregisterFromSession(userMail: string | "me") {
+        await $fetch(
+            `/api/courses/${courseId}/sessions/${sessionId}/unregister`,
+            {
+                method: "POST",
+                body: JSON.stringify({ userEmail: userMail }),
+            },
+        );
+    }
+
+    return {
+        registerForSession,
+        unregisterFromSession,
     };
 }

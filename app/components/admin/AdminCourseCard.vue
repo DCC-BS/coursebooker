@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui';
-import type { Course } from '~~/shared/models';
+import type { DropdownMenuItem } from "@nuxt/ui";
+import type { Course } from "~~/shared/models";
 
 interface Props {
     course: Course;
@@ -16,36 +16,37 @@ const emit = defineEmits<{
 }>();
 
 // Computed values
-const totalLessons = computed(() => {
+const totalRegistrations = computed(() => {
     return props.course.sessions.reduce((total, session) => {
-        return total + session.lessons.length;
+        return total + (session.registrations?.length ?? 0);
     }, 0);
 });
 
 // Dropdown actions
-const actions = [[
-    {
-        label: 'Edit Course',
-        icon: 'i-lucide-square-pen',
-        onSelect: () => emit('edit', props.course)
-    },
-    {
-        label: 'Manage Sessions',
-        icon: 'i-lucide-calendar-days',
-        to: `/admin/courses/${props.course.id}/sessions`
-    },
-    {
-        label: 'Duplicate Course',
-        icon: 'i-lucide-copy',
-        onSelect: () => emit('duplicate', props.course)
-    },
-    {
-        label: 'Delete Course',
-        icon: 'i-lucide-trash-2',
-        onSelect: () => emit('delete', props.course)
-    }]
+const actions = [
+    [
+        {
+            label: "Edit Course",
+            icon: "i-lucide-square-pen",
+            onSelect: () => emit("edit", props.course),
+        },
+        {
+            label: "Manage Sessions",
+            icon: "i-lucide-calendar-days",
+            to: `/admin/courses/${props.course.id}/sessions`,
+        },
+        {
+            label: "Duplicate Course",
+            icon: "i-lucide-copy",
+            onSelect: () => emit("duplicate", props.course),
+        },
+        {
+            label: "Delete Course",
+            icon: "i-lucide-trash-2",
+            onSelect: () => emit("delete", props.course),
+        },
+    ],
 ] as DropdownMenuItem[][];
-
 </script>
 
 <template>
@@ -101,10 +102,10 @@ const actions = [[
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-primary-600">
-                        {{ totalLessons }}
+                        {{ totalRegistrations }}
                     </div>
                     <div class="text-xs text-gray-500">
-                        {{ totalLessons === 1 ? 'Lesson' : 'Lessons' }}
+                        {{ totalRegistrations === 1 ? 'Registration' : 'Registrations' }}
                     </div>
                 </div>
             </div>

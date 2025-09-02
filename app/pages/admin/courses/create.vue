@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Course, CreateCourse } from '~~/shared/models';
-import AdminHeader from '~/components/admin/AdminHeader.vue';
+import AdminHeader from "~/components/admin/AdminHeader.vue";
+import type { Course, CreateCourse } from "~~/shared/models";
 
 // Page meta
 definePageMeta({
-    layout: false,
-    title: 'Create Course'
+    layout: "admin",
+    title: "Create Course",
 });
 
 const toast = useToast();
@@ -15,28 +15,30 @@ const submitting = ref(false);
 
 // Course type options
 const typeOptions = [
-    { label: 'Course', value: 'course' },
-    { label: 'Event', value: 'event' }
+    { label: "Course", value: "course" },
+    { label: "Event", value: "event" },
 ];
 
 // Form data
 const emptyFormData = {
-    type: 'course',
-    title: '',
-    description: '',
-    organizer_name: '',
-    organizer_mail: '',
-    teams_link: '',
+    type: "course",
+    title: "",
+    description: "",
+    organizer_name: "",
+    organizer_mail: "",
+    teams_link: "",
 } as Course;
 
 const formData = ref({ ...emptyFormData });
 
 // Computed
 const isFormValid = computed(() => {
-    return formData.value.title.trim() !== '' &&
-        formData.value.description.trim() !== '' &&
-        formData.value.organizer_name.trim() !== '' &&
-        formData.value.organizer_mail.trim() !== '';
+    return (
+        formData.value.title.trim() !== "" &&
+        formData.value.description.trim() !== "" &&
+        formData.value.organizer_name.trim() !== "" &&
+        formData.value.organizer_mail.trim() !== ""
+    );
 });
 
 // Methods
@@ -60,20 +62,20 @@ async function submitForm() {
         const body = courseData;
 
         // Submit to API
-        const newCourse = await $fetch<Course>('/api/courses', {
-            method: 'POST',
-            body
+        const newCourse = await $fetch<Course>("/api/courses", {
+            method: "POST",
+            body,
         });
 
         toast.add({
-            title: 'Course created successfully',
+            title: "Course created successfully",
             description: `The course "${newCourse.title}" has been created.`,
-            icon: 'i-lucide-circle-check',
+            icon: "i-lucide-circle-check",
         });
 
         await navigateTo(`/admin/courses/${newCourse.id}/edit`);
     } catch (error) {
-        console.error('Error creating course:', error);
+        console.error("Error creating course:", error);
         // Show error toast
     } finally {
         submitting.value = false;
@@ -81,7 +83,7 @@ async function submitForm() {
 }
 
 useHead({
-    title: 'Create Course - Admin'
+    title: "Create Course - Admin",
 });
 </script>
 

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { type Session, type CreateSession, type UpdateSession, createSessionSchema } from '~/../shared/models';
+import {
+    type CreateSession,
+    createSessionSchema,
+    type Session,
+    type UpdateSession,
+} from "~/../shared/models";
 
 interface Props {
     courseId: string;
@@ -7,20 +12,25 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const title = computed(() => props.session ? `Edit Session ${props.session.id}` : 'Add New Session');
+const title = computed(() =>
+    props.session ? `Edit Session ${props.session.id}` : "Add New Session",
+);
 const creating = ref(false);
 const feedback = useUserFeedback();
 
-watch(() => props.session, (newSession) => {
-    if (newSession) {
-        state.location = newSession.location ?? undefined;
-        state.teams_link = newSession.teams_link ?? undefined;
-    }
-});
+watch(
+    () => props.session,
+    (newSession) => {
+        if (newSession) {
+            state.location = newSession.location ?? undefined;
+            state.teams_link = newSession.teams_link ?? undefined;
+        }
+    },
+);
 
 const state = reactive({
-    location: props.session?.location || '',
-    teams_link: props.session?.teams_link || '',
+    location: props.session?.location || "",
+    teams_link: props.session?.teams_link || "",
     courseId: props.courseId,
 } as CreateSession);
 
@@ -47,18 +57,21 @@ function createSession() {
     } as CreateSession;
 
     $fetch<Session>(`/api/courses/${props.courseId}/sessions/`, {
-        method: 'POST',
+        method: "POST",
         body,
-    }).then((newSession) => {
-        emit('update', newSession);
-    }).catch((error) => {
-        console.error('Error creating session:', error);
-        feedback.showError({
-            title: 'Failed to create session. Please try again.'
+    })
+        .then((newSession) => {
+            emit("update", newSession);
+        })
+        .catch((error) => {
+            console.error("Error creating session:", error);
+            feedback.showError({
+                title: "Failed to create session. Please try again.",
+            });
+        })
+        .finally(() => {
+            creating.value = false;
         });
-    }).finally(() => {
-        creating.value = false;
-    });
 }
 
 function updateSession() {
@@ -71,18 +84,23 @@ function updateSession() {
         teams_link: state.teams_link,
     } as UpdateSession;
 
-    $fetch<Session>(`/api/courses/${props.courseId}/sessions/${props.session.id}`, {
-        method: 'PATCH',
-        body,
-    }).then((updatedSession) => {
-        emit('update', updatedSession);
-    }).catch((error) => {
-        console.error('Error updating session:', error);
+    $fetch<Session>(
+        `/api/courses/${props.courseId}/sessions/${props.session.id}`,
+        {
+            method: "PATCH",
+            body,
+        },
+    )
+        .then((updatedSession) => {
+            emit("update", updatedSession);
+        })
+        .catch((error) => {
+            console.error("Error updating session:", error);
 
-        feedback.showError({
-            title: 'Failed to update session. Please try again.'
+            feedback.showError({
+                title: "Failed to update session. Please try again.",
+            });
         });
-    });
 }
 </script>
 

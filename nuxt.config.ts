@@ -7,6 +7,10 @@ export default defineNuxtConfig({
     runtimeConfig: {
         githubToken: process.env.GITHUB_TOKEN,
         apiUrl: process.env.API_URL,
+        azureAdTenantId: process.env.AZURE_AD_TENANT_ID ?? "NA",
+        azureAdClientId: process.env.AZURE_AD_CLIENT_ID ?? "NA",
+        azureAdClientSecret: process.env.AZURE_AD_CLIENT_SECRET ?? "NA",
+        authSecret: process.env.AUTH_SECRET ?? "NA",
         public: {
             logger_bs: {
                 loglevel: process.env.LOG_LEVEL || "debug",
@@ -39,11 +43,12 @@ export default defineNuxtConfig({
         colorMode: false,
     },
     modules: [
-      "@nuxt/ui",
-      "@nuxtjs/i18n",
-      "@dcc-bs/logger.bs.js",
-      "@dcc-bs/feedback-control.bs.js",
-      "@nuxtjs/mdc",
+        "@nuxt/ui",
+        "@nuxtjs/i18n",
+        "@dcc-bs/logger.bs.js",
+        "@dcc-bs/feedback-control.bs.js",
+        "@nuxtjs/mdc",
+        "@sidebase/nuxt-auth",
     ],
     devtools: { enabled: true },
     css: ["~/assets/css/main.css"],
@@ -69,5 +74,19 @@ export default defineNuxtConfig({
         ],
         defaultLocale: "de",
         strategy: "no_prefix",
+    },
+    auth: {
+        isEnabled: true,
+        globalAppMiddleware: true,
+        originEnvKey: "AUTH_ORIGIN",
+        provider: {
+            type: "authjs",
+            defaultProvider: "azureAd",
+            addDefaultCallbackUrl: true,
+        },
+        sessionRefresh: {
+            enablePeriodically: 10000,
+            enableOnWindowFocus: true,
+        },
     },
 });
