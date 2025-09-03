@@ -22,6 +22,17 @@ export default defineAdminResponseHandler(async (event) => {
         });
     }
 
+    if (!body.isAdmin) {
+        const session = await getUserSession(event);
+
+        if (session?.user.email?.trim() === email.trim()) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: "You cannot change your own admin status",
+            });
+        }
+    }
+
     const user = await db
         .update(userTable)
         .set(body)
@@ -35,5 +46,5 @@ export default defineAdminResponseHandler(async (event) => {
         });
     }
 
-    return user;
+    return user[0];
 });

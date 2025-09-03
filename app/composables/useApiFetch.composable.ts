@@ -1,25 +1,45 @@
 import type { ZodType, z } from "zod";
+// import type { FetchOptions } from "ofetch";
+
+export type FetchOptions = Parameters<typeof $fetch>[1];
 
 export async function fetchWithSchema<T extends ZodType>(
     url: string,
     schema: T,
-    options: RequestInit = {},
+    options: FetchOptions = {},
 ): Promise<z.infer<T>> {
-    const response = await $fetch.raw(url, { ...options } as any);
+    const response = await $fetch.raw(url, options);
 
     if (response.ok) {
-        const parsed = schema.parse(response._data);
-        return parsed;
+        const parsed = schema.safeParse(response._data);
+
+        if (parsed.success && parsed.data !== undefined) {
+            return parsed.data;
+        }
+
+        let errorMsg = `Schema validation for ${url} failed output was \n ${JSON.stringify(response._data)} \n`;
+
+        if (parsed.error) {
+            parsed.error.issues.forEach((issue) => {
+                errorMsg += `\n - Path: ${issue.path} Issue: ${issue.message}`;
+            });
+        }
+
+        throw new Error(errorMsg);
     }
 
-    console.error("Failed to load user:", response.statusText);
-    throw new Error("Failed to load user");
+    if (response._data) {
+        console.error("Fetch failed:", response._data);
+    }
+
+    console.error("Fetch failed:", response.statusText);
+    throw new Error(response.statusText);
 }
 
 export function useSchemaFetch<T>(
     urls: string,
     schema: ZodType<T>,
-    options: RequestInit = {},
+    options: FetchOptions = {},
     initalFetch = true,
 ) {
     const data = ref<T>();
@@ -49,8 +69,14 @@ export function useSchemaFetch<T>(
                 return;
             }
 
-            console.error("Failed to load session:", e);
-            error.value = "Failed to load session";
+            console.error(e);
+            error.value =
+                e &&
+                typeof e === "object" &&
+                "message" in e &&
+                typeof e.message === "string"
+                    ? e.message
+                    : String(e);
         } finally {
             isPending.value = false;
         }

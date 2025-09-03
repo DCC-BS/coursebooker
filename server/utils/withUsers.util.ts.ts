@@ -1,6 +1,4 @@
 import type { H3Event } from "h3";
-import { getServerSession } from "#auth";
-import type { AzureSession } from "../models/azureSession.models";
 import { useDb } from "../composables/db.composable";
 
 export async function getWithUsers(event: H3Event) {
@@ -9,7 +7,7 @@ export async function getWithUsers(event: H3Event) {
     const { db } = useDb();
 
     if (withUsers && withUsers === "true") {
-        const session = (await getServerSession(event)) as AzureSession | null;
+        const session = await getUserSession(event);
 
         const user = await db.query.userTable.findFirst({
             where: (users, { eq }) =>

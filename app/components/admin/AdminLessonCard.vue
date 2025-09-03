@@ -21,11 +21,6 @@ const emit = defineEmits<{
 const actions = [
     [
         {
-            label: "Edit Lesson",
-            icon: "i-lucide-square-pen",
-            onSelect: () => emit("edit", props.lesson),
-        },
-        {
             label: "Delete Lesson",
             icon: "i-lucide-trash-2",
             onSelect: () => emit("delete", props.lesson),

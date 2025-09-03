@@ -22,6 +22,7 @@ const emit = defineEmits<{
 
 const feedback = useUserFeedback();
 const isSubmitting = ref(false);
+const fromDuration = ref("1h");
 
 const schema = z
     .object({
@@ -53,8 +54,8 @@ watch(
     { immediate: true },
 );
 
-function endFromDuration(duration: string) {
-    const parts = duration.match(/(\d+)\s*(m|h)/g);
+function endFromDuration() {
+    const parts = fromDuration.value.match(/(\d+)\s*(m|h)/g);
     if (!parts) {
         console.error("Invalid duration format");
         feedback.showError({ title: "Invalid duration format" });
@@ -165,7 +166,7 @@ async function updateLesson(data: Schema) {
                 <template #content>
                     <div class="flex flex-col p-2">
                         <span>Duration of the event. (m for minutes, h for hours)</span>
-                        <UInput @change="(v) => endFromDuration(v.target!.value as string)" placeholder="1h 30m" />
+                        <UInput v-model="fromDuration" @blur="endFromDuration"" placeholder=" 1h 30m" />
                     </div>
                 </template>
             </UPopover>

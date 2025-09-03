@@ -1,11 +1,10 @@
-import { getServerSession } from "#auth";
-import { userTable } from "~~/shared/schema";
+import { lessonsTable, userTable } from "~~/shared/schema";
 import { useDb } from "../composables/db.composable";
-import { eq } from "drizzle-orm";
+import { asc, eq, or } from "drizzle-orm";
 import type { User } from "~~/shared/models";
 
 export default defineEventHandler(async (event) => {
-    const session = await getServerSession(event);
+    const session = await getUserSession(event);
     const { db } = useDb();
 
     if (!session?.user?.email) {
@@ -19,7 +18,9 @@ export default defineEventHandler(async (event) => {
                 with: {
                     session: {
                         with: {
-                            lessons: true,
+                            lessons: {
+                                orderBy: [asc(lessonsTable.start)],
+                            },
                         },
                     },
                 },

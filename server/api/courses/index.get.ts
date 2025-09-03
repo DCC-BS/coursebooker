@@ -1,4 +1,4 @@
-import { and, gte, like, lte } from "drizzle-orm";
+import { and, gte, like, lte, asc, desc } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { coursesTable, lessonsTable } from "~~/shared/schema";
@@ -33,6 +33,7 @@ export default defineEventHandler(async (event) => {
             sessions: {
                 with: {
                     lessons: {
+                        orderBy: [desc(lessonsTable.start)],
                         where: and(
                             gte(
                                 lessonsTable.start,

@@ -22,6 +22,12 @@ useHead({
                         <h1 class="text-3xl font-bold text-gray-900">CourseBooker Admin</h1>
                     </div>
                     <div class="flex space-x-4">
+                        <UButton to="/" color="neutral" variant="ghost" icon="i-lucide-eye">
+                            View Site
+                        </UButton>
+                        <UButton to="/admin/users" color="primary" size="lg" icon="i-lucide-graduation-cap">
+                            Manage Users
+                        </UButton>
                         <UButton to="/admin/courses" color="primary" size="lg" icon="i-lucide-graduation-cap">
                             Manage Courses
                         </UButton>

@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { coursesTable } from "~/../shared/schema";
+import { asc, eq } from "drizzle-orm";
+import { coursesTable, lessonsTable, sessionsTable } from "~/../shared/schema";
 import { useDb } from "~~/server/composables/db.composable";
 import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 
@@ -22,8 +22,10 @@ export default defineEventHandler(async (event) => {
         with: {
             sessions: {
                 with: {
-                    lessons: true,
-                    users: withUsers,
+                    lessons: {
+                        orderBy: [asc(lessonsTable.start)],
+                    },
+                    registrations: withUsers,
                 },
             },
         },

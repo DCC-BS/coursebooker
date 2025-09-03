@@ -12,15 +12,6 @@ import {
     usersToSessionsTable,
     userTable,
 } from "../schema";
-export type Lesson = typeof lessonsTable.$inferSelect;
-
-export type Session = typeof sessionsTable.$inferSelect & {
-    lessons: Lesson[];
-    registrations?: SessionRegistration[];
-};
-
-export type CreateCourse = Omit<typeof coursesTable.$inferInsert, "id">;
-export type UpdateCourse = Partial<CreateCourse>;
 
 export const sessionToUsersSchema = createSelectSchema(
     usersToSessionsTable,
@@ -44,8 +35,6 @@ export const courseSchema = createSelectSchema(coursesTable, {
     sessions: z.array(sessionSchema),
 });
 
-export type Course = z.infer<typeof courseSchema>;
-
 export const coursesSchema = z.array(courseSchema);
 
 export const createCourseSchema = createInsertSchema(coursesTable, {
@@ -56,16 +45,10 @@ export const updateCourseSchema = createUpdateSchema(coursesTable, {
     organizer_mail: z.email().optional(),
 });
 
-export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id">;
-export type UpdateSession = Partial<CreateSession>;
-
 export const createSessionSchema = createInsertSchema(sessionsTable, {
     id: z.string().max(0).optional().default(""),
 });
 export const updateSessionSchema = createUpdateSchema(sessionsTable);
-
-export type CreateLesson = Omit<typeof lessonsTable.$inferInsert, "id">;
-export type UpdateLesson = Partial<CreateLesson>;
 
 export const createLessonSchema = createInsertSchema(lessonsTable, {
     id: z.string().max(0).optional().default(""),
@@ -74,18 +57,6 @@ export const createLessonSchema = createInsertSchema(lessonsTable, {
 });
 
 export const updateLessonSchema = createUpdateSchema(lessonsTable);
-
-export type SessionRegistration = typeof usersToSessionsTable.$inferSelect & {
-    user: User;
-};
-
-export type UserRegistration = typeof usersToSessionsTable.$inferSelect & {
-    session: Session;
-};
-
-export type User = typeof userTable.$inferSelect & {
-    registrations: UserRegistration[];
-};
 
 export const userToSessionSchema = createSelectSchema(
     usersToSessionsTable,
@@ -96,3 +67,25 @@ export const userToSessionSchema = createSelectSchema(
 export const userSchema = createSelectSchema(userTable).extend({
     registrations: z.array(userToSessionSchema),
 });
+
+export type User = z.infer<typeof userSchema>;
+export type Course = z.infer<typeof courseSchema>;
+export type Session = z.infer<typeof sessionSchema>;
+export type Lesson = z.infer<typeof lessonSchema>;
+
+export type CreateCourse = Omit<typeof coursesTable.$inferInsert, "id">;
+export type UpdateCourse = Partial<CreateCourse>;
+
+export type SessionRegistration = typeof usersToSessionsTable.$inferSelect & {
+    user: User;
+};
+
+export type UserRegistration = typeof usersToSessionsTable.$inferSelect & {
+    session: Session;
+};
+
+export type CreateLesson = Omit<typeof lessonsTable.$inferInsert, "id">;
+export type UpdateLesson = Partial<CreateLesson>;
+
+export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id">;
+export type UpdateSession = Partial<CreateSession>;

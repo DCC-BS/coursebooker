@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
-import type { Course } from "~~/shared/models";
+import type { Course, Session } from "~~/shared/models";
 
 interface Props {
     course: Course;
@@ -14,6 +14,45 @@ const emit = defineEmits<{
     delete: [course: Course];
     duplicate: [course: Course];
 }>();
+
+function distanceToNow(session: Session) {
+    const start = session?.lessons[0]?.start;
+    if (!start) return 0;
+
+    const now = Date.now();
+    return start.getTime() - now;
+}
+
+function getNextSession(course: Course) {
+    const sessions = course.sessions.sort((a, b) => {
+        return distanceToNow(a) - distanceToNow(b);
+    });
+
+    let nextSession = undefined as Session | undefined;
+
+    for (const session of sessions) {
+        nextSession = session;
+        if (distanceToNow(session) > 0) {
+            break;
+        }
+    }
+
+    const start = nextSession?.lessons[0]?.start;
+    if (!start) return "N/A";
+
+    const now = Date.now();
+    const diff = now - start.getTime();
+
+    const minutes = Math.abs(Math.floor(diff / 1000 / 60));
+    const hours = Math.abs(Math.floor(minutes / 60));
+    const timeStr = `${hours} hour${hours === 1 ? "" : "s"} ${minutes % 60} minute${minutes % 60 === 1 ? "" : "s"}`
+
+    if (diff < 0) {
+        return `Next starts in ${timeStr}`;
+    }
+
+    return `Last started ${timeStr} ago`;
+}
 
 // Computed values
 const totalRegistrations = computed(() => {
@@ -59,6 +98,8 @@ const actions = [
                         <UBadge :color="course.type === 'course' ? 'primary' : 'secondary'" size="sm">
                             {{ course.type.toUpperCase() ?? '' + course.type.slice(1) }}
                         </UBadge>
+
+                        <span>{{ getNextSession(course) }}</span>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">
                         {{ course.title }}

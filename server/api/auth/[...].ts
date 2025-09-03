@@ -1,7 +1,7 @@
 import AzureADProvider from "next-auth/providers/azure-ad";
-import { NuxtAuthHandler } from "#auth";
 import { useRuntimeConfig } from "#imports";
 import { AzureSession } from "~~/server/models/azureSession.models";
+import { NuxtAuthHandler } from "#auth";
 
 // Helper function to decode JWT without verification (for reading claims)
 function decodeJWT(token: string) {

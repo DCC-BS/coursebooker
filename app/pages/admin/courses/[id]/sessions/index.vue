@@ -16,12 +16,7 @@ const currentSession = ref<Session>();
 const showSessionModal = ref(false);
 
 // Fetch course data
-const {
-    data: course,
-    pending,
-    error,
-    refresh,
-} = await useFetch<Course>(`/api/courses/${courseId}`);
+const { course, isPending, error, refresh } = useCourse(courseId, true);
 
 // Computed
 const totalLessons = computed(() => {
@@ -73,12 +68,8 @@ useHead({
         <AdminHeader :title="`Manage Sessions - ${course?.title || 'Course'}`" />
 
         <div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div v-if="pending" class="bg-white shadow rounded-lg p-6">
-                <div class="animate-pulse">
-                    <USkeleton class="h-8 w-1/3 mb-4" />
-                    <USkeleton class="h-4 w-full mb-2" />
-                    <USkeleton class="h-4 w-2/3" />
-                </div>
+            <div v-if="isPending" class="bg-white shadow rounded-lg p-6">
+                <LoadingView :text="'Loading ...'" />
             </div>
 
             <div v-else-if="error" class="bg-white shadow rounded-lg p-6">

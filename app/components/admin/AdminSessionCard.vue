@@ -94,7 +94,7 @@ async function deleteLesson(lesson: Lesson) {
             </div>
         </div>
 
-        <div>
+        <div class="mt-2">
             <AdminLessonForm :course-id="courseId" :session-id="session.id" @created="emit('changed')" />
         </div>
 

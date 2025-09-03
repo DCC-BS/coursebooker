@@ -34,6 +34,14 @@ const typeOptions = ref([
 // Fetch courses
 const { courses, isPending, refresh } = useCourses(true);
 
+function distanceToNow(course: Course) {
+    const start = course.sessions[0]?.lessons[0]?.start;
+    if (!start) return 0;
+
+    const now = Date.now();
+    return Math.abs(start.getTime() - now);
+}
+
 // Computed filtered courses
 const filteredCourses = computed(() => {
     if (!courses.value) return [];
@@ -58,7 +66,7 @@ const filteredCourses = computed(() => {
         );
     }
 
-    return filtered;
+    return filtered.sort((a, b) => distanceToNow(a) - distanceToNow(b));
 });
 
 // Methods
@@ -211,7 +219,7 @@ useHead({
 
                     <p class="text-gray-600">
                         Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                        }}</span>"?
+                            }}</span>"?
                         This action cannot be undone and will also delete all associated sessions and lessons.
                     </p>
 

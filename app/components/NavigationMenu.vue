@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { DisclaimerButton } from "@dcc-bs/common-ui.bs.js";
 import type { DropdownMenuItem } from "@nuxt/ui";
-import { Icon, UIcon } from "#components";
 
 const { t, locale, locales, setLocale } = useI18n();
 
@@ -45,6 +44,9 @@ async function handleSignOut(): Promise<void> {
             {{ t("navigation.app") }}
         </div>
         <div class="flex gap-1">
+            <UButton to="/me" color="primary" variant="ghost" icon="i-lucide-graduation-cap">
+                {{ t("navigation.myCourses") }}
+            </UButton>
             <UDropdownMenu :items="items" arrow>
                 <UButton variant="ghost" :label="t('navigation.languages')" icon="i-lucide-languages">
                 </UButton>

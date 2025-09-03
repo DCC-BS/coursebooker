@@ -9,6 +9,7 @@ const props = defineProps<{
     refreshUser: () => void;
 }>();
 
+const { t } = useI18n();
 const isRegistered = computed(() => props.user.registrations.some(r => r.session.id === props.session.id));
 const { registerForSession, unregisterFromSession } = useSetSession(props.courseId, props.session.id);
 
@@ -32,7 +33,7 @@ async function unregister() {
                     {{ index + 1 }}
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Session {{ index + 1 }}
+                    <h3 class="text-lg font-semibold text-gray-900">{{ t("session.title", { number: index + 1 }) }}
                     </h3>
                     <div v-if="session.location" class="flex items-center text-sm text-gray-600 mt-1">
                         <UIcon name="i-lucide-map-pin" class="h-4 w-4 mr-1" />
@@ -42,26 +43,15 @@ async function unregister() {
             </div>
             <div class="flex items-center gap-2">
                 <UBadge color="success" size="sm">
-                    {{ session.lessons.length }} {{ session.lessons.length === 1 ? 'Lesson' :
-                        'Lessons' }}
+                    {{ t("session.lesson", session.lessons.length) }}
                 </UBadge>
                 <UBadge :color="isRegistered ? 'success' : 'neutral'" size="sm">
                     <UIcon :name="isRegistered ? 'i-lucide-check-circle' : 'i-lucide-user-x'" class="h-3 w-3 mr-1" />
-                    {{ isRegistered ? 'Registered' : 'Not Registered' }}
+                    {{ isRegistered ? t("session.registered") : t("session.notRegistered") }}
                 </UBadge>
             </div>
         </div>
 
-        <!-- Registration Button -->
-        <div class="flex justify-end mt-4">
-            <UButton v-if="!isRegistered" @click="() => register()" color="primary" size="sm" icon="i-lucide-user-plus">
-                Register for Session
-            </UButton>
-            <UButton v-else @click="() => unregister()" color="error" size="sm" icon="i-lucide-user-minus"
-                variant="outline">
-                Unregister
-            </UButton>
-        </div>
         <!-- Session Lessons -->
         <div v-if="session.lessons.length > 0" class="ml-12 space-y-3">
             <div v-for="lesson in session.lessons" :key="lesson.id"
@@ -79,6 +69,17 @@ async function unregister() {
                 </div>
             </div>
         </div>
+
+        <!-- Registration Button -->
+        <div class="flex justify-end mt-4">
+            <UButton v-if="!isRegistered" @click="() => register()" color="primary" size="lg" icon="i-lucide-user-plus">
+                {{ t("session.registerForSession") }}
+            </UButton>
+            <UButton v-else @click="() => unregister()" color="error" size="sm" icon="i-lucide-user-minus"
+                variant="outline">
+                {{ t("session.unregister") }}
+            </UButton>
+        </div>
     </div>
 
     <!-- Session Teams Link -->
@@ -86,7 +87,7 @@ async function unregister() {
         <a :href="session.teams_link" target="_blank"
             class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 transition-colors">
             <UIcon name="i-lucide-video" class="h-4 w-4 mr-1" />
-            Join Session Meeting
+            {{ t("session.joinSessionMeeting") }}
             <UIcon name="i-lucide-external-link" class="h-3 w-3 ml-1" />
         </a>
     </div>

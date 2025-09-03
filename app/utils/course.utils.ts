@@ -1,5 +1,4 @@
 import type { Lesson, Session } from "~~/shared/models";
-import { lessonHasOneSession } from "~~/shared/schema";
 
 export function getSessionDuration(session: Session): string {
     console.log(session);
