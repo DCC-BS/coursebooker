@@ -69,6 +69,7 @@ const filteredCourses = computed(() => {
 
     return courses.value.filter((course) => {
         if (course.sessions.flatMap((session) => session.lessons).length === 0) return false;
+        filterUpcomingSessions(course);
 
         // Search filter (title and description)
         const matchesSearch =

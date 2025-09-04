@@ -1,24 +1,25 @@
 <script setup lang="ts">
+import { format } from "date-fns";
+
 const { emitFormChange } = useFormField();
 
 function toNormalizeDateString(date: Date) {
-    return date.;
+    return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
 const model = defineModel<Date>({ required: true });
-
 const dateString = ref<string>("");
 
-watch(
-    () => dateString,
-    () => {
-        if (!dateString.value) return;
+function onDateStringChange() {
+    console.log("Date string changed:", dateString.value);
+    if (!dateString.value) return;
 
-        model.value = new Date(dateString.value);
+    model.value = new Date(dateString.value);
 
-        emitFormChange();
-    },
-);
+    console.log("Date changed:", model.value);
+
+    emitFormChange();
+}
 
 watch(
     model,
@@ -36,5 +37,5 @@ watch(
 </script>
 
 <template>
-    <UInput v-model="dateString" type="datetime-local" icon="i-lucide-calendar" />
+    <UInput v-model="dateString" @change="onDateStringChange" type="datetime-local" icon="i-lucide-calendar" />
 </template>

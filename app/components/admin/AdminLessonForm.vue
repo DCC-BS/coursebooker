@@ -8,6 +8,7 @@ import {
     type UpdateLesson,
     updateLessonSchema,
 } from "~~/shared/models";
+import { add } from "date-fns";
 
 const props = defineProps<{
     courseId: string;
@@ -22,7 +23,7 @@ const emit = defineEmits<{
 
 const feedback = useUserFeedback();
 const isSubmitting = ref(false);
-const fromDuration = ref("1h");
+const fromDuration = ref("");
 
 const schema = z
     .object({
@@ -40,7 +41,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     start: new Date(),
-    end: new Date(Date.now() + 1 * 60 * 60 * 1000),
+    end: add(new Date(), { hours: 1 }),
 });
 
 watch(
@@ -55,6 +56,10 @@ watch(
 );
 
 function endFromDuration() {
+    if (fromDuration.value.trim() === "") {
+        return;
+    }
+
     const parts = fromDuration.value.match(/(\d+)\s*(m|h)/g);
     if (!parts) {
         console.error("Invalid duration format");
@@ -82,7 +87,9 @@ function endFromDuration() {
         }
     }
 
-    state.end = new Date(state.start.getTime() + totalMinutes * 60 * 1000);
+    console.log("start", state.start, "totalMinutes", totalMinutes);
+
+    state.end = add(state.start, { minutes: totalMinutes });
 }
 
 function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -162,11 +169,13 @@ async function updateLesson(data: Schema) {
         </UFormField>
         <UFormField label="End Time" name="end">
             <UPopover>
-                <DateTime v-model="state.end" />
+                <div>
+                    <DateTime v-model="state.end" />
+                </div>
                 <template #content>
                     <div class="flex flex-col p-2">
                         <span>Duration of the event. (m for minutes, h for hours)</span>
-                        <UInput v-model="fromDuration" @blur="endFromDuration"" placeholder=" 1h 30m" />
+                        <UInput v-model="fromDuration" @change="endFromDuration" placeholder=" 1h 30m" />
                     </div>
                 </template>
             </UPopover>

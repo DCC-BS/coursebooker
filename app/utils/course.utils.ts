@@ -1,4 +1,4 @@
-import type { Lesson, Session } from "~~/shared/models";
+import type { Course, Lesson, Session } from "~~/shared/models";
 
 export function getSessionDuration(session: Session): string {
     console.log(session);
@@ -42,4 +42,15 @@ export function getLessonDate(lesson: Lesson): string {
         return `${start.toLocaleDateString("de-CH")} ${startTime} - ${endTime}`;
     }
     return `${start.toLocaleDateString("de-CH")} ${start.toLocaleTimeString("de-CH")} - ${end.toLocaleDateString("de-CH")} ${end.toLocaleTimeString("de-CH")}`;
+}
+
+export function filterUpcomingSessions(course: Course) {
+    const now = Date.now();
+
+    course.sessions = course.sessions.filter(
+        (s) =>
+            s.lessons.length > 0 &&
+            s.lessons[0] &&
+            s.lessons[0].start.getTime() > now,
+    );
 }

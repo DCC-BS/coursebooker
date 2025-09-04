@@ -25,6 +25,7 @@
         "@sidebase/nuxt-auth": "1.0.2",
         "@types/better-sqlite3": "^7.6.13",
         "better-sqlite3": "^12.2.0",
+        "date-fns": "^4.1.0",
         "drizzle-orm": "^0.44.5",
         "drizzle-zod": "^0.8.3",
         "maska": "^3.2.0",

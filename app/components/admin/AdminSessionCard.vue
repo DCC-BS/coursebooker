@@ -61,7 +61,7 @@ async function deleteLesson(lesson: Lesson) {
                     <h4 class="text-lg font-semibold text-gray-900">
                         Session {{ sessionNumber }}
                     </h4>
-                    <UBadge v-if="session.lessons.length === 0" color="warning">No
+                    <UBadge v-if="props.session.lessons.length === 0" color="warning">No
                         Lessons</UBadge>
                 </div>
 
@@ -84,12 +84,12 @@ async function deleteLesson(lesson: Lesson) {
         </div>
 
         <!-- Lessons List -->
-        <div v-if="session.lessons.length > 0" class="space-y-3">
+        <div v-if="props.session.lessons.length > 0" class="space-y-3">
             <h5 class="text-sm font-medium text-gray-700 border-b border-gray-200 pb-2">
                 Lessons
             </h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <AdminLessonCard v-for="(lesson, index) in session.lessons" :key="lesson.id" :lesson="lesson"
+                <AdminLessonCard v-for="(lesson, index) in props.session.lessons" :key="lesson.id" :lesson="lesson"
                     :lesson-number="index + 1" :course-id="courseId" :session-id="session.id" @delete="deleteLesson" />
             </div>
         </div>

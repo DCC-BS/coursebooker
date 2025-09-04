@@ -19,6 +19,10 @@ const showSessionModal = ref(false);
 const { course, isPending, error, refresh } = useCourse(courseId, true);
 
 // Computed
+const sessions = computed(() => {
+    return course.value ? course.value.sessions.sort((a, b) => a.id.localeCompare(b.id)) : [];
+});
+
 const totalLessons = computed(() => {
     if (!course.value) return 0;
     return course.value.sessions.reduce((total: number, session: Session) => {
@@ -93,7 +97,7 @@ useHead({
                             <div class="flex items-center space-x-4 text-sm text-gray-500">
                                 <span>{{ course.organizer_name }}</span>
                                 <span>•</span>
-                                <span>{{ course.sessions.length }} sessions</span>
+                                <span>{{ sessions.length }} sessions</span>
                                 <span>•</span>
                                 <span>{{ totalLessons }} lessons</span>
                             </div>
@@ -120,7 +124,7 @@ useHead({
                     </div>
 
                     <div class="p-6">
-                        <div v-if="course.sessions.length === 0" class="text-center py-12">
+                        <div v-if="sessions.length === 0" class="text-center py-12">
                             <UIcon name="i-lucide-calendar-days" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
                             <h4 class="text-lg font-medium text-gray-900 mb-2">No sessions yet</h4>
                             <p class="text-gray-500 mb-6">Get started by adding your first session.</p>
@@ -130,10 +134,9 @@ useHead({
                         </div>
 
                         <div v-else class="space-y-6">
-                            <AdminSessionCard v-for="(session, index) in course.sessions" :key="session.id"
-                                :session="session" :session-number="index + 1" :course-id="course.id"
-                                @edit="editSession" @delete="deleteSession" @add-lesson="addLessonToSession"
-                                @changed="refresh" />
+                            <AdminSessionCard v-for="(session, index) in sessions" :key="session.id" :session="session"
+                                :session-number="index + 1" :course-id="course.id" @edit="editSession"
+                                @delete="deleteSession" @add-lesson="addLessonToSession" @changed="refresh" />
                         </div>
                     </div>
                 </div>

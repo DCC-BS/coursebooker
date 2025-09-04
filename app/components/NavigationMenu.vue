@@ -38,10 +38,10 @@ async function handleSignOut(): Promise<void> {
 </script>
 
 <template>
-    <div class="flex justify-between gap-2 p-2 w-full z-50">
-        <DisclaimerButton variant="ghost" />
-        <div class="text-md md:text-4xl font-bold bg-gradient-to-r text-cyan-600 hover:text-cyan-600">
-            {{ t("navigation.app") }}
+    <div class="sticky top-0 flex justify-between gap-2 p-2 w-full z-50">
+        <div>
+            <UButton to="/" variant="ghost" icon="i-lucide-home">
+            </UButton>
         </div>
         <div class="flex gap-1">
             <UButton to="/me" color="primary" variant="ghost" icon="i-lucide-graduation-cap">

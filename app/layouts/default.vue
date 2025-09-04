@@ -7,5 +7,6 @@ import NavigationMenu from "~/components/NavigationMenu.vue";
 <template>
     <NavigationMenu />
     <slot />
-    <DataBsBanner />
+
+    <DataBsBanner class="my-4" />
 </template>

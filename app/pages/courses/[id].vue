@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { createInsertSchema } from 'drizzle-zod';
+
 const route = useRoute();
 const courseId = route.params.id as string;
 
@@ -12,6 +14,12 @@ const { me, isPending: isMePending, error: meError, refresh: refreshMe } = useMe
 
 const isPending = computed(() => isCoursePending.value || isMePending.value);
 const error = computed(() => courseError.value ?? meError.value);
+
+watch(course, () => {
+    if (!course.value) return null;
+
+    filterUpcomingSessions(course.value);
+}, { immediate: true });
 
 </script>
 
@@ -114,7 +122,7 @@ const error = computed(() => courseError.value ?? meError.value);
                         <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center">
                                 <UIcon name="i-lucide-calendar-days" class="h-6 w-6 mr-3 text-green-600" />
-                                {{ t('courseDetails.courseSessions') }}
+                                {{ t('courseDetails.upcomingCourseSessions') }}
                             </h2>
                         </div>
                         <div class="p-8">

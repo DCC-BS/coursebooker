@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { add, nextMonday, set } from "date-fns";
 import { AnimatePresence, motion } from "motion-v";
 
 const { t } = useI18n();
@@ -28,13 +29,13 @@ const getTimeUntilSession = (session: { lessons: { start: Date }[] }) => {
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (diffDays > 0) {
-        return t('me.inDays', { count: diffDays, plural: diffDays === 1 ? '' : 'e' });
+        return t('me.inDays', diffDays);
     }
     if (diffHours > 0) {
-        return t('me.inHours', { count: diffHours, plural: diffHours === 1 ? '' : 'n' });
+        return t('me.inHours', diffHours);
     }
     if (diffMinutes > 0) {
-        return t('me.inMinutes', { count: diffMinutes, plural: diffMinutes === 1 ? '' : 'n' });
+        return t('me.inMinutes', diffMinutes);
     }
     return t('me.startingSoon');
 };
@@ -52,7 +53,12 @@ const upcomingSessions = computed(() => {
     for (const session of sessions) {
         const start = new Date(session.lessons[0]?.start ?? -1);
         const now = new Date();
-        if (start <= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7)) {
+        const monday = set(nextMonday(now), { hours: 0, minutes: 0, seconds: 0 }); // next Monday 00:00
+
+        console.log(monday);
+
+        // is upcoming and in this week
+        if (start <= monday) {
             sessionsThisWeek.push(session);
         } else {
             otherSessions.push(session);
