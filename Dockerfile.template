@@ -23,6 +23,7 @@ COPY . .
 # Build the application
 RUN bun x nuxi prepare
 RUN bun x nuxi build
+RUN bun run db:push
 
 # Stage 2: Run the application
 FROM node:23-alpine
