@@ -14,9 +14,7 @@ stages:
     - git remote set-url origin $CI_REPOSITORY_URL || true
     - git fetch
     - git checkout $CI_COMMIT_BRANCH
-    - git checkout .
-    - git clean -f -d
-    - git pull -f
+    - git pull
     - docker-compose down
     - cp Dockerfile.template Dockerfile
     - sed -i "s/PROXY_USER/$PROXY_USR/g" Dockerfile
