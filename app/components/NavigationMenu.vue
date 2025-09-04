@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { DisclaimerButton } from "@dcc-bs/common-ui.bs.js";
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const { t, locale, locales, setLocale } = useI18n();
