@@ -4,6 +4,7 @@ FROM node:23-alpine AS build
 # Set proxy environment variables
 ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
+ENV DATABASE_URL=data/coursebooker.db
 
 # Install bun
 RUN npm install -g bun
