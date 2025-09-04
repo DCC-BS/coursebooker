@@ -1,5 +1,30 @@
-app/.streamlit/secrets.toml
-app/data/*
-.venv
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Database files
+data/
 *.db
-__pycache__/
+*.sqlite
+*.sqlite3

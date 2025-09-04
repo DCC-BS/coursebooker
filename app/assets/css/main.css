@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "@dcc-bs/common-ui.bs.js";
+
+/* Custom utilities */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

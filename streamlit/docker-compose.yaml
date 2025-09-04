@@ -3,8 +3,9 @@ services:
   coursebooker:
     restart: always
     build: .
+    command: python -m streamlit run app.py --logger.level=debug
     volumes:
       - ./app:/usr/src/app
       - ./data:/data
     ports:
-      - 3000:8501
+      - 8502:8501

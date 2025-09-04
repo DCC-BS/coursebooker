@@ -1,0 +1,94 @@
+<script lang="ts" setup>
+import type { Session, User } from '~~/shared/models';
+
+const props = defineProps<{
+    index: number;
+    session: Session;
+    courseId: string;
+    user: User;
+    refreshUser: () => void;
+}>();
+
+const { t } = useI18n();
+const isRegistered = computed(() => props.user.registrations.some(r => r.session.id === props.session.id));
+const { registerForSession, unregisterFromSession } = useSetSession(props.courseId, props.session.id);
+
+async function register() {
+    await registerForSession(props.user.email);
+    props.refreshUser();
+}
+
+async function unregister() {
+    await unregisterFromSession(props.user.email);
+    props.refreshUser();
+}
+</script>
+
+<template>
+    <div>
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center">
+                <div
+                    class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4">
+                    {{ index + 1 }}
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ t("session.title", { number: index + 1 }) }}
+                    </h3>
+                    <div v-if="session.location" class="flex items-center text-sm text-gray-600 mt-1">
+                        <UIcon name="i-lucide-map-pin" class="h-4 w-4 mr-1" />
+                        {{ session.location }}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <UBadge color="success" size="sm">
+                    {{ t("session.lesson", session.lessons.length) }}
+                </UBadge>
+                <UBadge :color="isRegistered ? 'success' : 'neutral'" size="sm">
+                    <UIcon :name="isRegistered ? 'i-lucide-check-circle' : 'i-lucide-user-x'" class="h-3 w-3 mr-1" />
+                    {{ isRegistered ? t("session.registered") : t("session.notRegistered") }}
+                </UBadge>
+            </div>
+        </div>
+
+        <!-- Session Lessons -->
+        <div v-if="session.lessons.length > 0" class="ml-12 space-y-3">
+            <div v-for="lesson in session.lessons" :key="lesson.id"
+                class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <UIcon name="i-lucide-clock" class="h-4 w-4 text-gray-400 mr-3" />
+                    <div>
+                        <div class="font-medium text-gray-900">
+                            {{ formatDate(lesson.start) }}
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            {{ formatTime(lesson.start) }} - {{ formatTime(lesson.end) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Button -->
+        <div class="flex justify-end mt-4">
+            <UButton v-if="!isRegistered" @click="() => register()" color="primary" size="lg" icon="i-lucide-user-plus">
+                {{ t("session.registerForSession") }}
+            </UButton>
+            <UButton v-else @click="() => unregister()" color="error" size="sm" icon="i-lucide-user-minus"
+                variant="outline">
+                {{ t("session.unregister") }}
+            </UButton>
+        </div>
+    </div>
+
+    <!-- Session Teams Link -->
+    <div v-if="session.teams_link" class="ml-12 mt-4">
+        <a :href="session.teams_link" target="_blank"
+            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 transition-colors">
+            <UIcon name="i-lucide-video" class="h-4 w-4 mr-1" />
+            {{ t("session.joinSessionMeeting") }}
+            <UIcon name="i-lucide-external-link" class="h-3 w-3 ml-1" />
+        </a>
+    </div>
+</template>

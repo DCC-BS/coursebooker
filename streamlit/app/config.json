@@ -1,0 +1,74 @@
+{
+    "courses": [
+        {
+            "name": "Wissensaustausch Data Science & KI",
+            "date": "2025-10-23",
+            "time": "15:30",
+            "duration": 2,
+            "description": "Die Veranstaltung soll den Austausch zu Datenwissenschaft und KI im Kanton Basel fördern. Kern der Veranstaltung sind Vorträge aus verschiedenen Bereichen der Verwaltung. Ein detailliertes Programm folgt.",
+            "location": "Wird noch bekanntgegeben",
+            "teams_link": "",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Wissensaustausch Data Science & KI",
+            "date": "2026-02-12",
+            "time": "15:30",
+            "duration": 2,
+            "description": "Die Veranstaltung soll den Austausch zu Datenwissenschaft und KI im Kanton Basel fördern. Kern der Veranstaltung sind Vorträge aus verschiedenen Bereichen der Verwaltung. Ein detailliertes Programm folgt.",
+            "location": "Wird noch bekanntgegeben",
+            "teams_link": "",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Wissensaustausch Data Science & KI",
+            "date": "2026-06-18",
+            "time": "15:30",
+            "duration": 2,
+            "description": "Die Veranstaltung soll den Austausch zu Datenwissenschaft und KI im Kanton Basel fördern. Kern der Veranstaltung sind Vorträge aus verschiedenen Bereichen der Verwaltung. Ein detailliertes Programm folgt.",
+            "location": "Wird noch bekanntgegeben",
+            "teams_link": "",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Wissensaustausch Data Science & KI",
+            "date": "2026-10-22",
+            "time": "15:30",
+            "duration": 2,
+            "description": "Die Veranstaltung soll den Austausch zu Datenwissenschaft und KI im Kanton Basel fördern. Kern der Veranstaltung sind Vorträge aus verschiedenen Bereichen der Verwaltung. Ein detailliertes Programm folgt.",
+            "location": "Wird noch bekanntgegeben",
+            "teams_link": "",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Einführung DCC KI Pilotanwendungen",
+            "date": "2025-08-19",
+            "time": "13:30",
+            "duration": 0.5,
+            "description": "In 30 Minuten geben wir eine Einführung zu den neuen kantonalen KI Pilot Tools. Wir gehen dabei auf folgende Fragen ein: Wie kann ich die Tools verwenden, was muss ich beachten und wie steht es um den Datenschutz?",
+            "location": "Microsoft Teams",
+            "teams_link": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_NTFmNGRkZmUtOTQ5MC00ODg2LWJlODYtM2RiMGY0ZjkwMjcy%40thread.v2/0?context=%7b%22Tid%22%3a%2211172f95-a39a-4f7b-9224-c6a11d1e5c24%22%2c%22Oid%22%3a%22b702716c-e2e6-4c9e-8b9b-ea88ef3f3f0a%22%7d",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Einführung DCC KI Pilotanwendungen",
+            "date": "2025-08-22",
+            "time": "09:00",
+            "duration": 0.5,
+            "description": "In 30 Minuten geben wir eine Einführung zu den neuen kantonalen KI Pilot Tools. Wir gehen dabei auf folgende Fragen ein: Wie kann ich die Tools verwenden, was muss ich beachten und wie steht es um den Datenschutz?",
+            "location": "Microsoft Teams",
+            "teams_link": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_YzE4NGFhYTctZmI5Zi00M2M1LWJhMzQtYTI5N2VkMWM3Y2Y4%40thread.v2/0?context=%7b%22Tid%22%3a%2211172f95-a39a-4f7b-9224-c6a11d1e5c24%22%2c%22Oid%22%3a%22b702716c-e2e6-4c9e-8b9b-ea88ef3f3f0a%22%7d",
+            "organizer_mail": "dcc@bs.ch"
+        },
+        {
+            "name": "Einführung DCC KI Pilotanwendungen",
+            "date": "2025-08-27",
+            "time": "10:00",
+            "duration": 0.5,
+            "description": "In 30 Minuten geben wir eine Einführung zu den neuen kantonalen KI Pilot Tools. Wir gehen dabei auf folgende Fragen ein: Wie kann ich die Tools verwenden, was muss ich beachten und wie steht es um den Datenschutz?",
+            "location": "Microsoft Teams",
+            "teams_link": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_NDg2YjUxYmItOTg3Yy00ZjY3LTgyZDgtNmY2NTIyNDE1NTI3%40thread.v2/0?context=%7b%22Tid%22%3a%2211172f95-a39a-4f7b-9224-c6a11d1e5c24%22%2c%22Oid%22%3a%22b702716c-e2e6-4c9e-8b9b-ea88ef3f3f0a%22%7d",
+            "organizer_mail": "dcc@bs.ch"
+        }
+    ]
+}

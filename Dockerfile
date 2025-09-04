@@ -1,10 +1,6 @@
 # Stage 1: Build the application
 FROM node:23-alpine AS build
 
-# Set proxy environment variables
-ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-
 # Install bun
 RUN npm install -g bun
 
@@ -26,10 +22,6 @@ RUN bun x nuxi build
 
 # Stage 2: Run the application
 FROM node:23-alpine
-
-# Set proxy environment variables
-ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 
 # Set the working directory
 WORKDIR /app
