@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { add } from "date-fns";
 import * as z from "zod";
 import {
     type CreateLesson,
@@ -8,7 +9,6 @@ import {
     type UpdateLesson,
     updateLessonSchema,
 } from "~~/shared/models";
-import { add } from "date-fns";
 
 const props = defineProps<{
     courseId: string;

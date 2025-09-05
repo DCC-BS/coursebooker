@@ -30,5 +30,5 @@ export default defineAdminResponseHandler(async (event) => {
         });
     }
 
-    return updatedCourse;
+    return updatedCourse[0];
 });

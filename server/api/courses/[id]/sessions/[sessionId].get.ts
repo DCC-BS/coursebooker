@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
-import { sessionsTable } from "~~/shared/schema";
 import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
+import { sessionsTable } from "~~/shared/schema";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDb();

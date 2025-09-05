@@ -45,7 +45,7 @@ function getNextSession(course: Course) {
 
     const minutes = Math.abs(Math.floor(diff / 1000 / 60));
     const hours = Math.abs(Math.floor(minutes / 60));
-    const timeStr = `${hours} hour${hours === 1 ? "" : "s"} ${minutes % 60} minute${minutes % 60 === 1 ? "" : "s"}`
+    const timeStr = `${hours} hour${hours === 1 ? "" : "s"} ${minutes % 60} minute${minutes % 60 === 1 ? "" : "s"}`;
 
     if (diff < 0) {
         return `Next starts in ${timeStr}`;

@@ -1,4 +1,4 @@
-import { regex, z } from "zod";
+import { z } from "zod";
 import { userSchema } from "~~/shared/models";
 
 type useUsersOptions = {

@@ -27,7 +27,7 @@ watch(
         const dateStr = toNormalizeDateString(newModel);
 
         if (dateStr === dateString.value) {
-            return
+            return;
         }
 
         dateString.value = dateStr;

@@ -1,7 +1,7 @@
-import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { userTable } from "./users.schema";
-import { sessionsTable } from "./sessions.schema";
 import { relations } from "drizzle-orm";
+import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sessionsTable } from "./sessions.schema";
+import { userTable } from "./users.schema";
 
 export const usersToSessionsTable = sqliteTable(
     "users_sessions",

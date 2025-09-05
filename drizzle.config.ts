@@ -5,8 +5,11 @@ export default defineConfig({
     out: "./drizzle",
     schema: "./shared/schema",
     dialect: "sqlite",
-
     dbCredentials: {
-        url: process.env.DATABASE_URL!,
+        url:
+            process.env.DATABASE_URL ??
+            (() => {
+                throw new Error("DATABASE_URL is not set");
+            })(),
     },
 });

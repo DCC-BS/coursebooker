@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import { useDb } from "~~/server/composables/db.composable";
-import { userTable } from "~~/shared/schema";
 import { createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
+import { useDb } from "~~/server/composables/db.composable";
+import { userTable } from "~~/shared/schema";
 
 const updateUserSchema = createUpdateSchema(userTable, {
     email: z.string().max(0).optional(),

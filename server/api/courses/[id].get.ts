@@ -1,5 +1,5 @@
 import { asc, eq } from "drizzle-orm";
-import { coursesTable, lessonsTable, sessionsTable } from "~/../shared/schema";
+import { coursesTable, lessonsTable } from "~/../shared/schema";
 import { useDb } from "~~/server/composables/db.composable";
 import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 
@@ -14,8 +14,6 @@ export default defineEventHandler(async (event) => {
             statusMessage: "Course ID is required",
         });
     }
-
-    const query = getQuery(event);
 
     const withUsers = await getWithUsers(event);
 

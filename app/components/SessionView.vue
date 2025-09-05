@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Session, User } from '~~/shared/models';
+import type { Session, User } from "~~/shared/models";
 
 const props = defineProps<{
     index: number;
@@ -10,8 +10,13 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const isRegistered = computed(() => props.user.registrations.some(r => r.session.id === props.session.id));
-const { registerForSession, unregisterFromSession } = useSetSession(props.courseId, props.session.id);
+const isRegistered = computed(() =>
+    props.user.registrations.some((r) => r.session.id === props.session.id),
+);
+const { registerForSession, unregisterFromSession } = useSetSession(
+    props.courseId,
+    props.session.id,
+);
 
 async function register() {
     await registerForSession(props.user.email);

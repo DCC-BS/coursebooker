@@ -12,21 +12,21 @@ const selectedTimeRange = ref("");
 
 // Filter options
 const daysOfWeek = computed(() => [
-    { value: "", label: t('home.allDays') },
-    { value: "0", label: t('home.sunday') },
-    { value: "1", label: t('home.monday') },
-    { value: "2", label: t('home.tuesday') },
-    { value: "3", label: t('home.wednesday') },
-    { value: "4", label: t('home.thursday') },
-    { value: "5", label: t('home.friday') },
-    { value: "6", label: t('home.saturday') },
+    { value: "", label: t("home.allDays") },
+    { value: "0", label: t("home.sunday") },
+    { value: "1", label: t("home.monday") },
+    { value: "2", label: t("home.tuesday") },
+    { value: "3", label: t("home.wednesday") },
+    { value: "4", label: t("home.thursday") },
+    { value: "5", label: t("home.friday") },
+    { value: "6", label: t("home.saturday") },
 ]);
 
 const timeRanges = computed(() => [
-    { value: "", label: t('home.allTimes') },
-    { value: "morning", label: t('home.morning') },
-    { value: "afternoon", label: t('home.afternoon') },
-    { value: "evening", label: t('home.evening') },
+    { value: "", label: t("home.allTimes") },
+    { value: "morning", label: t("home.morning") },
+    { value: "afternoon", label: t("home.afternoon") },
+    { value: "evening", label: t("home.evening") },
 ]);
 
 // Helper function to check if a lesson is in a specific time range
@@ -68,7 +68,8 @@ const filteredCourses = computed(() => {
     if (!courses.value) return [];
 
     return courses.value.filter((course) => {
-        if (course.sessions.flatMap((session) => session.lessons).length === 0) return false;
+        if (course.sessions.flatMap((session) => session.lessons).length === 0)
+            return false;
         filterUpcomingSessions(course);
 
         // Search filter (title and description)
@@ -118,12 +119,12 @@ function clearFilters() {
 // Computed property for results count message
 const resultsMessage = computed(() => {
     if (filteredCourses.value.length === 0) {
-        return t('home.noCourses');
+        return t("home.noCourses");
     }
-    const plural = filteredCourses.value.length === 1 ? '' : 's';
-    return t('home.foundCourses', {
+    const plural = filteredCourses.value.length === 1 ? "" : "s";
+    return t("home.foundCourses", {
         count: filteredCourses.value.length,
-        plural
+        plural,
     });
 });
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { Session } from '~~/shared/models';
-import { z } from 'zod';
-import type { FormSubmitEvent } from '@nuxt/ui';
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { z } from "zod";
+import type { Session } from "~~/shared/models";
 
 const props = defineProps<{
     courseId: string;
@@ -10,9 +10,12 @@ const props = defineProps<{
 }>();
 
 const { users } = useUsers({ withRegistrations: false });
-const userEmails = computed(() => users.value?.map(u => u.email) ?? []);
+const userEmails = computed(() => users.value?.map((u) => u.email) ?? []);
 
-const { registerForSession, unregisterFromSession } = useSetSession(props.courseId, props.session.id);
+const { registerForSession, unregisterFromSession } = useSetSession(
+    props.courseId,
+    props.session.id,
+);
 const { showSuccess, showError } = useUserFeedback();
 
 const addRegistrationSchema = z.object({
@@ -22,16 +25,18 @@ const addRegistrationSchema = z.object({
 type Schema = z.infer<typeof addRegistrationSchema>;
 
 const formState = reactive<Schema>({
-    email: '',
+    email: "",
 });
-
 
 async function removeRegistration(email: string) {
     try {
         await unregisterFromSession(email);
-        showSuccess({ title: 'Registration removed successfully' });
+        showSuccess({ title: "Registration removed successfully" });
     } catch (error) {
-        showError({ title: 'Failed to remove registration', description: (error as Error).message });
+        showError({
+            title: "Failed to remove registration",
+            description: (error as Error).message,
+        });
     } finally {
         await props.refreshSession();
     }
@@ -41,15 +46,17 @@ async function submitAddRegistration(event: FormSubmitEvent<Schema>) {
     event.preventDefault();
     try {
         await registerForSession(formState.email);
-        showSuccess({ title: 'Registration added successfully' });
-        formState.email = '';
+        showSuccess({ title: "Registration added successfully" });
+        formState.email = "";
     } catch (error) {
-        showError({ title: 'Failed to add registration', description: (error as Error).message });
+        showError({
+            title: "Failed to add registration",
+            description: (error as Error).message,
+        });
     } finally {
         await props.refreshSession();
     }
 }
-
 </script>
 
 <template>

@@ -1,8 +1,8 @@
-import { and, gte, like, lte, asc, desc } from "drizzle-orm";
+import { and, desc, gte, like, lte } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
-import { coursesTable, lessonsTable } from "~~/shared/schema";
 import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
+import { coursesTable, lessonsTable } from "~~/shared/schema";
 
 const filterSchema = z.object({
     from: z.coerce.date().optional(),

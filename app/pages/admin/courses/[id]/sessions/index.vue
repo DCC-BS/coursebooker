@@ -19,7 +19,10 @@ const showSessionModal = ref(false);
 const { showSuccess, showError } = useUserFeedback();
 
 // Fetch course data
-const { course, isPending, error, refresh } = useCourse(courseId, { admin: true, sortedSessions: false });
+const { course, isPending, error, refresh } = useCourse(courseId, {
+    admin: true,
+    sortedSessions: false,
+});
 
 // Computed
 const sessions = computed(() => {
@@ -54,7 +57,10 @@ async function deleteSession(session: Session) {
         showSuccess({ title: "Session deleted successfully" });
     } catch (error) {
         console.error("Error deleting session:", error);
-        showError({ title: "Failed to delete session", description: (error as Error).message });
+        showError({
+            title: "Failed to delete session",
+            description: (error as Error).message,
+        });
     }
 }
 

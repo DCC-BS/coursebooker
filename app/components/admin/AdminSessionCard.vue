@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { AnimatePresence, motion } from "motion-v";
 import type { Lesson, Session } from "~/../shared/models";
-import { motion, AnimatePresence } from "motion-v";
 
 interface Props {
     session: Session;
@@ -57,7 +57,9 @@ async function deleteLesson(lesson: Lesson) {
         );
 
         await props.refreshSession();
-        feedback.showSuccess({ title: t("admin.session.lessonDeletedSuccessfully") });
+        feedback.showSuccess({
+            title: t("admin.session.lessonDeletedSuccessfully"),
+        });
     } catch (error) {
         feedback.showError({ title: t("admin.session.failedToDeleteLesson") });
         console.error("Error deleting lesson:", error);

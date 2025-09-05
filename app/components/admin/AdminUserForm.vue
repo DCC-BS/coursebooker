@@ -1,27 +1,27 @@
 <script setup>
-const emit = defineEmits(['userCreated', 'cancel']);
+const emit = defineEmits(["userCreated", "cancel"]);
 
 const { showSuccess, showError } = useUserFeedback();
 
 const isCreating = ref(false);
 const formData = reactive({
-    email: '',
+    email: "",
     isAdmin: false,
 });
 
-const emailError = ref('');
+const emailError = ref("");
 
 const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) {
-        emailError.value = 'Email is required';
+        emailError.value = "Email is required";
         return false;
     }
     if (!emailRegex.test(formData.email)) {
-        emailError.value = 'Please enter a valid email address';
+        emailError.value = "Please enter a valid email address";
         return false;
     }
-    emailError.value = '';
+    emailError.value = "";
     return true;
 };
 
@@ -38,26 +38,27 @@ const handleSubmit = async () => {
         });
 
         showSuccess({
-            title: 'User created successfully',
-            description: `${formData.email} has been added ${formData.isAdmin ? 'as an admin' : 'as a regular user'}`,
+            title: "User created successfully",
+            description: `${formData.email} has been added ${formData.isAdmin ? "as an admin" : "as a regular user"}`,
         });
 
         // Reset form
-        formData.email = '';
+        formData.email = "";
         formData.isAdmin = false;
 
-        emit('userCreated');
+        emit("userCreated");
     } catch (error) {
-        console.error('Failed to create user:', error);
-        if (error.message?.includes('already exists')) {
+        console.error("Failed to create user:", error);
+        if (error.message?.includes("already exists")) {
             showError({
-                title: 'User already exists',
-                description: 'A user with this email address already exists',
+                title: "User already exists",
+                description: "A user with this email address already exists",
             });
         } else {
             showError({
-                title: 'Failed to create user',
-                description: 'There was an error creating the user. Please try again.',
+                title: "Failed to create user",
+                description:
+                    "There was an error creating the user. Please try again.",
             });
         }
     } finally {
@@ -66,10 +67,10 @@ const handleSubmit = async () => {
 };
 
 const handleCancel = () => {
-    formData.email = '';
+    formData.email = "";
     formData.isAdmin = false;
-    emailError.value = '';
-    emit('cancel');
+    emailError.value = "";
+    emit("cancel");
 };
 </script>
 

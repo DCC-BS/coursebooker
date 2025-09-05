@@ -1,6 +1,6 @@
-import { H3Event } from "h3";
+import type { H3Event } from "h3";
 import { getServerSession } from "#auth";
-import { AzureSession } from "../models/azureSession.models";
+import type { AzureSession } from "../models/azureSession.models";
 
 export async function getUserSession(
     event: H3Event,

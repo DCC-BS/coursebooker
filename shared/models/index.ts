@@ -29,9 +29,11 @@ export const sessionSchema = createSelectSchema(sessionsTable).extend({
     registrations: z.array(createSelectSchema(usersToSessionsTable)).optional(),
 });
 
-export const courseSchema = createSelectSchema(coursesTable, {
+export const courseSchemaWithoutSessions = createSelectSchema(coursesTable, {
     organizer_mail: z.email(),
-}).extend({
+});
+
+export const courseSchema = courseSchemaWithoutSessions.extend({
     sessions: z.array(sessionSchema),
 });
 
@@ -39,8 +41,9 @@ export const coursesSchema = z.array(courseSchema);
 
 export const createCourseSchema = createInsertSchema(coursesTable, {
     organizer_mail: z.email(),
-    id: z.string().max(0).optional().default(""),
+    id: z.undefined().optional(),
 });
+
 export const updateCourseSchema = createUpdateSchema(coursesTable, {
     organizer_mail: z.email().optional(),
 });

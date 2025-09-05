@@ -9,18 +9,30 @@ if (!courseId) {
 }
 
 const { t } = useI18n();
-const { course, isPending: isCoursePending, error: courseError } = useCourse(courseId);
-const { me, isPending: isMePending, error: meError, refresh: refreshMe } = useMe();
+const {
+    course,
+    isPending: isCoursePending,
+    error: courseError,
+} = useCourse(courseId);
+const {
+    me,
+    isPending: isMePending,
+    error: meError,
+    refresh: refreshMe,
+} = useMe();
 
 const isPending = computed(() => isCoursePending.value || isMePending.value);
 const error = computed(() => courseError.value ?? meError.value);
 
-watch(course, () => {
-    if (!course.value) return null;
+watch(
+    course,
+    () => {
+        if (!course.value) return null;
 
-    filterUpcomingSessions(course.value);
-}, { immediate: true });
-
+        filterUpcomingSessions(course.value);
+    },
+    { immediate: true },
+);
 </script>
 
 <template>

@@ -1,20 +1,22 @@
 <script lang="ts" setup>
-import LoadingView from '~/components/LoadingView.vue';
+import LoadingView from "~/components/LoadingView.vue";
 
 const isAdmin = ref(false);
 const isPending = ref(true);
 
 onMounted(() => {
-    fetchMe().then((data) => {
-        isAdmin.value = data?.isAdmin ?? false;
-    }).catch((error) => {
-        console.error("Error fetching user data:", error);
-        isAdmin.value = false;
-    }).finally(() => {
-        isPending.value = false;
-    });
+    fetchMe()
+        .then((data) => {
+            isAdmin.value = data?.isAdmin ?? false;
+        })
+        .catch((error) => {
+            console.error("Error fetching user data:", error);
+            isAdmin.value = false;
+        })
+        .finally(() => {
+            isPending.value = false;
+        });
 });
-
 </script>
 
 <template>

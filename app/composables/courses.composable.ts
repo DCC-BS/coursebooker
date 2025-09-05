@@ -1,4 +1,11 @@
-import { courseSchema, coursesSchema, type Course } from "~~/shared/models";
+import {
+    type Course,
+    type CreateCourse,
+    courseSchema,
+    courseSchemaWithoutSessions,
+    coursesSchema,
+    type UpdateCourse,
+} from "~~/shared/models";
 
 function sortSessions(course: Course) {
     course.sessions.sort(
@@ -71,4 +78,28 @@ export function useCourse(courseId: string, options: useCourseOptions = {}) {
         error,
         refresh,
     };
+}
+
+export async function createCourse(courseData: CreateCourse) {
+    return await fetchWithSchema("/api/courses", courseSchemaWithoutSessions, {
+        method: "POST",
+        body: courseData,
+    });
+}
+
+export async function updateCourse(courseId: string, updates: UpdateCourse) {
+    return await fetchWithSchema(
+        `/api/courses/${courseId}`,
+        courseSchemaWithoutSessions,
+        {
+            method: "PATCH",
+            body: updates,
+        },
+    );
+}
+
+export async function deleteCourse(courseId: string) {
+    return await $fetch(`/api/courses/${courseId}`, {
+        method: "DELETE",
+    });
 }

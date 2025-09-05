@@ -55,7 +55,9 @@ const filteredUsers = computed(() => {
 
 // Stats
 const totalUsers = computed(() => users.value?.length ?? 0);
-const adminUsers = computed(() => users.value?.filter(user => user.isAdmin).length ?? 0);
+const adminUsers = computed(
+    () => users.value?.filter((user) => user.isAdmin).length ?? 0,
+);
 const regularUsers = computed(() => totalUsers.value - adminUsers.value);
 
 // Handle creating a new user
@@ -70,20 +72,25 @@ const handleCreateUser = async () => {
         });
 
         feedback.showSuccess({
-            title: 'User created successfully',
+            title: "User created successfully",
         });
 
         // Reset form
-        newUserEmail.value = '';
+        newUserEmail.value = "";
         newUserIsAdmin.value = false;
         showCreateForm.value = false;
 
         // Refresh users list
         await refresh();
-    } catch (error: any) {
-        console.error('Failed to create user:', error);
+    } catch (error: unknown) {
+        console.error("Failed to create user:", error);
+        let msg = "Unknown error";
+        if (error && typeof error === "object") {
+            const err = error as { statusMessage?: string; message?: string };
+            msg = err.statusMessage ?? err.message ?? "Unknown error";
+        }
         feedback.showError({
-            title: 'Failed to create user',
+            title: `Failed to create user: ${msg}`,
         });
     } finally {
         isCreatingUser.value = false;
@@ -95,13 +102,17 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
     try {
         await updateUser(userEmail, { isAdmin });
         feedback.showSuccess({
-            title: `User ${isAdmin ? 'promoted to' : 'demoted from'} admin successfully`,
+            title: `User ${isAdmin ? "promoted to" : "demoted from"} admin successfully`,
         });
         await refresh();
-    } catch (error: any) {
-        console.error('Failed to update user role:', error);
+    } catch (error: unknown) {
+        console.error("Failed to update user role:", error);
 
-        const msg = error.statusMessage ?? error.message ?? 'Unknown error';
+        let msg = "Unknown error";
+        if (error && typeof error === "object") {
+            const err = error as { statusMessage?: string; message?: string };
+            msg = err.statusMessage ?? err.message ?? "Unknown error";
+        }
 
         feedback.showError({
             title: `Failed to update user role: ${msg}`,

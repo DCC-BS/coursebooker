@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Course, Session } from "~/../shared/models";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import type { Course, Session, updateCourseSchema } from "~/../shared/models";
 
 // Page meta
 definePageMeta({
@@ -10,17 +11,6 @@ definePageMeta({
 // Get route params
 const route = useRoute();
 const courseId = route.params.id as string;
-
-// Form state
-const submitting = ref(false);
-const deleting = ref(false);
-const showDeleteModal = ref(false);
-
-// Course type options
-const typeOptions = [
-    { label: "Course", value: "course" },
-    { label: "Event", value: "event" },
-];
 
 // Fetch course data
 const {
@@ -37,8 +27,6 @@ const form = reactive({
     description: "",
     organizer_name: "",
     organizer_mail: "",
-    teams_link: "",
-    sessions: [] as Session[],
 } as Course);
 
 // Watch for course data and populate form
@@ -51,37 +39,21 @@ watch(
             form.description = newCourse.description;
             form.organizer_name = newCourse.organizer_name;
             form.organizer_mail = newCourse.organizer_mail;
-            form.teams_link = newCourse.teams_link || "";
         }
     },
     { immediate: true },
 );
 
-// Computed
-const isFormValid = computed(() => {
-    return (
-        form.title.trim() !== "" &&
-        form.description.trim() !== "" &&
-        form.organizer_name.trim() !== "" &&
-        form.organizer_mail.trim() !== ""
-    );
-});
-
 // Methods
-async function submitForm() {
-    if (!isFormValid.value || !course.value) return;
-
-    submitting.value = true;
-
+async function submitForm(event: FormSubmitEvent<Course>) {
     try {
         // Prepare the update data
         const updateData = {
-            type: form.type,
-            title: form.title.trim(),
-            description: form.description.trim(),
-            organizer_name: form.organizer_name.trim(),
-            organizer_mail: form.organizer_mail.trim(),
-            teams_link: form.teams_link?.trim() || undefined,
+            type: event.data.type,
+            title: event.data.title.trim(),
+            description: event.data.description?.trim(),
+            organizer_name: event.data.organizer_name.trim(),
+            organizer_mail: event.data.organizer_mail.trim(),
         };
 
         // Update via API
@@ -159,77 +131,7 @@ useHead({
                     <p class="text-sm text-gray-600 mt-1">Update the details for this course.</p>
                 </div>
 
-                <form @submit.prevent="submitForm" class="p-6 space-y-6">
-                    <!-- Course Type -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Course Type
-                        </label>
-                        <USelect v-model="form.type" :items="typeOptions" value-key="value"
-                            placeholder="Select course type" size="lg" required />
-                    </div>
-
-                    <!-- Course Title -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Course Title *
-                        </label>
-                        <UInput v-model="form.title" placeholder="Enter course title" size="lg" required />
-                    </div>
-
-                    <!-- Course Description -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Description *
-                        </label>
-                        <UTextarea v-model="form.description" placeholder="Describe what this course covers..."
-                            :rows="4" resize required />
-                    </div>
-
-                    <!-- Organizer Information -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Organizer Name *
-                            </label>
-                            <UInput v-model="form.organizer_name" placeholder="Enter organizer name" size="lg"
-                                required />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Organizer Email *
-                            </label>
-                            <UInput v-model="form.organizer_mail" type="email" placeholder="organizer@example.com"
-                                size="lg" required />
-                        </div>
-                    </div>
-
-                    <!-- Teams Link -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Microsoft Teams Link (Optional)
-                        </label>
-                        <UInput v-model="form.teams_link" placeholder="https://teams.microsoft.com/..." size="lg" />
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="flex justify-between pt-6 border-t border-gray-200">
-                        <div>
-                            <UButton type="button" color="error" variant="outline" icon="i-lucide-trash-2"
-                                @click="showDeleteModal = true">
-                                Delete Course
-                            </UButton>
-                        </div>
-                        <div class="flex space-x-4">
-                            <UButton type="button" color="neutral" @click="$router.back()">
-                                Cancel
-                            </UButton>
-                            <UButton type="submit" color="primary" :loading="submitting" :disabled="!isFormValid">
-                                Update Course
-                            </UButton>
-                        </div>
-                    </div>
-                </form>
+                <AdminCourseForm :course="course" :course-id="courseId" :refresh="refresh" />
             </div>
 
             <!-- Sessions Management Link -->
@@ -246,32 +148,5 @@ useHead({
                 </div>
             </div>
         </div>
-
-        <!-- Delete Confirmation Modal -->
-        <UModal v-model:open="showDeleteModal">
-            <template #content>
-                <UCard>
-                    <template #header>
-                        <h3 class="text-lg font-semibold">Delete Course</h3>
-                    </template>
-
-                    <p class="text-gray-600">
-                        Are you sure you want to delete "<span class="font-semibold">{{ course?.title }}</span>"?
-                        This action cannot be undone and will also delete all associated sessions and lessons.
-                    </p>
-
-                    <template #footer>
-                        <div class="flex justify-end gap-3">
-                            <UButton color="neutral" @click="showDeleteModal = false">
-                                Cancel
-                            </UButton>
-                            <UButton color="error" :loading="deleting" @click="deleteCourse">
-                                Delete Course
-                            </UButton>
-                        </div>
-                    </template>
-                </UCard>
-            </template>
-        </UModal>
     </div>
 </template>

@@ -1,7 +1,7 @@
+import { asc, eq } from "drizzle-orm";
+import type { User } from "~~/shared/models";
 import { lessonsTable, userTable } from "~~/shared/schema";
 import { useDb } from "../composables/db.composable";
-import { asc, eq, or } from "drizzle-orm";
-import type { User } from "~~/shared/models";
 
 export default defineEventHandler(async (event) => {
     const session = await getUserSession(event);
@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
     if (!user) {
         return {
             email: session.user.email,
-            // biome-ignore lint/suspicious/noDuplicateObjectKeys: false positive
             isAdmin: false,
             registrations: [],
         } as User;

@@ -1,7 +1,7 @@
-import { useDb } from "~~/server/composables/db.composable";
-import { userTable } from "~~/shared/schema";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { useDb } from "~~/server/composables/db.composable";
+import { userTable } from "~~/shared/schema";
 
 const createUserSchema = createInsertSchema(userTable, {
     email: z.email("Invalid email address"),

@@ -1,5 +1,5 @@
-import { useDb } from "../composables/db.composable";
 import type { H3Event } from "h3";
+import { useDb } from "../composables/db.composable";
 import { getUserSession } from "./getUserSession.utils";
 
 export async function isAdmin(event: H3Event) {

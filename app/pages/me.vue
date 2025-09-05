@@ -8,7 +8,7 @@ const { courses } = useCourses(false, true);
 
 // Helper function to get course by ID
 const getCourse = (courseId: string) => {
-    return courses.value?.find(course => course.id === courseId);
+    return courses.value?.find((course) => course.id === courseId);
 };
 
 // Helper function to calculate time until session starts
@@ -22,30 +22,37 @@ const getTimeUntilSession = (session: { lessons: { start: Date }[] }) => {
     const now = new Date();
     const diffMs = sessionStart.getTime() - now.getTime();
 
-    if (diffMs <= 0) return t('me.startingNow');
+    if (diffMs <= 0) return t("me.startingNow");
 
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const diffHours = Math.floor(
+        (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (diffDays > 0) {
-        return t('me.inDays', diffDays);
+        return t("me.inDays", diffDays);
     }
     if (diffHours > 0) {
-        return t('me.inHours', diffHours);
+        return t("me.inHours", diffHours);
     }
     if (diffMinutes > 0) {
-        return t('me.inMinutes', diffMinutes);
+        return t("me.inMinutes", diffMinutes);
     }
-    return t('me.startingSoon');
+    return t("me.startingSoon");
 };
 
 const upcomingSessions = computed(() => {
-    const sessions = me.value?.registrations
-        .map(r => r.session)
-        .filter(s => s.lessons.length > 0)
-        .filter(s => new Date(s.lessons[0]?.end ?? -1) >= new Date())
-        .sort((a, b) => new Date(a.lessons[0]?.start ?? -1).getTime() - new Date(b.lessons[0]?.start ?? -1).getTime()) || [];
+    const sessions =
+        me.value?.registrations
+            .map((r) => r.session)
+            .filter((s) => s.lessons.length > 0)
+            .filter((s) => new Date(s.lessons[0]?.end ?? -1) >= new Date())
+            .sort(
+                (a, b) =>
+                    new Date(a.lessons[0]?.start ?? -1).getTime() -
+                    new Date(b.lessons[0]?.start ?? -1).getTime(),
+            ) || [];
 
     const sessionsThisWeek = [];
     const otherSessions = [];
@@ -53,7 +60,11 @@ const upcomingSessions = computed(() => {
     for (const session of sessions) {
         const start = new Date(session.lessons[0]?.start ?? -1);
         const now = new Date();
-        const monday = set(nextMonday(now), { hours: 0, minutes: 0, seconds: 0 }); // next Monday 00:00
+        const monday = set(nextMonday(now), {
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+        }); // next Monday 00:00
 
         console.log(monday);
 
@@ -67,7 +78,6 @@ const upcomingSessions = computed(() => {
 
     return { sessionsThisWeek, otherSessions };
 });
-
 </script>
 
 <template>

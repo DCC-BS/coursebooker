@@ -1,8 +1,8 @@
-import { useDb } from "~~/server/composables/db.composable";
-import { usersToSessionsTable } from "~~/shared/schema";
-import { z } from "zod";
 import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
+import { usersToSessionsTable } from "~~/shared/schema";
 
 const schema = z.object({
     userEmail: z.email().nonempty(),
