@@ -13,9 +13,13 @@ stages:
     - git checkout $CI_COMMIT_BRANCH
     - git pull
     - docker-compose down
-    - cp Dockerfile.template Dockerfile
     - sed -i "s/PROXY_USER/$PROXY_USR/g" Dockerfile
     - sed -i "s/PROXY_PWD/$PROXY_PWD/g" Dockerfile
+    - sed -i "s/!AZURE_AD_TENANT_ID!/$AZURE_AD_TENANT_ID/g" Dockerfile
+    - sed -i "s/!AZURE_AD_CLIENT_ID!/$AZURE_AD_CLIENT_ID/g" Dockerfile
+    - sed -i "s/!NUXT_AZURE_AD_CLIENT_SECRET!/$NUXT_AZURE_AD_CLIENT_SECRET/g" Dockerfile
+    - sed -i "s/!NUXT_AUTH_SECRET!/$NUXT_AUTH_SECRET/g" Dockerfile
+    - sed -i "s/!AUTH_ORIGIN!/$AUTH_ORIGIN/g" Dockerfile
     - find . -type d -exec chmod 755 {} \;
     - find . -type f -exec chmod 644 {} \;
     - docker-compose build
@@ -28,6 +32,7 @@ deploy-to-test:
     name: test_env
     url: https://$SUBDOMAIN.pdstatasvtapp04.pd.intranet.bs.ch/
     on_stop: stop_test
+    AUTH_ORIGIN: "https://$SUBDOMAIN.pdstatasvtapp04.pd.intranet.bs.ch/api/auth"
   tags:
     - app04-shell
 
@@ -40,6 +45,7 @@ deploy-to-prod:
     name: prod_env
     url: https://$SUBDOMAIN.stata.pd.intranet.bs.ch/
     on_stop: stop_production
+    AUTH_ORIGIN: "https://$SUBDOMAIN.stata.pd.intranet.bs.ch/api/auth"
   tags:
     - app05-shell
 

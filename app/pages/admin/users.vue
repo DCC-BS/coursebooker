@@ -8,6 +8,7 @@ definePageMeta({
 });
 
 const feedback = useUserFeedback();
+const { t } = useI18n();
 
 // Reactive data
 const searchQuery = ref("");
@@ -18,10 +19,10 @@ const newUserEmail = ref("");
 const newUserIsAdmin = ref(false);
 
 // Role filter options
-const roleOptions = ref([
-    { label: "All Users", value: "all" },
-    { label: "Administrators", value: "admin" },
-    { label: "Regular Users", value: "user" },
+const roleOptions = computed(() => [
+    { label: t("admin.users.roleFilterOptions.all"), value: "all" },
+    { label: t("admin.users.roleFilterOptions.admin"), value: "admin" },
+    { label: t("admin.users.roleFilterOptions.user"), value: "user" },
 ]);
 
 // Fetch users
@@ -72,7 +73,7 @@ const handleCreateUser = async () => {
         });
 
         feedback.showSuccess({
-            title: "User created successfully",
+            title: t("admin.users.userCreatedSuccessfully"),
         });
 
         // Reset form
@@ -84,13 +85,13 @@ const handleCreateUser = async () => {
         await refresh();
     } catch (error: unknown) {
         console.error("Failed to create user:", error);
-        let msg = "Unknown error";
+        let msg = t("admin.users.unknownError");
         if (error && typeof error === "object") {
             const err = error as { statusMessage?: string; message?: string };
-            msg = err.statusMessage ?? err.message ?? "Unknown error";
+            msg = err.statusMessage ?? err.message ?? t("admin.users.unknownError");
         }
         feedback.showError({
-            title: `Failed to create user: ${msg}`,
+            title: t("admin.users.failedToCreateUser", { message: msg }),
         });
     } finally {
         isCreatingUser.value = false;
@@ -101,34 +102,35 @@ const handleCreateUser = async () => {
 const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
     try {
         await updateUser(userEmail, { isAdmin });
+        const action = isAdmin ? t("admin.users.promotedTo") : t("admin.users.demotedFrom");
         feedback.showSuccess({
-            title: `User ${isAdmin ? "promoted to" : "demoted from"} admin successfully`,
+            title: t("admin.users.userPromotedToDemoted", { action }),
         });
         await refresh();
     } catch (error: unknown) {
         console.error("Failed to update user role:", error);
 
-        let msg = "Unknown error";
+        let msg = t("admin.users.unknownError");
         if (error && typeof error === "object") {
             const err = error as { statusMessage?: string; message?: string };
-            msg = err.statusMessage ?? err.message ?? "Unknown error";
+            msg = err.statusMessage ?? err.message ?? t("admin.users.unknownError");
         }
 
         feedback.showError({
-            title: `Failed to update user role: ${msg}`,
+            title: t("admin.users.failedToUpdateUserRole", { message: msg }),
         });
     }
 };
 
 // Page head
 useHead({
-    title: "Manage Users - Admin Dashboard",
+    title: computed(() => t("admin.users.manageUsersTitle")),
 });
 </script>
 
 <template>
     <div class="space-y-6">
-        <AdminHeader title="Manage Users" />
+        <AdminHeader :title="t('admin.users.manageUsers')" />
 
         <div class="px-2 pb-2">
             <!-- Stats Cards -->
@@ -140,7 +142,7 @@ useHead({
                         </div>
                         <div class="ml-4">
                             <div class="text-2xl font-bold text-gray-900">{{ totalUsers }}</div>
-                            <div class="text-sm text-gray-500">Total Users</div>
+                            <div class="text-sm text-gray-500">{{ t("admin.users.totalUsers") }}</div>
                         </div>
                     </div>
                 </div>
@@ -152,7 +154,7 @@ useHead({
                         </div>
                         <div class="ml-4">
                             <div class="text-2xl font-bold text-gray-900">{{ adminUsers }}</div>
-                            <div class="text-sm text-gray-500">Administrators</div>
+                            <div class="text-sm text-gray-500">{{ t("admin.users.administrators") }}</div>
                         </div>
                     </div>
                 </div>
@@ -164,7 +166,7 @@ useHead({
                         </div>
                         <div class="ml-4">
                             <div class="text-2xl font-bold text-gray-900">{{ regularUsers }}</div>
-                            <div class="text-sm text-gray-500">Regular Users</div>
+                            <div class="text-sm text-gray-500">{{ t("admin.users.regularUsers") }}</div>
                         </div>
                     </div>
                 </div>
@@ -174,46 +176,46 @@ useHead({
             <div class="bg-white rounded-lg shadow p-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <UInput v-model="searchQuery" placeholder="Search users..." icon="i-lucide-search"
+                        <UInput v-model="searchQuery" :placeholder="t('admin.users.searchUsers')" icon="i-lucide-search"
                             class="w-full sm:w-64" />
 
                         <USelect v-model="roleFilter" :items="roleOptions" class="w-full sm:w-48" />
                     </div>
 
                     <UButton color="primary" icon="i-lucide-user-plus" @click="showCreateForm = !showCreateForm">
-                        {{ showCreateForm ? 'Cancel' : 'Add User' }}
+                        {{ showCreateForm ? t('admin.users.cancel') : t('admin.users.addUser') }}
                     </UButton>
                 </div>
             </div>
 
             <!-- Create User Form -->
             <div v-if="showCreateForm" class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New User</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ t("admin.users.addNewUser") }}</h3>
                 <form @submit.prevent="handleCreateUser" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                                Email Address
+                                {{ t("admin.users.emailAddress") }}
                             </label>
-                            <UInput id="email" v-model="newUserEmail" type="email" placeholder="user@example.com"
-                                required />
+                            <UInput id="email" v-model="newUserEmail" type="email"
+                                :placeholder="t('admin.users.emailPlaceholder')" required />
                         </div>
                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">
-                                    Administrator Rights
+                                    {{ t("admin.users.administratorRights") }}
                                 </label>
-                                <p class="text-xs text-gray-500">Grant admin privileges</p>
+                                <p class="text-xs text-gray-500">{{ t("admin.users.grantAdminPrivileges") }}</p>
                             </div>
                             <USwitch v-model="newUserIsAdmin" />
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3">
                         <UButton type="button" color="neutral" variant="ghost" @click="showCreateForm = false">
-                            Cancel
+                            {{ t("admin.users.cancel") }}
                         </UButton>
                         <UButton type="submit" color="primary" :loading="isCreatingUser">
-                            Create User
+                            {{ t("admin.users.createUser") }}
                         </UButton>
                     </div>
                 </form>
@@ -224,7 +226,7 @@ useHead({
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            All Users ({{ filteredUsers.length }})
+                            {{ t("admin.users.allUsersCount", { count: filteredUsers.length }) }}
                         </h3>
                     </div>
 
@@ -233,7 +235,7 @@ useHead({
                         <div class="flex items-center justify-center py-12">
                             <div class="flex items-center space-x-2">
                                 <UIcon name="i-lucide-loader-2" class="h-5 w-5 animate-spin text-primary-600" />
-                                <span class="text-gray-500">Loading users...</span>
+                                <span class="text-gray-500">{{ t("admin.users.loadingUsers") }}</span>
                             </div>
                         </div>
                     </template>
@@ -242,9 +244,10 @@ useHead({
                     <template v-else-if="error">
                         <div class="text-center py-12">
                             <UIcon name="i-lucide-alert-circle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Error Loading Users</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t("admin.users.errorLoadingUsers") }}
+                            </h3>
                             <p class="text-gray-500 mb-4">{{ error }}</p>
-                            <UButton @click="refresh" color="primary">Try Again</UButton>
+                            <UButton @click="refresh" color="primary">{{ t("admin.users.tryAgain") }}</UButton>
                         </div>
                     </template>
 
@@ -252,15 +255,15 @@ useHead({
                     <template v-else-if="!filteredUsers.length">
                         <div class="text-center py-12">
                             <UIcon name="i-lucide-users" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">No Users Found</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t("admin.users.noUsersFound") }}</h3>
                             <p class="text-gray-500 mb-4">
                                 {{ searchQuery || roleFilter !== 'all'
-                                    ? 'Try adjusting your search or filters.'
-                                    : 'Get started by adding your first user.' }}
+                                    ? t('admin.users.adjustSearchFilters')
+                                    : t('admin.users.getStartedAddUser') }}
                             </p>
                             <UButton v-if="!searchQuery && roleFilter === 'all'" @click="showCreateForm = true"
                                 color="primary" icon="i-lucide-user-plus">
-                                Add User
+                                {{ t("admin.users.addUser") }}
                             </UButton>
                         </div>
                     </template>
@@ -276,7 +279,7 @@ useHead({
                                         <div class="flex items-center gap-2 mb-2">
                                             <UBadge :color="user.isAdmin ? 'primary' : 'secondary'" size="sm"
                                                 :variant="user.isAdmin ? 'solid' : 'soft'">
-                                                {{ user.isAdmin ? 'ADMIN' : 'USER' }}
+                                                {{ user.isAdmin ? t('admin.users.admin') : t('admin.users.user') }}
                                             </UBadge>
                                         </div>
                                         <h4 class="text-lg font-semibold text-gray-900 mb-1 break-words">
@@ -291,18 +294,20 @@ useHead({
                                         {{ user.registrations?.length ?? 0 }}
                                     </div>
                                     <div class="text-xs text-gray-500">
-                                        Session Registrations
+                                        {{ t("admin.users.sessionRegistrations") }}
                                     </div>
                                 </div>
 
                                 <!-- Registrations List -->
                                 <div v-if="user.registrations && user.registrations.length > 0" class="mt-4">
-                                    <h5 class="text-sm font-medium text-gray-700 mb-2">Registered Sessions:</h5>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-2">{{
+                                        t("admin.users.registeredSessions") }}</h5>
                                     <div class="space-y-2 max-h-32 overflow-y-auto">
                                         <div v-for="registration in user.registrations" :key="registration.sessionId"
                                             class="p-2 bg-gray-50 rounded-md text-xs">
                                             <div class="font-medium text-gray-900">
-                                                Session: {{ registration.sessionId.slice(0, 8) }}...
+                                                {{ t("admin.users.session") }} {{ registration.sessionId.slice(0, 8)
+                                                }}...
                                             </div>
                                             <div v-if="registration.session?.lessons && registration.session.lessons.length > 0"
                                                 class="text-gray-600 mt-1">
@@ -314,7 +319,7 @@ useHead({
                                                 📍 {{ registration.session.location }}
                                             </div>
                                             <div v-if="registration.session?.teams_link" class="text-gray-600 mt-1">
-                                                🔗 Teams Meeting Available
+                                                🔗 {{ t("admin.users.teamsAvailable") }}
                                             </div>
                                         </div>
                                     </div>
@@ -322,9 +327,9 @@ useHead({
 
                                 <!-- Actions -->
                                 <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <UButton size="xs" :color="user.isAdmin ? 'red' : 'primary'" variant="outline"
+                                    <UButton size="xs" :color="user.isAdmin ? 'error' : 'primary'" variant="outline"
                                         @click="handleUpdateUserRole(user.email, !user.isAdmin)" class="w-full">
-                                        {{ user.isAdmin ? 'Remove Admin' : 'Make Admin' }}
+                                        {{ user.isAdmin ? t('admin.users.removeAdmin') : t('admin.users.makeAdmin') }}
                                     </UButton>
                                 </div>
                             </div>

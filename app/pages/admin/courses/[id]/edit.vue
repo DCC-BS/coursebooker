@@ -8,6 +8,8 @@ definePageMeta({
     title: "Edit Course",
 });
 
+const { t } = useI18n();
+
 // Get route params
 const route = useRoute();
 const courseId = route.params.id as string;
@@ -95,15 +97,15 @@ async function deleteCourse() {
 useHead({
     title: computed(() =>
         course.value
-            ? `Edit ${course.value.title} - Admin`
-            : "Edit Course - Admin",
+            ? t("admin.course.editCourseTitle", { title: course.value.title })
+            : t("admin.course.editCourseGeneric"),
     ),
 });
 </script>
 
 <template>
     <div class="min-h-screen bg-gray-50">
-        <AdminHeader title="Edit Course" />
+        <AdminHeader :title="t('admin.course.editCourse')" />
 
         <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div v-if="pending" class="bg-white shadow rounded-lg p-6">
@@ -117,18 +119,18 @@ useHead({
             <div v-else-if="error" class="bg-white shadow rounded-lg p-6">
                 <div class="text-center">
                     <UIcon name="i-lucide-triangle-alert" class="h-12 w-12 text-red-500 mx-auto mb-4" />
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Course Not Found</h3>
-                    <p class="text-gray-600 mb-4">The course you're looking for doesn't exist or has been deleted.</p>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t("admin.course.courseNotFound") }}</h3>
+                    <p class="text-gray-600 mb-4">{{ t("admin.course.courseNotFoundDesc") }}</p>
                     <UButton to="/admin/courses" color="primary">
-                        Back to Courses
+                        {{ t("admin.course.backToCourses") }}
                     </UButton>
                 </div>
             </div>
 
             <div v-else class="bg-white shadow rounded-lg">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-900">Edit Course</h2>
-                    <p class="text-sm text-gray-600 mt-1">Update the details for this course.</p>
+                    <h2 class="text-xl font-semibold text-gray-900">{{ t("admin.course.editCourseHeader") }}</h2>
+                    <p class="text-sm text-gray-600 mt-1">{{ t("admin.course.updateCourseDetails") }}</p>
                 </div>
 
                 <AdminCourseForm :course="course" :course-id="courseId" :refresh="refresh" />
@@ -138,12 +140,11 @@ useHead({
             <div v-if="course" class="mt-6 bg-white shadow rounded-lg p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900">Sessions & Lessons</h3>
-                        <p class="text-sm text-gray-600 mt-1">Manage sessions and lessons for this course separately.
-                        </p>
+                        <h3 class="text-lg font-medium text-gray-900">{{ t("admin.course.sessionsAndLessons") }}</h3>
+                        <p class="text-sm text-gray-600 mt-1">{{ t("admin.course.manageSessionsDesc") }}</p>
                     </div>
                     <UButton :to="`/admin/courses/${course.id}/sessions`" color="primary" icon="i-lucide-calendar-days">
-                        Manage Sessions
+                        {{ t("admin.course.manageSessions") }}
                     </UButton>
                 </div>
             </div>

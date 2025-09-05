@@ -5,11 +5,13 @@ definePageMeta({
     title: "Admin Dashboard",
 });
 
+const { t } = useI18n();
+
 // Fetch statistics
 const { courses, isPending } = useCourses();
 
 useHead({
-    title: "Admin Dashboard - CourseBooker",
+    title: computed(() => t("admin.dashboard.pageTitle")),
 });
 </script>
 
@@ -19,17 +21,17 @@ useHead({
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center py-6">
                     <div class="flex items-center">
-                        <h1 class="text-3xl font-bold text-gray-900">CourseBooker Admin</h1>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ t("admin.dashboard.coursebookerAdmin") }}</h1>
                     </div>
                     <div class="flex space-x-4">
                         <UButton to="/" color="neutral" variant="ghost" icon="i-lucide-eye">
-                            View Site
+                            {{ t("admin.dashboard.viewSite") }}
                         </UButton>
-                        <UButton to="/admin/users" color="primary" size="lg" icon="i-lucide-graduation-cap">
-                            Manage Users
+                        <UButton to="/admin/users" color="primary" size="lg" icon="i-lucide-users">
+                            {{ t("admin.users.manageUsers") }}
                         </UButton>
                         <UButton to="/admin/courses" color="primary" size="lg" icon="i-lucide-graduation-cap">
-                            Manage Courses
+                            {{ t("admin.dashboard.manageCourses") }}
                         </UButton>
                     </div>
                 </div>
@@ -37,7 +39,7 @@ useHead({
         </div>
 
         <div v-if="isPending || !courses">
-            <LoadingView text="Loading courses..." />
+            <LoadingView :text="t('admin.dashboard.loadingCourses')" />
         </div>
         <div v-else class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -51,7 +53,7 @@ useHead({
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">
-                                        Total Courses
+                                        {{ t("admin.dashboard.totalCourses") }}
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
                                         {{ courses.length ?? 0 }}
@@ -63,7 +65,7 @@ useHead({
                     <div class="bg-gray-50 px-5 py-3">
                         <div class="text-sm">
                             <NuxtLink to="/admin/courses" class="font-medium text-cyan-700 hover:text-cyan-900">
-                                View all courses
+                                {{ t("admin.dashboard.viewAllCourses") }}
                             </NuxtLink>
                         </div>
                     </div>
@@ -79,7 +81,7 @@ useHead({
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">
-                                        Total Sessions
+                                        {{ t("admin.dashboard.totalSessions") }}
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
                                         {{courses.reduce((acc, course) => acc + (course.sessions?.length || 0), 0) || 0
@@ -92,7 +94,7 @@ useHead({
                     <div class="bg-gray-50 px-5 py-3">
                         <div class="text-sm">
                             <span class="font-medium text-gray-700">
-                                Across all courses
+                                {{ t("admin.dashboard.acrossAllCourses") }}
                             </span>
                         </div>
                     </div>
@@ -108,7 +110,7 @@ useHead({
                             <div class="ml-5 w-0 flex-1">
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">
-                                        Total Lessons
+                                        {{ t("admin.dashboard.totalLessons") }}
                                     </dt>
                                     <dd class="text-lg font-medium text-gray-900">
                                         {{courses.reduce((acc, course) => acc + (course.sessions?.length || 0), 0) || 0
@@ -121,7 +123,7 @@ useHead({
                     <div class="bg-gray-50 px-5 py-3">
                         <div class="text-sm">
                             <span class="font-medium text-gray-700">
-                                Scheduled lessons
+                                {{ t("admin.dashboard.scheduledLessons") }}
                             </span>
                         </div>
                     </div>
@@ -130,20 +132,21 @@ useHead({
 
             <!-- Quick Actions -->
             <div class="mt-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ t("admin.dashboard.quickActions") }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white overflow-hidden shadow rounded-lg">
                         <div class="p-6">
                             <div class="flex items-center">
                                 <UIcon name="i-lucide-circle-plus" class="h-8 w-8 text-primary-500" />
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Create New Course</h3>
-                                    <p class="text-sm text-gray-500">Add a new course with sessions and lessons</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{
+                                        t("admin.dashboard.createNewCourse") }}</h3>
+                                    <p class="text-sm text-gray-500">{{ t("admin.dashboard.createNewCourseDesc") }}</p>
                                 </div>
                             </div>
                             <div class="mt-4">
                                 <UButton to="/admin/courses/create" color="primary" block>
-                                    Create Course
+                                    {{ t("admin.dashboard.createCourse") }}
                                 </UButton>
                             </div>
                         </div>
@@ -154,13 +157,14 @@ useHead({
                             <div class="flex items-center">
                                 <UIcon name="i-lucide-file-text" class="h-8 w-8 text-primary-500" />
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Manage Existing</h3>
-                                    <p class="text-sm text-gray-500">Edit or delete existing courses</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ t("admin.dashboard.manageExisting")
+                                        }}</h3>
+                                    <p class="text-sm text-gray-500">{{ t("admin.dashboard.manageExistingDesc") }}</p>
                                 </div>
                             </div>
                             <div class="mt-4">
                                 <UButton to="/admin/courses" color="neutral" block>
-                                    View All Courses
+                                    {{ t("admin.dashboard.viewAllCoursesBtn") }}
                                 </UButton>
                             </div>
                         </div>

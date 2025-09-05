@@ -5,6 +5,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -19,10 +21,10 @@ const props = defineProps({
                 </div>
                 <div class="flex items-center space-x-4">
                     <UButton to="/" color="gray" variant="ghost" icon="i-lucide-eye">
-                        View Site
+                        {{ t("admin.components.header.viewSite") }}
                     </UButton>
                     <UButton to="/admin" color="gray" icon="i-lucide-house">
-                        Dashboard
+                        {{ t("admin.components.header.dashboard") }}
                     </UButton>
                 </div>
             </div>

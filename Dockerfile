@@ -4,6 +4,7 @@ FROM node:23-alpine AS build
 # Set proxy environment variables
 ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
+
 ENV DATABASE_URL=data/coursebooker.db
 
 # Install bun
@@ -14,9 +15,11 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY ./package*.json ./
+COPY ./bun.lock ./
 
 # Install dependencies using bun
 RUN bun install
+RUN bun add  @libsql/linux-x64-musl
 
 # Copy the rest of the application code
 COPY . .
@@ -33,11 +36,23 @@ FROM node:23-alpine
 ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 
+ENV NUXT_AZURE_AD_TENANT_ID="!AZURE_AD_TENANT_ID!"
+ENV NUXT_AZURE_AD_CLIENT_ID="!AZURE_AD_CLIENT_ID!"
+ENV NUXT_AZURE_AD_CLIENT_SECRET="!AZURE_AD_CLIENT_SECRET!"
+ENV NUXT_AUTH_SECRET="!AUTH_SECRET!"
+ENV AUTH_ORIGIN="!AUTH_ORIGIN!"
+ENV DATABASE_URL=data/coursebooker.db
+
+
 # Set the working directory
 WORKDIR /app
 
 # Copy the built application from the build stage
 COPY --from=build /app/.output ./
+COPY ./drizzle ./drizzle
+COPY --from=build /app/node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
+
+RUN mkdir ./data
 
 # Expose the port the app runs on
 EXPOSE 3000
