@@ -12,11 +12,13 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const { showSuccess, showError } = useUserFeedback();
+
 const title = computed(() =>
     props.session ? `Edit Session ${props.session.id}` : "Add New Session",
 );
 const creating = ref(false);
-const feedback = useUserFeedback();
 
 watch(
     () => props.session,
@@ -62,10 +64,11 @@ function createSession() {
     })
         .then((newSession) => {
             emit("update", newSession);
+            showSuccess({ title: "Session created successfully" });
         })
         .catch((error) => {
             console.error("Error creating session:", error);
-            feedback.showError({
+            showError({
                 title: "Failed to create session. Please try again.",
             });
         })
@@ -93,11 +96,12 @@ function updateSession() {
     )
         .then((updatedSession) => {
             emit("update", updatedSession);
+            showSuccess({ title: "Session updated successfully" });
         })
         .catch((error) => {
             console.error("Error updating session:", error);
 
-            feedback.showError({
+            showError({
                 title: "Failed to update session. Please try again.",
             });
         });

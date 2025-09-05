@@ -1,10 +1,22 @@
-import { z } from "zod";
+import { regex, z } from "zod";
 import { userSchema } from "~~/shared/models";
 
-export function useUsers() {
+type useUsersOptions = {
+    withRegistrations?: boolean;
+};
+
+export function useUsers(options: useUsersOptions = {}) {
+    const { withRegistrations = true } = options;
+
+    const schema = withRegistrations
+        ? userSchema
+        : userSchema.extend({
+              registrations: z.undefined(),
+          });
+
     const { data, error, isPending, refresh } = useSchemaFetch(
-        "/api/users",
-        z.array(userSchema),
+        `/api/users?withRegistrations=${withRegistrations}`,
+        z.array(schema),
     );
 
     return {

@@ -22,6 +22,7 @@ onMounted(() => {
         <LoadingView text="loading ..." />
     </div>
     <div v-else-if="isAdmin">
+        <NavigationMenu />
         <slot />
     </div>
     <div v-else>

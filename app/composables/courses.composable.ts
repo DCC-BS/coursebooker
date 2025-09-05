@@ -1,4 +1,3 @@
-import { da } from "zod/v4/locales";
 import { courseSchema, coursesSchema, type Course } from "~~/shared/models";
 
 function sortSessions(course: Course) {
@@ -37,11 +36,20 @@ export function useCourses(admin = false, onlyUpcoming = false) {
     };
 }
 
-export function useCourse(
-    courseId: string,
-    admin = false,
-    onlyUpcoming = false,
-) {
+type useCourseOptions = {
+    admin?: boolean;
+    onlyUpcoming?: boolean;
+    sorted?: boolean;
+    sortedSessions?: boolean;
+};
+
+export function useCourse(courseId: string, options: useCourseOptions = {}) {
+    const {
+        admin = false,
+        onlyUpcoming = false,
+        sortedSessions = true,
+    } = options;
+
     const { data, error, isPending, refresh } = useSchemaFetch(
         `/api/courses/${courseId}?withUsers=${admin}&from=${onlyUpcoming ? new Date().toISOString() : ""}`,
         courseSchema,
@@ -50,7 +58,10 @@ export function useCourse(
     const course = computed(() => {
         if (data.value === undefined) return undefined;
 
-        sortSessions(data.value);
+        if (sortedSessions) {
+            sortSessions(data.value);
+        }
+
         return data.value;
     });
 

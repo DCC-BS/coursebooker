@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { createInsertSchema } from 'drizzle-zod';
+import { motion } from "motion-v";
 
 const route = useRoute();
 const courseId = route.params.id as string;
@@ -38,7 +38,7 @@ watch(course, () => {
         <!-- Course Content -->
         <div v-else-if="course && me" class="container mx-auto px-4 py-8 max-w-7xl">
             <!-- Hero Section -->
-            <div
+            <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }"
                 class="relative overflow-hidden bg-gradient-to-r from-blue-400 to-cyan-600 rounded-3xl shadow-2xl mb-8">
                 <div class="absolute inset-0 bg-black opacity-10"></div>
                 <div class="relative px-8 py-12 md:px-12 md:py-16">
@@ -70,13 +70,15 @@ watch(course, () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Course Details Card -->
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }"
+                        :transition="{ delay: 0.1 }"
+                        class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                         <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center">
                                 <UIcon name="i-lucide-info" class="h-6 w-6 mr-3 text-blue-600" />
@@ -115,10 +117,12 @@ watch(course, () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     <!-- Sessions Overview -->
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }"
+                        :transition="{ delay: 0.2 }"
+                        class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                         <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center">
                                 <UIcon name="i-lucide-calendar-days" class="h-6 w-6 mr-3 text-green-600" />
@@ -138,13 +142,15 @@ watch(course, () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 <!-- Sidebar -->
                 <div class="space-y-8">
                     <!-- Quick Actions -->
-                    <div class="sticky top-2 bg-white rounded-2xl shadow-lg border border-gray-100">
+                    <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }"
+                        :transition="{ delay: 0.1 }"
+                        class="sticky top-2 bg-white rounded-2xl shadow-lg border border-gray-100">
                         <div
                             class="px-6 py-4 rounded-t-2xl bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100">
                             <h3 class="text-lg font-bold text-gray-900 flex items-center">
@@ -169,7 +175,7 @@ watch(course, () => {
                                 {{ t('courseDetails.backToCourses') }}
                             </UButton>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>

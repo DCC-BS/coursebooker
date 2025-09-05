@@ -103,5 +103,17 @@
         "registerForSession": "Für Durchführung anmelden",
         "unregister": "Abmelden",
         "joinSessionMeeting": "An Durchführung teilnehmen"
+    },
+    "admin": {
+        "session": {
+            "editSession": "Durchführung bearbeiten",
+            "deleteSession": "Durchführung löschen",
+            "noLessons": "Keine Lektionen",
+            "lessons": "Lektionen",
+            "registrations": "keine Anmeldungen | 1 Anmeldung | {count} Anmeldungen",
+            "lessonDeletedSuccessfully": "Lektion erfolgreich gelöscht",
+            "failedToDeleteLesson": "Lektion konnte nicht gelöscht werden",
+            "sessionId": "ID: {id}"
+        }
     }
 }

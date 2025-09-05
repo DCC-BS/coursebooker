@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { fa } from "zod/v4/locales";
 import type { Course, CreateSession, Session } from "~/../shared/models";
 
 // Page meta
@@ -15,12 +16,14 @@ const currentSession = ref<Session>();
 // State
 const showSessionModal = ref(false);
 
+const { showSuccess, showError } = useUserFeedback();
+
 // Fetch course data
-const { course, isPending, error, refresh } = useCourse(courseId, true);
+const { course, isPending, error, refresh } = useCourse(courseId, { admin: true, sortedSessions: false });
 
 // Computed
 const sessions = computed(() => {
-    return course.value ? course.value.sessions.sort((a, b) => a.id.localeCompare(b.id)) : [];
+    return course.value ? course.value.sessions : [];
 });
 
 const totalLessons = computed(() => {
@@ -48,8 +51,10 @@ async function deleteSession(session: Session) {
         });
 
         await refresh();
+        showSuccess({ title: "Session deleted successfully" });
     } catch (error) {
         console.error("Error deleting session:", error);
+        showError({ title: "Failed to delete session", description: (error as Error).message });
     }
 }
 
@@ -136,7 +141,7 @@ useHead({
                         <div v-else class="space-y-6">
                             <AdminSessionCard v-for="(session, index) in sessions" :key="session.id" :session="session"
                                 :session-number="index + 1" :course-id="course.id" @edit="editSession"
-                                @delete="deleteSession" @add-lesson="addLessonToSession" @changed="refresh" />
+                                @delete="deleteSession" @add-lesson="addLessonToSession" :refresh-session="refresh" />
                         </div>
                     </div>
                 </div>

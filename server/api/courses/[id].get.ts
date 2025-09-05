@@ -15,6 +15,8 @@ export default defineEventHandler(async (event) => {
         });
     }
 
+    const query = getQuery(event);
+
     const withUsers = await getWithUsers(event);
 
     const course = await db.query.coursesTable.findFirst({

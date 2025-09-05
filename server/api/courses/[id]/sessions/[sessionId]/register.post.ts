@@ -1,7 +1,8 @@
 import { useDb } from "~~/server/composables/db.composable";
-import { usersToSessionsTable } from "~~/shared/schema";
+import { usersToSessionsTable, userTable } from "~~/shared/schema";
 import { z } from "zod";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
+import { eq } from "drizzle-orm";
 
 const schema = z.object({
     userEmail: z.email().nonempty(),
@@ -43,6 +44,17 @@ export default defineEventHandler(async (event) => {
     // user can only register therself when they are not an admin
     if (session?.user.email !== values.userEmail) {
         await guardAdmin(event);
+    }
+
+    const user = await db.query.userTable.findFirst({
+        where: eq(userTable.email, values.userEmail),
+    });
+
+    if (!user) {
+        await db.insert(userTable).values({
+            email: values.userEmail,
+            isAdmin: false,
+        });
     }
 
     await db.insert(usersToSessionsTable).values({

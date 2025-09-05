@@ -103,5 +103,17 @@
         "registerForSession": "Register for Session",
         "unregister": "Unregister",
         "joinSessionMeeting": "Join Session Meeting"
+    },
+    "admin": {
+        "session": {
+            "editSession": "Edit Session",
+            "deleteSession": "Delete Session",
+            "noLessons": "No Lessons",
+            "lessons": "Lessons",
+            "registrations": "no Registrations | 1 Registration | {count} Registrations",
+            "lessonDeletedSuccessfully": "Lesson deleted successfully",
+            "failedToDeleteLesson": "Failed to delete lesson",
+            "sessionId": "ID: {id}"
+        }
     }
 }
