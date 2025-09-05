@@ -32,6 +32,7 @@ deploy-to-test:
     name: test_env
     url: https://$SUBDOMAIN.pdstatasvtapp04.pd.intranet.bs.ch/
     on_stop: stop_test
+  variables:
     AUTH_ORIGIN: "https://$SUBDOMAIN.pdstatasvtapp04.pd.intranet.bs.ch/api/auth"
   tags:
     - app04-shell
@@ -45,6 +46,7 @@ deploy-to-prod:
     name: prod_env
     url: https://$SUBDOMAIN.stata.pd.intranet.bs.ch/
     on_stop: stop_production
+  variables:
     AUTH_ORIGIN: "https://$SUBDOMAIN.stata.pd.intranet.bs.ch/api/auth"
   tags:
     - app05-shell
