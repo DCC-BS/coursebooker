@@ -1,8 +1,15 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
-import { usersToSessionsTable, userTable } from "~~/shared/schema";
+import type { Session } from "~~/shared/models";
+import {
+    coursesTable,
+    lessonsTable,
+    sessionsTable,
+    usersToSessionsTable,
+    userTable,
+} from "~~/shared/schema";
 
 const schema = z.object({
     userEmail: z.email().nonempty(),
@@ -50,6 +57,26 @@ export default defineEventHandler(async (event) => {
         where: eq(userTable.email, values.userEmail),
     });
 
+    const course = await db.query.coursesTable.findFirst({
+        where: eq(coursesTable.id, courseId),
+    });
+
+    const courseSession = await db.query.sessionsTable.findFirst({
+        where: eq(sessionsTable.id, sessionId),
+        with: {
+            lessons: {
+                orderBy: [desc(lessonsTable.start)],
+            },
+        },
+    });
+
+    if (!course || !courseSession) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: "Course or Session not found",
+        });
+    }
+
     if (!user) {
         await db.insert(userTable).values({
             email: values.userEmail,
@@ -61,4 +88,12 @@ export default defineEventHandler(async (event) => {
         sessionId: sessionId,
         userEmail: values.userEmail,
     });
+
+    sendRegistrationMail(
+        session?.user.family_name || "",
+        session?.user.given_name || "",
+        values.userEmail,
+        course,
+        courseSession as Session,
+    );
 });

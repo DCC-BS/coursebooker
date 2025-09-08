@@ -90,8 +90,11 @@ export default NuxtAuthHandler({
                     token.refreshToken as string,
                 );
                 const decoded = decodeJWT(azureSession.apiAccessToken);
+
                 azureSession.apiAccessTokenExpiresAt = decoded.exp;
                 azureSession.user.roles = decoded.roles;
+                azureSession.user.family_name = decoded.family_name;
+                azureSession.user.given_name = decoded.given_name;
             }
             return azureSession;
         },

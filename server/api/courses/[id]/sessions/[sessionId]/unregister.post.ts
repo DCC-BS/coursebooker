@@ -1,8 +1,15 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
-import { usersToSessionsTable } from "~~/shared/schema";
+import { sendUnregisterMail } from "~~/server/utils/mail.utils";
+import type { Session } from "~~/shared/models";
+import {
+    coursesTable,
+    lessonsTable,
+    sessionsTable,
+    usersToSessionsTable,
+} from "~~/shared/schema";
 
 const schema = z.object({
     userEmail: z.email().nonempty(),
@@ -54,6 +61,34 @@ export default defineEventHandler(async (event) => {
                 eq(usersToSessionsTable.userEmail, values.userEmail),
             ),
         );
+
+    const course = await db.query.coursesTable.findFirst({
+        where: eq(coursesTable.id, courseId),
+    });
+
+    const courseSession = await db.query.sessionsTable.findFirst({
+        where: eq(sessionsTable.id, sessionId),
+        with: {
+            lessons: {
+                orderBy: [desc(lessonsTable.start)],
+            },
+        },
+    });
+
+    if (!course || !courseSession) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: "Course or Session not found",
+        });
+    }
+
+    sendUnregisterMail(
+        session?.user.family_name || "",
+        session?.user.given_name || "",
+        values.userEmail,
+        course,
+        courseSession as Session,
+    );
 
     if (result.rowsAffected <= 0) {
         throw createError({

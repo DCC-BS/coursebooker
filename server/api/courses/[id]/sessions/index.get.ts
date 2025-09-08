@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         where: eq(sessionsTable.courseId, courseId),
         with: {
             lessons: true,
-            useers: withUsers,
+            users: withUsers,
         },
     });
 
