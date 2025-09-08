@@ -86,14 +86,4 @@ async function unregister() {
             </UButton>
         </div>
     </div>
-
-    <!-- Session Teams Link -->
-    <div v-if="session.teams_link" class="ml-12 mt-4">
-        <a :href="session.teams_link" target="_blank"
-            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 transition-colors">
-            <UIcon name="i-lucide-video" class="h-4 w-4 mr-1" />
-            {{ t("session.joinSessionMeeting") }}
-            <UIcon name="i-lucide-external-link" class="h-3 w-3 ml-1" />
-        </a>
-    </div>
 </template>

@@ -116,17 +116,6 @@ watch(
                                         </a>
                                     </div>
                                 </div>
-                                <div v-if="course.teams_link" class="flex items-start">
-                                    <UIcon name="i-lucide-video" class="h-5 w-5 text-gray-400 mr-4 mt-1" />
-                                    <div>
-                                        <div class="text-sm text-gray-500">{{ t('courseDetails.teamsMeeting') }}</div>
-                                        <a :href="course.teams_link" target="_blank"
-                                            class="inline-flex items-center font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                                            {{ t('courseDetails.joinMeeting') }}
-                                            <UIcon name="i-lucide-external-link" class="h-4 w-4 ml-1" />
-                                        </a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </motion.div>
