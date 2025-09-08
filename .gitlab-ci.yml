@@ -12,6 +12,7 @@ stages:
     - git fetch
     - git checkout $CI_COMMIT_BRANCH
     - git pull -f
+    - cp Dockerfile.template Dockerfile
     - sed -i "s/PROXY_USER/$PROXY_USR/g" Dockerfile
     - sed -i "s/PROXY_PWD/$PROXY_PWD/g" Dockerfile
     - sed -i "s/!AZURE_AD_TENANT_ID!/$AZURE_AD_TENANT_ID/g" Dockerfile
