@@ -22,7 +22,7 @@ COPY ./package*.json ./
 # RUN bun add  @libsql/linux-x64-musl
 
 # Install dependencies using npm (for packages not supported by bun)
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npm install @libsql/linux-x64-musl
 
 # Copy the rest of the application code
