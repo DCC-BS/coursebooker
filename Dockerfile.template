@@ -7,9 +7,7 @@ ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 
 ENV DATABASE_URL=data/coursebooker.db
 
-RUN apt-get update && apt-get install -y \
-    --no-install-recommends \
-    git
+RUN apk update && apk add git
 
 # Install bun
 # RUN npm install -g bun
