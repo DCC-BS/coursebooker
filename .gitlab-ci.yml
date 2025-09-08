@@ -12,8 +12,7 @@ stages:
     - git fetch
     - git checkout $CI_COMMIT_BRANCH
     - git checkout Dockerfile
-    - git pull
-    - docker-compose down
+    - git pull -f
     - sed -i "s/PROXY_USER/$PROXY_USR/g" Dockerfile
     - sed -i "s/PROXY_PWD/$PROXY_PWD/g" Dockerfile
     - sed -i "s/!AZURE_AD_TENANT_ID!/$AZURE_AD_TENANT_ID/g" Dockerfile
