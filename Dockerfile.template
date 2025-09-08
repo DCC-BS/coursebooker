@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM node:22-alpine3.21 AS build
+FROM node:24-alpine AS build
 
 # Set proxy environment variables
 ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
