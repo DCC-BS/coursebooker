@@ -8,26 +8,30 @@ ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 ENV DATABASE_URL=data/coursebooker.db
 
 # Install bun
-RUN npm install -g bun
+# RUN npm install -g bun
 
 # Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY ./package*.json ./
-COPY ./bun.lock ./
+# COPY ./bun.lock ./
 
 # Install dependencies using bun
-RUN bun install
-RUN bun add  @libsql/linux-x64-musl
+# RUN bun install
+# RUN bun add  @libsql/linux-x64-musl
+
+# Install dependencies using npm (for packages not supported by bun)
+RUN npm install
+RUN npm install @libsql/linux-x64-musl
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the application
-RUN bun x nuxi prepare
-RUN bun x nuxi build
-RUN bun run db:push
+RUN npm x nuxi prepare
+RUN npm x nuxi build
+RUN npm run db:push
 
 # Stage 2: Run the application
 FROM node:23-alpine
