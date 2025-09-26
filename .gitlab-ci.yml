@@ -15,9 +15,9 @@ stages:
     - cp Dockerfile.template Dockerfile
     - sed -i "s#PROXY_USER#$PROXY_USR#g" Dockerfile
     - sed -i "s#PROXY_PWD#$PROXY_PWD#g" Dockerfile
-    - sed -i "s#?AZURE_AD_TENANT_ID?#$AZURE_AD_TENANT_ID#g" Dockerfile
-    - sed -i "s#?AZURE_AD_CLIENT_ID?#$AZURE_AD_CLIENT_ID#g" Dockerfile
-    - sed -i "s#?AZURE_AD_CLIENT_SECRET?#$AZURE_AD_CLIENT_SECRET#g" Dockerfile
+    - sed -i "s#?AZURE_AD_TENANT_ID?#$AD_TENANT_ID#g" Dockerfile
+    - sed -i "s#?AZURE_AD_CLIENT_ID?#$AD_CLIENT_ID#g" Dockerfile
+    - sed -i "s#?AZURE_AD_CLIENT_SECRET?#$AD_CLIENT_SECRET#g" Dockerfile
     - sed -i "s#?AUTH_SECRET?#$AUTH_SECRET#g" Dockerfile
     - sed -i "s#?AUTH_ORIGIN?#$AUTH_ORIGIN#g" Dockerfile
     - sed -i "s#?SMTP_HOST?#$SMTP_HOST#g" Dockerfile
