@@ -1,14 +1,6 @@
 # Stage 1: Build the application
 FROM node:22-alpine3.21 AS build
 
-# Set proxy environment variables
-ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-
-ENV DATABASE_URL=data/coursebooker.db
-
-RUN apk update && apk add git
-
 # Set working directory
 WORKDIR /app
 
@@ -32,24 +24,11 @@ RUN npm add @libsql/linux-x64-musl
 COPY . .
 
 # Build the application
+# RUN npm run prepare
 RUN npm run build
 
 # Stage 2: Run the application
 FROM node:22-alpine3.21 AS runtime
-
-# Set proxy environment variables
-ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
-
-ENV NUXT_AZURE_AD_TENANT_ID="?AZURE_AD_TENANT_ID?"
-ENV NUXT_AZURE_AD_CLIENT_ID="?AZURE_AD_CLIENT_ID?"
-ENV NUXT_AZURE_AD_CLIENT_SECRET="?AZURE_AD_CLIENT_SECRET?"
-ENV NUXT_AUTH_SECRET="?AUTH_SECRET?"
-ENV AUTH_ORIGIN="?AUTH_ORIGIN?"
-ENV DATABASE_URL=data/coursebooker.db
-
-ENV SMTP_HOST=?SMTP_HOST?
-ENV SMTP_PORT=?SMTP_PORT?
 
 # Set working directory
 WORKDIR /app

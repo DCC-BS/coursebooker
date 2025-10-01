@@ -1,5 +1,9 @@
+./node_modules
 ./.vscode
 ./.git
 ./.env
 ./.editorconfig
 ./.nuxt
+Dockerfile
+Dockerfile.template
+.dockerignore

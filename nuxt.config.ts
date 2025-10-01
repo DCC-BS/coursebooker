@@ -92,6 +92,11 @@ export default defineNuxtConfig({
             enableOnWindowFocus: true,
         },
     },
+    nitro: {
+        rollupConfig: {
+            external: ["node:sqlite"],
+        },
+    },
     fonts: {
         providers: {
             google: false,
