@@ -10,7 +10,8 @@ const props = defineProps<{
 }>();
 
 const { users } = useUsers({ withRegistrations: false });
-const userEmails = computed(() => users.value?.map((u) => u.email) ?? []);
+const addedUsers = ref<string[]>([]);
+const userEmails = computed(() => users.value?.map((u) => u.email).concat(addedUsers.value) ?? []);
 
 const { registerForSession, unregisterFromSession } = useSetSession(
     props.courseId,
@@ -57,6 +58,12 @@ async function submitAddRegistration(event: FormSubmitEvent<Schema>) {
         await props.refreshSession();
     }
 }
+
+function addedUser(email: string) {
+    if (!addedUsers.value.includes(email)) {
+        addedUsers.value.push(email);
+    }
+}
 </script>
 
 <template>
@@ -93,7 +100,7 @@ async function submitAddRegistration(event: FormSubmitEvent<Schema>) {
 
             <UFormField name="email">
                 <UInputMenu icon="i-lucide-search" v-model="formState.email" placeholder="Select user"
-                    :items="userEmails" createItem />
+                    :items="userEmails" createItem @create="addedUser" />
             </UFormField>
 
             <UButton icon="i-lucide-user-plus" type="submit">Add Registration</UButton>
