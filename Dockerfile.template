@@ -55,4 +55,4 @@ COPY --from=build /node_modules/@libsql/linux-x64-musl node_modules/@libsql/linu
 EXPOSE 3000
 
 # Start the application
-ENTRYPOINT ["node", "./server/index.mjs"]
+ENTRYPOINT ["node", ".output/server/index.mjs"]
