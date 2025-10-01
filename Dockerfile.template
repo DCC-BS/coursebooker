@@ -49,7 +49,7 @@ ENV SMTP_PORT=?SMTP_PORT?
 # Copy the built application from the build stage
 COPY --from=build /.output ./
 COPY ./drizzle ./drizzle
-COPY --from=build /app/node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
+COPY --from=build /node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
 
 # Expose the port the app runs on
 EXPOSE 3000
