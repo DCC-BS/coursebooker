@@ -17,7 +17,7 @@ COPY ./package*.json ./
 COPY ./bun.lock ./
 
 # Install dependencies using bun
-RUN bun install
+RUN bun ci -f
 RUN bun add  @libsql/linux-x64-musl
 
 # Install dependencies using npm (for packages not supported by bun)
