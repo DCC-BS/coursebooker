@@ -16,7 +16,7 @@ COPY .npmrc ./
 # COPY ./bun.lock ./
 
 # Install dependencies using bun
-RUN npm ci -f
+RUN npm ci
 RUN npm add  @libsql/linux-x64-musl
 
 # Install dependencies using npm (for packages not supported by bun)
