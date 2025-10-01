@@ -17,7 +17,7 @@ COPY .npmrc ./
 
 # Install dependencies using bun
 RUN npm ci
-RUN npm add  @libsql/linux-x64-musl
+RUN npm add @libsql/linux-x64-musl
 
 # Install dependencies using npm (for packages not supported by bun)
 # RUN npm install
@@ -51,7 +51,7 @@ ENV SMTP_PORT=?SMTP_PORT?
 COPY --from=build /.output ./
 COPY ./drizzle ./drizzle
 COPY ./drizzle.config.ts ./drizzle.config.ts
-COPY --from=build /node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
+# COPY --from=build /node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
 
 # Expose the port the app runs on
 EXPOSE 3000
