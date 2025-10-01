@@ -10,9 +10,6 @@ ENV DATABASE_URL=data/coursebooker.db
 # Install bun
 # RUN npm install -g bun
 
-# Set the working directory
-WORKDIR /app
-
 # Copy package.json and package-lock.json
 COPY ./package*.json ./
 # COPY ./bun.lock ./
@@ -49,16 +46,10 @@ ENV DATABASE_URL=data/coursebooker.db
 ENV SMTP_HOST=?SMTP_HOST?
 ENV SMTP_PORT=?SMTP_PORT?
 
-
-# Set the working directory
-WORKDIR /app
-
 # Copy the built application from the build stage
-COPY --from=build /app/.output ./
+COPY --from=build /.output ./
 COPY ./drizzle ./drizzle
-COPY --from=build /app/node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
-
-RUN mkdir ./data
+COPY --from=build /node_modules/@libsql/linux-x64-musl node_modules/@libsql/linux-x64-musl
 
 # Expose the port the app runs on
 EXPOSE 3000

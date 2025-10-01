@@ -4,7 +4,6 @@ services:
     restart: always
     build: .
     volumes:
-      - ./app:/usr/src/app
       - ./data:/data
     ports:
       - 8502:3000
