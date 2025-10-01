@@ -30,6 +30,7 @@
         "date-fns": "^4.1.0",
         "drizzle-orm": "^0.44.5",
         "drizzle-zod": "^0.8.3",
+        "estree-walker": "^3.0.3",
         "ics": "^3.8.1",
         "maska": "^3.2.0",
         "motion-v": "^1.7.2",
