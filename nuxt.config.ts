@@ -51,6 +51,7 @@ export default defineNuxtConfig({
         "@dcc-bs/common-ui.bs.js",
         "@nuxtjs/mdc",
         "@sidebase/nuxt-auth",
+        "@nuxt/fonts",
     ],
     devtools: { enabled: true },
     css: ["~/assets/css/main.css"],
@@ -89,6 +90,15 @@ export default defineNuxtConfig({
         sessionRefresh: {
             enablePeriodically: 10000,
             enableOnWindowFocus: true,
+        },
+    },
+    fonts: {
+        providers: {
+            google: false,
+            bunny: false,
+            adobe: false,
+            fontshare: false,
+            googleicons: false,
         },
     },
 });
