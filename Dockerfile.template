@@ -33,7 +33,6 @@ COPY . .
 # Build the application
 RUN npm x nuxi prepare
 RUN npm x nuxi build
-RUN npm run db:push
 
 # Stage 2: Run the application
 FROM node:23-alpine

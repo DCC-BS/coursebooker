@@ -8,7 +8,7 @@ definePageMeta({
         unauthenticatedOnly: true,
         navigateAuthenticatedTo: "/",
     },
-    layout: undefined,
+    layout: 'auth',
 });
 
 const { signIn } = useAuth();
@@ -17,7 +17,6 @@ const route = useRoute();
 const { t } = useI18n();
 
 // Add reactive state for loading animation
-const isLoading = ref(true);
 const loadingText = ref(t("auth.connecting"));
 
 // Simulate loading states for better UX

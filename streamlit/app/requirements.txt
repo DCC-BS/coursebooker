@@ -1,5 +1,0 @@
-streamlit
-python-dateutil
-icalendar
-pytz
-Pillow

@@ -2,10 +2,6 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const { t, locale, locales, setLocale } = useI18n();
-
-const availableLocales = computed(() => {
-    return locales.value.filter((i) => i.code !== locale.value);
-});
 const { data, signOut } = useAuth();
 
 const userImage = computed(() => {
@@ -13,10 +9,18 @@ const userImage = computed(() => {
     return base64 ? base64 : "/LucideCircleUserRound.png";
 });
 
+const availableLocales = computed(() => {
+    return locales.value.filter((i) => i.code !== locale.value);
+});
+
+const currentLocale = computed(() => {
+    return locale.value?.toUpperCase() ?? "EN";
+});
+
 // Navigation menu items
 const items = computed<DropdownMenuItem[]>(() =>
     availableLocales.value.map((locale) => ({
-        label: locale.name,
+        label: locale.code.toUpperCase(),
         onSelect: async () => setLocale(locale.code),
     })),
 );
@@ -37,19 +41,23 @@ async function handleSignOut(): Promise<void> {
 </script>
 
 <template>
-    <div class="sticky top-0 flex justify-between gap-2 p-2 w-full z-50">
-        <div>
-            <UButton to="/" variant="ghost" icon="i-lucide-home">
-            </UButton>
-        </div>
-        <div class="flex gap-1">
+    <div class="flex justify-between gap-2 p-2 w-full z-50">
+        <ULink to="/">
+            <div class="text-xl font-bold mt-4 ml-4">
+                {{ t("navigation.app") }}
+            </div>
+        </ULink>
+
+        <div class="flex items-center gap-2">
             <UButton to="/me" color="primary" variant="ghost" icon="i-lucide-graduation-cap">
                 {{ t("navigation.myCourses") }}
             </UButton>
-            <UDropdownMenu :items="items" arrow>
-                <UButton variant="ghost" :label="t('navigation.languages')" icon="i-lucide-languages">
+
+            <UDropdownMenu :items="items" variant="ghost">
+                <UButton variant="ghost" :label="currentLocale" color="neutral">
                 </UButton>
             </UDropdownMenu>
+
             <UDropdownMenu :items="logoutItems" arrow>
                 <img :src="userImage" alt="User Image" class="w-8 h-8 rounded-full" />
             </UDropdownMenu>
