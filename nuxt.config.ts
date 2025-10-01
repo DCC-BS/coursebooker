@@ -98,6 +98,7 @@ export default defineNuxtConfig({
             bunny: false,
             adobe: false,
             fontshare: false,
+            fontsource: false,
             googleicons: false,
         },
     },
