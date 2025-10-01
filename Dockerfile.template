@@ -14,6 +14,7 @@ RUN apk update && apk add git
 
 # Copy package.json and package-lock.json
 COPY ./package*.json ./
+COPY .npmrc ./
 # COPY ./bun.lock ./
 
 # Install dependencies using bun
