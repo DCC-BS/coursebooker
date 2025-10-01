@@ -12,6 +12,7 @@ ENV DATABASE_URL=data/coursebooker.db
 
 # Copy package.json and package-lock.json
 COPY ./package*.json ./
+COPY .npmrc ./
 # COPY ./bun.lock ./
 
 # Install dependencies using bun
