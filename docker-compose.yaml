@@ -4,6 +4,6 @@ services:
     restart: always
     build: .
     volumes:
-      - ./data:/data
+      - ./data:/app/data
     ports:
       - 8502:3000
