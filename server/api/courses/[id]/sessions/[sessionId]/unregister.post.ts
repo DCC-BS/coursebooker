@@ -3,6 +3,7 @@ import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
 import { sendUnregisterMail } from "~~/server/utils/mail.utils";
+import { firstCharToUpper } from "~~/server/utils/string.utils";
 import type { Session } from "~~/shared/models";
 import {
     coursesTable,
@@ -36,8 +37,10 @@ export default defineEventHandler(async (event) => {
 
     const values = schema.parse(await readBody(event));
     const session = await getUserSession(event);
+    let registrationIsForMe = false;
 
     if (values.userEmail === "me") {
+        registrationIsForMe = true;
         if (session?.user.email) {
             throw createError({
                 statusCode: 401,
@@ -82,9 +85,17 @@ export default defineEventHandler(async (event) => {
         });
     }
 
+    const given_name = registrationIsForMe
+        ? session?.user.given_name || ""
+        : firstCharToUpper(values.userEmail.split(".")[0]);
+
+    const family_name = registrationIsForMe
+        ? session?.user.family_name || ""
+        : firstCharToUpper(values.userEmail.split(".")[1].split("@")[0]);
+
     sendUnregisterMail(
-        session?.user.family_name || "",
-        session?.user.given_name || "",
+        family_name,
+        given_name,
         values.userEmail,
         course,
         courseSession as Session,
