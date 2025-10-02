@@ -2,6 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
+import { firstCharToUpper } from "~~/server/utils/string.utils";
 import type { Session } from "~~/shared/models";
 import {
     coursesTable,
@@ -91,16 +92,12 @@ export default defineEventHandler(async (event) => {
         userEmail: values.userEmail,
     });
 
-    function firstCharToUpper(str: string) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+    const given_name = registrationIsForMe
+        ? session?.user.given_name || ""
+        : firstCharToUpper(values.userEmail.split(".")[0]);
 
     const family_name = registrationIsForMe
         ? session?.user.family_name || ""
-        : firstCharToUpper(values.userEmail.split(".")[0]);
-
-    const given_name = registrationIsForMe
-        ? session?.user.given_name || ""
         : firstCharToUpper(values.userEmail.split(".")[1].split("@")[0]);
 
     console.log(
