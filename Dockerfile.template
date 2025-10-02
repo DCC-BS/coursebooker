@@ -17,6 +17,8 @@ ENV AUTH_ORIGIN="?AUTH_ORIGIN?"
 ENV SMTP_HOST=?SMTP_HOST?
 ENV SMTP_PORT=?SMTP_PORT?
 
+RUN apk update && apk add git
+
 # Set working directory
 WORKDIR /app
 
@@ -34,6 +36,9 @@ COPY . .
 
 # Build the application
 RUN npm run build
+
+COPY ./docker/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # Expose the port the app runs on
 EXPOSE 3000
