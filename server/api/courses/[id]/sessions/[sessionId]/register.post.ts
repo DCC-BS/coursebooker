@@ -36,8 +36,10 @@ export default defineEventHandler(async (event) => {
 
     const values = schema.parse(await readBody(event));
     const session = await getUserSession(event);
+    let registrationIsForMe = false;
 
     if (values.userEmail === "me") {
+        registrationIsForMe = true;
         if (session?.user.email) {
             throw createError({
                 statusCode: 401,
@@ -89,9 +91,28 @@ export default defineEventHandler(async (event) => {
         userEmail: values.userEmail,
     });
 
+    function firstCharToUpper(str: string) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    const family_name = registrationIsForMe
+        ? session?.user.family_name || ""
+        : firstCharToUpper(values.userEmail.split(".")[0]);
+
+    const given_name = registrationIsForMe
+        ? session?.user.given_name || ""
+        : firstCharToUpper(values.userEmail.split(".")[1].split("@")[0]);
+
+    console.log(
+        "Sending registration mail to:",
+        family_name,
+        given_name,
+        values.userEmail,
+    );
+
     sendRegistrationMail(
-        session?.user.family_name || "",
-        session?.user.given_name || "",
+        family_name,
+        given_name,
         values.userEmail,
         course,
         courseSession as Session,

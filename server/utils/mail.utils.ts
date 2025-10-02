@@ -2,7 +2,6 @@ import type { Course, CreateCourse, Lesson, Session } from "~~/shared/models";
 import { format } from "date-fns";
 import { createEvent } from "ics";
 import { createTransport, type SendMailOptions } from "nodemailer";
-import { date } from "zod";
 
 export function sendRegistrationMail(
     familyName: string,
@@ -110,7 +109,13 @@ dcc@bs.ch`;
 
 function createIcsEvents(course: Course, session: Session) {
     let descriptionPostfix = "";
-    if (session.teams_link) {
+
+    let teams_link = undefined;
+    if (session.teams_link && session.teams_link.length > 0) {
+        teams_link = session.teams_link;
+    }
+
+    if (teams_link) {
         descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
     }
 
@@ -137,7 +142,7 @@ function createIcsEvents(course: Course, session: Session) {
                 email: course.organizer_mail,
             },
             location: session.location ?? undefined,
-            url: session.teams_link ?? undefined,
+            url: teams_link,
         }),
     );
 }
