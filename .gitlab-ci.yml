@@ -8,6 +8,7 @@ stages:
 .deploy:
   script:
     - cd /opt/apps/ki/$CI_PROJECT_NAME
+    - git init
     - git remote set-url origin $CI_REPOSITORY_URL
     - git fetch
     - git checkout $CI_COMMIT_BRANCH
