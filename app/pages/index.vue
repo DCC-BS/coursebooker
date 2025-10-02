@@ -131,18 +131,6 @@ const resultsMessage = computed(() => {
 
 <template>
     <div class="bg-gradient-to-br from-blue-50 to-indigo-100">
-        <!-- Header -->
-        <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }" class="bg-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <h1 class="text-4xl font-bold text-gray-900 text-center mb-2">
-                    {{ t('home.welcome') }}
-                </h1>
-                <p class="text-lg text-gray-600 text-center">
-                    {{ t('home.subtitle') }}
-                </p>
-            </div>
-        </motion.div>
-
         <!-- Search and Filters -->
         <motion.div :initial="{ opacity: 0, y: 30 }" :animate="{ opacity: 1, y: 0 }" :transition="{ delay: 0.2 }"
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

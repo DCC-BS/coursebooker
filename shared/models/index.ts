@@ -50,8 +50,11 @@ export const updateCourseSchema = createUpdateSchema(coursesTable, {
 
 export const createSessionSchema = createInsertSchema(sessionsTable, {
     id: z.string().max(0).optional().default(""),
+    ics_file: z.instanceof(Blob).optional(),
 });
-export const updateSessionSchema = createUpdateSchema(sessionsTable);
+export const updateSessionSchema = createUpdateSchema(sessionsTable, {
+    ics_file: z.any().optional(),
+});
 
 export const createLessonSchema = createInsertSchema(lessonsTable, {
     id: z.string().max(0).optional().default(""),
@@ -90,5 +93,7 @@ export type UserRegistration = typeof usersToSessionsTable.$inferSelect & {
 export type CreateLesson = Omit<typeof lessonsTable.$inferInsert, "id">;
 export type UpdateLesson = Partial<CreateLesson>;
 
-export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id">;
+export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id"> & {
+    ics_file?: Blob | undefined;
+};
 export type UpdateSession = Partial<CreateSession>;

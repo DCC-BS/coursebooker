@@ -34,12 +34,23 @@ const state = reactive({
     location: props.session?.location || "",
     teams_link: props.session?.teams_link || "",
     courseId: props.courseId,
+    ics_file: undefined,
 } as CreateSession);
 
 const emit = defineEmits<{
     update: [session: Session];
     cancel: [];
 }>();
+
+async function handleFileChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+
+    console.log(target.files[0]);
+
+    const arrayBuffer = await target.files[0]?.arrayBuffer();
+    state.ics_file = arrayBuffer ? new Blob([arrayBuffer]) : undefined;
+}
 
 function onSubmit() {
     creating.value = true;
@@ -56,6 +67,7 @@ function createSession() {
         location: state.location,
         teams_link: state.teams_link,
         courseId: state.courseId,
+        ics_file: state.ics_file,
     } as CreateSession;
 
     $fetch<Session>(`/api/courses/${props.courseId}/sessions/`, {
@@ -85,13 +97,21 @@ function updateSession() {
     const body = {
         location: state.location,
         teams_link: state.teams_link,
+        ics_file: state.ics_file,
     } as UpdateSession;
+
+    const formData = new FormData();
+    formData.append("location", body.location || "");
+    formData.append("teams_link", body.teams_link || "");
+    if (body.ics_file) {
+        formData.append("ics_file", body.ics_file);
+    }
 
     $fetch<Session>(
         `/api/courses/${props.courseId}/sessions/${props.session.id}`,
         {
             method: "PATCH",
-            body,
+            body: formData,
         },
     )
         .then((updatedSession) => {
@@ -121,6 +141,11 @@ function updateSession() {
             <UFormField label="Teams Link" name="teams_link">
                 <UInput class="w-full" v-model="state.teams_link" placeholder="https://teams.microsoft.com/..."
                     size="lg" />
+            </UFormField>
+
+            <UFormField label="ICS File" name="ics_file">
+                <UInput class="w-full" accept=".ics," @change="handleFileChange" placeholder="Upload ICS File" size="lg"
+                    type="file" />
             </UFormField>
 
             <div class="flex justify-end gap-3 mt-2">
