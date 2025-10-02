@@ -23,7 +23,18 @@ export default defineAdminResponseHandler(async (event) => {
         });
     }
 
-    const body = updateSessionSchema.parse(await readBody(event));
+    const formData = await readFormData(event);
+    const data = {
+        location: formData.get("location"),
+        teams_link: formData.get("teams_link"),
+        ics_file: formData.get("ics_file"),
+    };
+
+    const body = updateSessionSchema.parse(data);
+
+    if (body.ics_file) {
+        body.ics_file = Buffer.from(await body.ics_file.arrayBuffer());
+    }
 
     await db
         .update(sessionsTable)

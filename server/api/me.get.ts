@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
             registrations: {
                 with: {
                     session: {
+                        columns: { ics_file: false },
                         with: {
                             lessons: {
                                 orderBy: [asc(lessonsTable.start)],

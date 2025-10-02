@@ -82,25 +82,6 @@ const upcomingSessions = computed(() => {
 
 <template>
     <div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-        <!-- Header -->
-        <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }" class="bg-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="text-center">
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2">
-                        {{ t('me.dashboard') }}
-                    </h1>
-                    <p class="text-lg text-gray-600">
-                        {{ t('me.welcomeBack') }}
-                    </p>
-                    <div v-if="me"
-                        class="mt-4 inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full">
-                        <UIcon name="i-lucide-user" class="w-4 h-4 mr-2" />
-                        {{ me.email }}
-                    </div>
-                </div>
-            </div>
-        </motion.div>
-
         <!-- Loading State -->
         <motion.div v-if="isPending" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }"
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
