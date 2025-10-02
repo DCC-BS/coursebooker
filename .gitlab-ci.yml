@@ -13,7 +13,6 @@ stages:
     # - git remote set-url origin $CI_REPOSITORY_URL
     # - git fetch
     # - git checkout $CI_COMMIT_BRANCH
-    - git clean
     - git checkout .
     - git pull -f
     - cp Dockerfile.template Dockerfile
