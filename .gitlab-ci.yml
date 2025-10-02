@@ -11,8 +11,8 @@ stages:
     # - git init
     # - git remote add origin $CI_REPOSITORY_URL
     - git remote set-url origin $CI_REPOSITORY_URL
-    # - git fetch
-    # - git checkout $CI_COMMIT_BRANCH
+    - git fetch
+    - git checkout $CI_COMMIT_BRANCH
     - git pull -f
     - cp Dockerfile.template Dockerfile
     - sed -i "s#PROXY_USER#$PROXY_USR#g" Dockerfile
