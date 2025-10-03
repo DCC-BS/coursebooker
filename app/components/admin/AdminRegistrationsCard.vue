@@ -11,7 +11,9 @@ const props = defineProps<{
 
 const { users } = useUsers({ withRegistrations: false });
 const addedUsers = ref<string[]>([]);
-const userEmails = computed(() => users.value?.map((u) => u.email).concat(addedUsers.value) ?? []);
+const userEmails = computed(
+    () => users.value?.map((u) => u.email).concat(addedUsers.value) ?? [],
+);
 
 const { registerForSession, unregisterFromSession } = useSetSession(
     props.courseId,

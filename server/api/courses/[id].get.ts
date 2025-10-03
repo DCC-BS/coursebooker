@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
         where: eq(coursesTable.id, courseId),
         with: {
             sessions: {
+                columns: { ics_file: false },
                 with: {
                     lessons: {
                         orderBy: [asc(lessonsTable.start)],

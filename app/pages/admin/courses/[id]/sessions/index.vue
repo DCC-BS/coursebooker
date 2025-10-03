@@ -74,7 +74,9 @@ function addLessonToSession(session: Session) {
 useHead({
     title: computed(() =>
         course.value
-            ? t("admin.course.manageSessionsTitle", { title: course.value.title })
+            ? t("admin.course.manageSessionsTitle", {
+                  title: course.value.title,
+              })
             : t("admin.course.manageSessionsGeneric"),
     ),
 });

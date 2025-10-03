@@ -88,7 +88,10 @@ const handleCreateUser = async () => {
         let msg = t("admin.users.unknownError");
         if (error && typeof error === "object") {
             const err = error as { statusMessage?: string; message?: string };
-            msg = err.statusMessage ?? err.message ?? t("admin.users.unknownError");
+            msg =
+                err.statusMessage ??
+                err.message ??
+                t("admin.users.unknownError");
         }
         feedback.showError({
             title: t("admin.users.failedToCreateUser", { message: msg }),
@@ -102,7 +105,9 @@ const handleCreateUser = async () => {
 const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
     try {
         await updateUser(userEmail, { isAdmin });
-        const action = isAdmin ? t("admin.users.promotedTo") : t("admin.users.demotedFrom");
+        const action = isAdmin
+            ? t("admin.users.promotedTo")
+            : t("admin.users.demotedFrom");
         feedback.showSuccess({
             title: t("admin.users.userPromotedToDemoted", { action }),
         });
@@ -113,7 +118,10 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
         let msg = t("admin.users.unknownError");
         if (error && typeof error === "object") {
             const err = error as { statusMessage?: string; message?: string };
-            msg = err.statusMessage ?? err.message ?? t("admin.users.unknownError");
+            msg =
+                err.statusMessage ??
+                err.message ??
+                t("admin.users.unknownError");
         }
 
         feedback.showError({

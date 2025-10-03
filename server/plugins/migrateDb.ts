@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { useDb } from "../composables/db.composable";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { userTable } from "~~/shared/schema";
+import { useDb } from "../composables/db.composable";
 
 export default defineNitroPlugin(async () => {
     const config = useRuntimeConfig();

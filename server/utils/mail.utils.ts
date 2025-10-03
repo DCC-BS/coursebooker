@@ -1,7 +1,8 @@
-import type { Course, CreateCourse, Lesson, Session } from "~~/shared/models";
 import { format } from "date-fns";
-import { createEvent } from "ics";
+import { createEvents, type EventAttributes } from "ics";
 import { createTransport, type SendMailOptions } from "nodemailer";
+import type Mail from "nodemailer/lib/mailer";
+import type { Course, CreateCourse, Lesson, Session } from "~~/shared/models";
 
 export function sendRegistrationMail(
     familyName: string,
@@ -9,12 +10,22 @@ export function sendRegistrationMail(
     userEmail: string,
     course: CreateCourse,
     session: Session,
+    ics_file?: Buffer<ArrayBufferLike>,
 ) {
-    const icss = createIcsEvents(course as Course, session);
+    const attachment = {
+        filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
+        contentType: "text/calendar",
+    } as Mail.Attachment;
 
-    for (const ics of icss) {
+    if (ics_file) {
+        attachment.raw = ics_file;
+    } else {
+        const icss = createIcsEvents(course as Course, session);
+        const ics = createEvents(icss);
         if (ics.error) {
             console.error("Error creating ICS event:", ics.error);
+        } else {
+            attachment.content = ics.value;
         }
     }
 
@@ -58,11 +69,7 @@ dcc@bs.ch`;
         to: userEmail,
         subject: `Anmeldung zum Kurs "${course.title}"`,
         text: body,
-        attachments: icss.map((v) => ({
-            filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
-            content: v.value,
-            contentType: "text/calendar",
-        })),
+        attachments: [attachment],
     };
 
     sendMail(mailOptions);
@@ -107,10 +114,10 @@ dcc@bs.ch`;
     sendMail(mailOptions);
 }
 
-function createIcsEvents(course: Course, session: Session) {
+function createIcsEvents(course: Course, session: Session): EventAttributes[] {
     let descriptionPostfix = "";
 
-    let teams_link = undefined;
+    let teams_link: string | undefined;
     if (session.teams_link && session.teams_link.length > 0) {
         teams_link = session.teams_link;
     }
@@ -119,32 +126,30 @@ function createIcsEvents(course: Course, session: Session) {
         descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
     }
 
-    return session.lessons.map((lesson: Lesson) =>
-        createEvent({
-            title: course.title,
-            description: course.description + descriptionPostfix,
-            start: [
-                lesson.start.getFullYear(),
-                lesson.start.getMonth() + 1,
-                lesson.start.getDate(),
-                lesson.start.getHours(),
-                lesson.start.getMinutes(),
-            ],
-            end: [
-                lesson.end.getFullYear(),
-                lesson.end.getMonth() + 1,
-                lesson.end.getDate(),
-                lesson.end.getHours(),
-                lesson.end.getMinutes(),
-            ],
-            organizer: {
-                name: course.organizer_name,
-                email: course.organizer_mail,
-            },
-            location: session.location ?? undefined,
-            url: teams_link,
-        }),
-    );
+    return session.lessons.map((lesson: Lesson) => ({
+        title: course.title,
+        description: course.description + descriptionPostfix,
+        start: [
+            lesson.start.getFullYear(),
+            lesson.start.getMonth() + 1,
+            lesson.start.getDate(),
+            lesson.start.getHours(),
+            lesson.start.getMinutes(),
+        ],
+        end: [
+            lesson.end.getFullYear(),
+            lesson.end.getMonth() + 1,
+            lesson.end.getDate(),
+            lesson.end.getHours(),
+            lesson.end.getMinutes(),
+        ],
+        organizer: {
+            name: course.organizer_name,
+            email: course.organizer_mail,
+        },
+        location: session.location ?? undefined,
+        url: teams_link,
+    }));
 }
 
 function sendMail(mailOptions: SendMailOptions) {

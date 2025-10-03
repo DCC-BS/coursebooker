@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
 
     const sessions = db.query.sessionsTable.findMany({
         where: eq(sessionsTable.courseId, courseId),
+        columns: { ics_file: false },
         with: {
             lessons: true,
             users: withUsers,

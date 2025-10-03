@@ -113,5 +113,6 @@ export default defineEventHandler(async (event) => {
         values.userEmail,
         course,
         courseSession as Session,
+        courseSession.ics_file ?? undefined,
     );
 });
