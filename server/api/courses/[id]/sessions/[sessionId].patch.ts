@@ -34,6 +34,7 @@ export default defineAdminResponseHandler(async (event) => {
 
     if (body.ics_file) {
         body.ics_file = Buffer.from(await body.ics_file.arrayBuffer());
+        body.ics_url = `/api/courses/${courseId}/sessions/${sessionId}/ics`;
     }
 
     await db

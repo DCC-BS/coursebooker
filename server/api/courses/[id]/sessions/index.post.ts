@@ -16,11 +16,20 @@ export default defineAdminResponseHandler(async (event) => {
     }
 
     // Check if course exists
-    const body = createSessionSchema.parse(await readBody(event));
+    const formData = await readFormData(event);
+    const data = {
+        location: formData.get("location"),
+        teams_link: formData.get("teams_link"),
+        ics_file: formData.get("ics_file"),
+        courseId: courseId,
+    };
+
+    const body = createSessionSchema.parse(data);
     body.id = uuidv7();
 
     if (body.ics_file) {
         body.ics_file = Buffer.from(await body.ics_file.arrayBuffer());
+        body.ics_url = `/api/courses/${courseId}/sessions/${body.id}/ics`;
     }
 
     const session = await db

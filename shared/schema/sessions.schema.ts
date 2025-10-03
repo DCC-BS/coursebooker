@@ -12,6 +12,7 @@ export const sessionsTable = sqliteTable("sessions", {
     location: text({ length: 255 }),
     teams_link: text({ length: 500 }),
     ics_file: blob({ mode: "buffer" }),
+    ics_url: text(),
 });
 
 export const SessionHasOneCourse = relations(sessionsTable, ({ one }) => ({

@@ -1,14 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
-import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 import { sessionsTable } from "~~/shared/schema";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDb();
     const courseId = getRouterParam(event, "id");
     const sessionId = getRouterParam(event, "sessionId");
-
-    const withUsers = await getWithUsers(event);
 
     if (!courseId) {
         throw createError({
@@ -24,17 +21,17 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    const session = await db.query.sessionsTable.findFirst({
-        where: and(
-            eq(sessionsTable.id, sessionId),
-            eq(sessionsTable.courseId, courseId),
-        ),
-        columns: { ics_file: true },
-        with: {
-            lessons: true,
-            users: withUsers,
-        },
-    });
+    const session = await db
+        .update(sessionsTable)
+        .set({ ics_file: null, ics_url: null })
+        .where(
+            and(
+                eq(sessionsTable.id, sessionId),
+                eq(sessionsTable.courseId, courseId),
+            ),
+        )
+        .returning({ ics_file: sessionsTable.ics_file })
+        .get();
 
     if (!session) {
         throw createError({

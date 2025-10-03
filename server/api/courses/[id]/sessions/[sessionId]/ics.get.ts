@@ -1,14 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
-import { getWithUsers } from "~~/server/utils/withUsers.util.ts";
 import { sessionsTable } from "~~/shared/schema";
 
 export default defineEventHandler(async (event) => {
     const { db } = useDb();
     const courseId = getRouterParam(event, "id");
     const sessionId = getRouterParam(event, "sessionId");
-
-    const withUsers = await getWithUsers(event);
 
     if (!courseId) {
         throw createError({
@@ -30,10 +27,6 @@ export default defineEventHandler(async (event) => {
             eq(sessionsTable.courseId, courseId),
         ),
         columns: { ics_file: true },
-        with: {
-            lessons: true,
-            users: withUsers,
-        },
     });
 
     if (!session) {
@@ -43,5 +36,21 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    return session;
+    if (!session.ics_file) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: "ICS file not found for this session",
+        });
+    }
+
+    // Set headers for file download
+    setHeader(event, "Content-Type", "text/calendar");
+    setHeader(
+        event,
+        "Content-Disposition",
+        `attachment; filename="session-${sessionId}.ics"`,
+    );
+    setHeader(event, "Cache-Control", "no-cache");
+
+    return session.ics_file;
 });

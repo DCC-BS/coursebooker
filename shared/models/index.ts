@@ -27,6 +27,7 @@ export const lessonSchema = createSelectSchema(lessonsTable, {
 export const sessionSchema = createSelectSchema(sessionsTable).extend({
     lessons: z.array(lessonSchema),
     registrations: z.array(createSelectSchema(usersToSessionsTable)).optional(),
+    ics_file: z.any().optional(),
 });
 
 export const courseSchemaWithoutSessions = createSelectSchema(coursesTable, {
@@ -94,6 +95,6 @@ export type CreateLesson = Omit<typeof lessonsTable.$inferInsert, "id">;
 export type UpdateLesson = Partial<CreateLesson>;
 
 export type CreateSession = Omit<typeof sessionsTable.$inferInsert, "id"> & {
-    ics_file?: Blob | undefined;
+    ics_file?: Blob;
 };
 export type UpdateSession = Partial<CreateSession>;
