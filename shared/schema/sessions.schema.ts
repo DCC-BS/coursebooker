@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { sqliteTable, text, blob } from "drizzle-orm/sqlite-core";
+import { blob, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { coursesTable } from "./courses.schema";
 import { lessonsTable } from "./lessons.schema";
 import { usersToSessionsTable } from "./usersToSessions.schema";

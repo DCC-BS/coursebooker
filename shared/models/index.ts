@@ -50,7 +50,7 @@ export const updateCourseSchema = createUpdateSchema(coursesTable, {
 
 export const createSessionSchema = createInsertSchema(sessionsTable, {
     id: z.string().max(0).optional().default(""),
-    ics_file: z.instanceof(Blob).optional(),
+    ics_file: z.any().optional(),
 });
 export const updateSessionSchema = createUpdateSchema(sessionsTable, {
     ics_file: z.any().optional(),

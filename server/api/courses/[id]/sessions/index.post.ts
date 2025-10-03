@@ -19,6 +19,10 @@ export default defineAdminResponseHandler(async (event) => {
     const body = createSessionSchema.parse(await readBody(event));
     body.id = uuidv7();
 
+    if (body.ics_file) {
+        body.ics_file = Buffer.from(await body.ics_file.arrayBuffer());
+    }
+
     const session = await db
         .insert(sessionsTable)
         .values({
