@@ -1,0 +1,1 @@
+ALTER TABLE `sessions` ADD `ics_url` text;

@@ -18,7 +18,7 @@ export function sendRegistrationMail(
     } as Mail.Attachment;
 
     if (ics_file) {
-        attachment.raw = ics_file;
+        attachment.content = ics_file;
     } else {
         const icss = createIcsEvents(course as Course, session);
         const ics = createEvents(icss);

@@ -63,16 +63,20 @@ function onSubmit() {
 }
 
 function createSession() {
-    const body = {
-        location: state.location,
-        teams_link: state.teams_link,
-        courseId: state.courseId,
-        ics_file: state.ics_file,
-    } as CreateSession;
+    const formData = new FormData();
+    if (state.location) {
+        formData.append("location", state.location);
+    }
+    if (state.teams_link) {
+        formData.append("teams_link", state.teams_link);
+    }
+    if (state.ics_file) {
+        formData.append("ics_file", state.ics_file);
+    }
 
     $fetch<Session>(`/api/courses/${props.courseId}/sessions/`, {
         method: "POST",
-        body,
+        body: formData,
     })
         .then((newSession) => {
             emit("update", newSession);
@@ -126,6 +130,26 @@ function updateSession() {
             });
         });
 }
+
+function removeIcsFile() {
+    $fetch<Session>(
+        `/api/courses/${props.courseId}/sessions/${props.session?.id}/ics`,
+        {
+            method: "DELETE",
+        },
+    )
+        .then((updatedSession) => {
+            emit("update", updatedSession);
+            showSuccess({ title: "ICS file removed successfully" });
+        })
+        .catch((error) => {
+            console.error("Error removing ICS file:", error);
+
+            showError({
+                title: "Failed to remove ICS file. Please try again.",
+            });
+        });
+}
 </script>
 
 <template>
@@ -146,6 +170,22 @@ function updateSession() {
             <UFormField label="ICS File" name="ics_file">
                 <UInput class="w-full" accept=".ics," @change="handleFileChange" placeholder="Upload ICS File" size="lg"
                     type="file" />
+
+                <div v-if="props.session?.ics_url" class="mt-2">
+                    <a :href="props.session.ics_url" download>Download ICS File</a>
+
+                    <UPopover>
+                        <UButton size="xs" variant="link" color="error" class="ml-2">Remove</UButton>
+                        <template #content>
+                            <div class="p-2">
+                                <p class="text-sm">Are you sure you want to remove it?</p>
+                                <UButton size="sm" color="error" class="mt-2" @click="removeIcsFile">
+                                    Yes, Remove
+                                </UButton>
+                            </div>
+                        </template>
+                    </UPopover>
+                </div>
             </UFormField>
 
             <div class="flex justify-end gap-3 mt-2">
