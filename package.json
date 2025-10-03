@@ -13,7 +13,8 @@
         "db:studio": "drizzle-kit studio",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
-        "docker:dev": "docker compose -f ./docker-compose-dev.yaml up"
+        "docker:dev": "docker compose -f ./docker-compose-dev.yaml up",
+        "docker:dev:down": "docker compose -f ./docker-compose-dev.yaml down -v"
     },
     "dependencies": {
         "@dcc-bs/authentication.bs.js": "git+https://github.com/DCC-BS/authentication.bs.js.git#v0.2.4",
