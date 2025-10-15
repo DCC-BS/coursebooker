@@ -66,16 +66,94 @@ function addedUser(email: string) {
         addedUsers.value.push(email);
     }
 }
+
+function exportCsvFile() {
+    const csvContent = toCsv();
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `registrations_session_${props.session.id}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function toCsv() {
+    if (!props.session.registrations) {
+        return "";
+    }
+
+    const additionalDataKeys = [] as string[];
+    for (const reg of props.session.registrations) {
+        if (reg.additional_data) {
+            try {
+                const data = JSON.parse(reg.additional_data);
+                for (const key of Object.keys(data)) {
+                    if (!additionalDataKeys.includes(key)) {
+                        additionalDataKeys.push(key);
+                    }
+                }
+            } catch {
+                // ignore
+            }
+        }
+    }
+
+    const header = ["Email", ...additionalDataKeys];
+    console.log(header);
+    const rows = props.session.registrations.map((reg) => {
+        const row = [reg.userEmail];
+        if (reg.additional_data) {
+            try {
+                const data = JSON.parse(reg.additional_data);
+                for (const key of additionalDataKeys) {
+                    row.push(data[key] || "");
+                }
+            } catch {
+                for (let i = 0; i < additionalDataKeys.length; i++) {
+                    row.push("");
+                }
+            }
+        } else {
+            for (let i = 0; i < additionalDataKeys.length; i++) {
+                row.push("");
+            }
+        }
+        return row;
+    });
+
+    const csvContent =
+        header.join(",") +
+        "\n" +
+        rows.map((r) => r.map((v) => `"${v.replace(/"/g, '""')}"`).join(",")).join("\n");
+    return csvContent;
+}
 </script>
 
 <template>
     <div class="border border-gray-200 rounded-lg p-6">
+        <UButton @click="exportCsvFile" icon="i-lucide-download" color="primary" size="sm" variant="outline">
+            Export Registrations as CSV
+        </UButton>
+
         <div v-for="registration in props.session.registrations" :key="registration.userEmail">
             <div class="flex gap-2 items-end border-b border-gray-200 p-1 my-1">
                 <UIcon name="i-lucide-user" class="w-5 h-5 text-gray-500 mt-1" />
                 <div class="flex-1">
                     {{ registration.userEmail }}
                 </div>
+                <UPopover v-if="registration.additional_data">
+                    <UButton icon="i-lucide-info" color="info" size="sm" variant="outline">
+                        Info
+                    </UButton>
+                    <template #content>
+                        <div class="p-2">
+                            <pre> {{ registration.additional_data }}</pre>
+                        </div>
+                    </template>
+                </UPopover>
                 <UPopover>
                     <UButton icon="i-lucide-trash-2" color="error" size="sm" variant="outline">
                         Remove

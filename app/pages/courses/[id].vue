@@ -150,11 +150,6 @@ watch(
                             </h3>
                         </div>
                         <div class="p-6 space-y-3">
-                            <UButton v-if="course.teams_link" :to="course.teams_link" external color="primary"
-                                variant="soft" block size="lg" class="justify-center">
-                                <UIcon name="i-lucide-video" class="h-4 w-4 mr-2" />
-                                {{ t('courseDetails.joinCourseMeeting') }}
-                            </UButton>
                             <UButton :href="`mailto:${course.organizer_mail}?subject=Question about ${course.title}`"
                                 color="neutral" variant="soft" block size="lg" class="justify-center">
                                 <UIcon name="i-lucide-mail" class="h-4 w-4 mr-2" />

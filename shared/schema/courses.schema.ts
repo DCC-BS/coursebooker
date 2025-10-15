@@ -9,6 +9,7 @@ export const coursesTable = sqliteTable("courses", {
     type: text({ enum: ["course", "event"] }).notNull(),
     organizer_name: text({ length: 100 }).notNull(),
     organizer_mail: text({ length: 100 }).notNull(),
+    form_schema: text({ length: 10000 }),
 });
 
 export const courseHasManySessions = relations(coursesTable, ({ many }) => ({

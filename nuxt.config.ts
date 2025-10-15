@@ -52,6 +52,7 @@ export default defineNuxtConfig({
         "@nuxtjs/mdc",
         "@sidebase/nuxt-auth",
         "@nuxt/fonts",
+        "@formkit/nuxt",
     ],
     devtools: { enabled: true },
     css: ["~/assets/css/main.css"],
