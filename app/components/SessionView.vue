@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { Session, User } from "~~/shared/models";
+import type { Course, Session, User } from "~~/shared/models";
 
 const props = defineProps<{
     index: number;
     session: Session;
-    courseId: string;
+    course: Course;
     user: User;
     refreshUser: () => void;
 }>();
@@ -14,7 +14,7 @@ const isRegistered = computed(() =>
     props.user.registrations.some((r) => r.session.id === props.session.id),
 );
 const { registerForSession, unregisterFromSession } = useSetSession(
-    props.courseId,
+    props.course.id,
     props.session.id,
 );
 
@@ -38,7 +38,7 @@ async function unregister() {
                     {{ index + 1 }}
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">{{ t("session.title", { number: index + 1 }) }}
+                    <h3 class="text-lg font-semibold text-gray-900">{{ course.title }}
                     </h3>
                     <div v-if="session.location" class="flex items-center text-sm text-gray-600 mt-1">
                         <UIcon name="i-lucide-map-pin" class="h-4 w-4 mr-1" />
@@ -78,7 +78,7 @@ async function unregister() {
         <!-- Registration Button -->
         <div class="flex justify-end mt-4">
             <UButton v-if="!isRegistered" @click="() => register()" color="primary" size="lg" icon="i-lucide-user-plus">
-                {{ t("session.registerForSession") }}
+                {{ t("session.registerForSession", { type: t(`courseDetails.${course.type}`) }) }}
             </UButton>
             <UButton v-else @click="() => unregister()" color="error" size="sm" icon="i-lucide-user-minus"
                 variant="outline">

@@ -13,13 +13,11 @@ const selectedTimeRange = ref("");
 // Filter options
 const daysOfWeek = computed(() => [
     { value: "", label: t("home.allDays") },
-    { value: "0", label: t("home.sunday") },
     { value: "1", label: t("home.monday") },
     { value: "2", label: t("home.tuesday") },
     { value: "3", label: t("home.wednesday") },
     { value: "4", label: t("home.thursday") },
     { value: "5", label: t("home.friday") },
-    { value: "6", label: t("home.saturday") },
 ]);
 
 const timeRanges = computed(() => [
@@ -274,10 +272,6 @@ const resultsMessage = computed(() => {
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="font-semibold text-gray-900">{{ t('home.sessions') }}</h4>
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ course.sessions.length }} {{ course.sessions.length === 1 ? t('home.session') :
-                                        t('home.sessions').toLowerCase() }}
-                                </span>
                             </div>
 
                             <div class="space-y-3">
@@ -292,9 +286,10 @@ const resultsMessage = computed(() => {
                                             <UIcon name="i-lucide-map-pin" class="w-4 h-4 text-gray-500" />
                                             <span>{{ session.location }}</span>
                                         </div>
-                                        <div class="flex items-center gap-2">
+                                        <div v-for="lesson in session.lessons.sort((a, b) => a.start.getTime() - b.start.getTime())"
+                                            :key="lesson.id" class="flex items-center gap-2">
                                             <UIcon name="i-lucide-calendar" class="w-4 h-4 text-gray-500" />
-                                            <span>{{ getSessionDate(session) }}</span>
+                                            <span>{{ getLessonDate(lesson) }}</span>
                                         </div>
                                     </div>
                                 </div>

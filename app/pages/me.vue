@@ -107,10 +107,6 @@ const upcomingSessions = computed(() => {
                             <UIcon name="i-lucide-calendar-clock" class="w-6 h-6 text-blue-600" />
                             {{ t('me.thisWeek') }}
                         </h2>
-                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                            {{ upcomingSessions.sessionsThisWeek.length }} {{ upcomingSessions.sessionsThisWeek.length
-                                === 1 ? t('me.session') : t('me.sessions') }}
-                        </span>
                     </div>
 
                     <div v-if="upcomingSessions.sessionsThisWeek.length === 0"
@@ -147,7 +143,7 @@ const upcomingSessions = computed(() => {
                                     <UBadge
                                         :color="getCourse(session.courseId)?.type === 'course' ? 'primary' : 'secondary'"
                                         size="sm">
-                                        {{ getCourse(session.courseId)?.type || 'course' }}
+                                        {{ t(`courseDetails.${getCourse(session.courseId)?.type || 'course'}`) }}
                                     </UBadge>
                                 </div>
 
@@ -208,9 +204,6 @@ const upcomingSessions = computed(() => {
                             <UIcon name="i-lucide-calendar" class="w-6 h-6 text-purple-600" />
                             {{ t('me.upcomingSessions') }}
                         </h2>
-                        <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">
-                            {{ t('me.sessionsCount', { count: upcomingSessions.otherSessions.length }) }}
-                        </span>
                     </div>
 
                     <div v-if="upcomingSessions.otherSessions.length === 0"
@@ -243,7 +236,7 @@ const upcomingSessions = computed(() => {
                                     <UBadge
                                         :color="getCourse(session.courseId)?.type === 'course' ? 'primary' : 'secondary'"
                                         size="sm">
-                                        {{ getCourse(session.courseId)?.type || 'course' }}
+                                        {{ t(`courseDetails.${getCourse(session.courseId)?.type || 'course'}`) }}
                                     </UBadge>
                                 </div>
 
