@@ -36,7 +36,7 @@ watch(
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div class="min-h-screen">
         <!-- Loading State -->
         <div v-if="isPending" class="flex items-center justify-center min-h-screen">
             <LoadingView :text="t('courseDetails.loadingCourseDetails')" />
@@ -60,7 +60,7 @@ watch(
                                 <UBadge :color="course.type === 'course' ? 'primary' : 'secondary'" size="lg"
                                     class="px-4 py-2 text-sm font-semibold">
                                     <UIcon name="i-lucide-graduation-cap" class="h-4 w-4 mr-2" />
-                                    {{ course.type.charAt(0).toUpperCase() + course.type.slice(1) }}
+                                    {{ t(`courseDetails.${course.type}`) }}
                                 </UBadge>
                             </div>
                             <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
@@ -69,16 +69,6 @@ watch(
                             <p class="text-xl text-blue-100 leading-relaxed max-w-3xl">
                                 <MDC :value="course.description"></MDC>
                             </p>
-                        </div>
-
-                        <!-- Stats Cards -->
-                        <div class="flex flex-col md:flex-row gap-4 md:gap-6">
-                            <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-center min-w-[120px]">
-                                <div class="text-3xl font-bold text-white">{{ course.sessions.length }}</div>
-                                <div class="text-blue-200 text-sm font-medium">
-                                    {{ t('courseDetails.sessionCount', course.sessions.length) }}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,8 +128,8 @@ watch(
                             <div v-else class="space-y-6">
                                 <div v-for="(session, index) in course.sessions" :key="session.id"
                                     class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-                                    <SessionView :index="index" :session="session" :courseId="course.id" :user="me"
-                                        :refresh-user="refreshMe" />
+                                    <SessionView :course="course" :index="index" :session="session"
+                                        :courseId="course.id" :user="me" :refresh-user="refreshMe" />
                                 </div>
                             </div>
                         </div>

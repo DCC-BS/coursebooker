@@ -23,7 +23,10 @@ export function getSessionDate(session: Session): string {
         return getLessonDate(session.lessons[0]);
     }
 
-    return session.lessons.map(getLessonDate).join(", ");
+    return session.lessons
+        .sort((a, b) => a.start.getTime() - b.start.getTime())
+        .map(getLessonDate)
+        .join(", ");
 }
 
 export function getLessonDate(lesson: Lesson): string {
