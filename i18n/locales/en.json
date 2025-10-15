@@ -241,7 +241,7 @@
             "organizerName": "Organizer Name",
             "enterOrganizerName": "Enter organizer name",
             "organizerEmail": "Organizer Email",
-            "organizerEmailPlaceholder": "organizer@example.com",
+            "organizerEmailPlaceholder": "organizer{'@'}example.com",
             "customRegistrationForm": "Custom Registration Form",
             "deleteCourse": "Delete Course",
             "cancel": "Cancel",
