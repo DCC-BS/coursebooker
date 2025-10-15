@@ -19,12 +19,15 @@ export function useSession(courseId: string, sessionId: string, admin = false) {
 }
 
 export function useSetSession(courseId: string, sessionId: string) {
-    async function registerForSession(userMail: string | "me") {
+    async function registerForSession(
+        userMail: string | "me",
+        additionalData?: string,
+    ) {
         await $fetch(
             `/api/courses/${courseId}/sessions/${sessionId}/register`,
             {
                 method: "POST",
-                body: JSON.stringify({ userEmail: userMail }),
+                body: JSON.stringify({ userEmail: userMail, additionalData }),
             },
         );
     }

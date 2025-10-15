@@ -12,6 +12,7 @@ export const usersToSessionsTable = sqliteTable(
         sessionId: text("session_id")
             .notNull()
             .references(() => sessionsTable.id),
+        additional_data: text("additional_data", { length: 1000 }),
     },
     (t) => [primaryKey({ columns: [t.userEmail, t.sessionId] })],
 );

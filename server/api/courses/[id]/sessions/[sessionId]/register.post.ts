@@ -14,6 +14,7 @@ import {
 
 const schema = z.object({
     userEmail: z.email().nonempty(),
+    additionalData: z.string().max(1000).optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -90,6 +91,7 @@ export default defineEventHandler(async (event) => {
     await db.insert(usersToSessionsTable).values({
         sessionId: sessionId,
         userEmail: values.userEmail,
+        additional_data: values.additionalData,
     });
 
     const given_name = registrationIsForMe

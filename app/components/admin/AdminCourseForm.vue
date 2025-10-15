@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { z } from "zod";
 import { type Course, createCourseSchema } from "~/../shared/models";
+import FormEditor from "./FormEditor.vue";
 
 const props = defineProps<{
     course?: Course;
@@ -32,6 +33,7 @@ const form = ref({
     description: "",
     organizer_name: "",
     organizer_mail: "",
+    form_schema: "[]",
 } as Schema);
 
 watch(
@@ -44,6 +46,7 @@ watch(
                 description: newCourse.description || "",
                 organizer_name: newCourse.organizer_name,
                 organizer_mail: newCourse.organizer_mail,
+                form_schema: newCourse.form_schema || "[]",
             };
         }
     },
@@ -69,6 +72,7 @@ async function submitForm(event: FormSubmitEvent<Schema>) {
             description: event.data.description?.trim(),
             organizer_name: event.data.organizer_name.trim(),
             organizer_mail: event.data.organizer_mail.trim(),
+            form_schema: event.data.form_schema || "[]",
         };
 
         // Update via API
@@ -150,6 +154,13 @@ async function onDeleteCourse() {
                             required />
                     </UFormField>
                 </div>
+
+                <UDrawer>
+                    <UButton>Customize Registration Form</UButton>
+                    <template #content>
+                        <FormEditor v-model="form.form_schema" />
+                    </template>
+                </UDrawer>
             </div>
 
             <!-- Form Actions -->
