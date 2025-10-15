@@ -10,6 +10,7 @@ const props = defineProps<{
     refresh?: () => Promise<void>;
 }>();
 
+const { t } = useI18n();
 const { showError, showSuccess } = useUserFeedback();
 const router = useRouter();
 
@@ -21,10 +22,10 @@ const schema = createCourseSchema;
 type Schema = z.infer<typeof schema>;
 
 // Course type options
-const typeOptions = [
-    { label: "Course", value: "course" },
-    { label: "Event", value: "event" },
-];
+const typeOptions = computed(() => [
+    { label: t("admin.courseForm.course"), value: "course" },
+    { label: t("admin.courseForm.event"), value: "event" },
+]);
 
 // Form data - initialize with course data
 const form = ref({
@@ -78,18 +79,18 @@ async function submitForm(event: FormSubmitEvent<Schema>) {
         // Update via API
         if (!props.courseId) {
             const createdCourse = await createCourse(data);
-            showSuccess({ title: "Course created successfully" });
+            showSuccess({ title: t("admin.courseForm.courseCreated") });
             await router.push(`/admin/courses/${createdCourse.id}/edit`);
         } else {
             await updateCourse(props.courseId, data);
             // Refresh course data
             await props.refresh?.();
-            showSuccess({ title: "Course updated successfully" });
+            showSuccess({ title: t("admin.courseForm.courseUpdated") });
         }
     } catch (error) {
         console.error("Error updating course:", error);
         showError({
-            title: "Failed to update course",
+            title: t("admin.courseForm.failedToUpdateCourse"),
             description: (error as Error).message,
         });
     } finally {
@@ -106,11 +107,11 @@ async function onDeleteCourse() {
 
         // Redirect to course list
         await navigateTo("/admin/courses");
-        showSuccess({ title: "Course deleted successfully" });
+        showSuccess({ title: t("admin.courseForm.courseDeleted") });
     } catch (error) {
         console.error("Error deleting course:", error);
         showError({
-            title: "Failed to delete course",
+            title: t("admin.courseForm.failedToDeleteCourse"),
             description: (error as Error).message,
         });
     } finally {
@@ -125,38 +126,39 @@ async function onDeleteCourse() {
         <UForm :state="form" :schema="schema" @submit="submitForm" @error="(e) => console.error('Form error:', e)"
             class="p-6 space-y-6">
             <!-- Course Type -->
-            <UFormField label="Course Type" name="type">
-                <USelect v-model="form.type" :items="typeOptions" value-key="value" placeholder="Select course type"
-                    size="lg" required />
+            <UFormField :label="t('admin.courseForm.courseType')" name="type">
+                <USelect v-model="form.type" :items="typeOptions" value-key="value"
+                    :placeholder="t('admin.courseForm.selectCourseType')" size="lg" required />
             </UFormField>
 
             <!-- Course Title -->
-            <UFormField label="Course Title" name="title">
-                <UInput v-model="form.title" placeholder="Enter course title" size="lg" required />
+            <UFormField :label="t('admin.courseForm.courseTitle')" name="title">
+                <UInput v-model="form.title" :placeholder="t('admin.courseForm.enterCourseTitle')" size="lg" required />
             </UFormField>
 
             <!-- Course Description -->
-            <UFormField label="Course Description" name="description">
-                <UTextarea v-model="form.description" placeholder="Describe what this course covers..." :rows="4" resize
-                    required class="justify-stretch w-full" />
+            <UFormField :label="t('admin.courseForm.courseDescription')" name="description">
+                <UTextarea v-model="form.description" :placeholder="t('admin.courseForm.describeCourse')" :rows="4"
+                    resize required class="justify-stretch w-full" />
             </UFormField>
 
             <!-- Organizer Information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <UFormField label="Organizer Name" name="organizer_name">
-                        <UInput v-model="form.organizer_name" placeholder="Enter organizer name" size="lg" required />
+                    <UFormField :label="t('admin.courseForm.organizerName')" name="organizer_name">
+                        <UInput v-model="form.organizer_name" :placeholder="t('admin.courseForm.enterOrganizerName')"
+                            size="lg" required />
                     </UFormField>
                 </div>
                 <div>
-                    <UFormField label="Organizer Email" name="organizer_mail">
-                        <UInput v-model="form.organizer_mail" type="email" placeholder="organizer@example.com" size="lg"
-                            required />
+                    <UFormField :label="t('admin.courseForm.organizerEmail')" name="organizer_mail">
+                        <UInput v-model="form.organizer_mail" type="email"
+                            :placeholder="t('admin.courseForm.organizerEmailPlaceholder')" size="lg" required />
                     </UFormField>
                 </div>
 
                 <UDrawer>
-                    <UButton>Customize Registration Form</UButton>
+                    <UButton>{{ t('admin.courseForm.customRegistrationForm') }}</UButton>
                     <template #content>
                         <FormEditor v-model="form.form_schema" />
                     </template>
@@ -168,15 +170,15 @@ async function onDeleteCourse() {
                 <div>
                     <UButton v-if="props.course" type="button" color="error" variant="outline" icon="i-lucide-trash-2"
                         @click="showDeleteModal = true">
-                        Delete Course
+                        {{ t('admin.courseForm.deleteCourse') }}
                     </UButton>
                 </div>
                 <div class="flex space-x-4">
                     <UButton type="button" color="neutral" @click="onCancel">
-                        Cancel
+                        {{ t('admin.courseForm.cancel') }}
                     </UButton>
                     <UButton type="submit" color="primary" :loading="submitting">
-                        Update Course
+                        {{ t('admin.courseForm.updateCourse') }}
                     </UButton>
                 </div>
             </div>
@@ -188,21 +190,20 @@ async function onDeleteCourse() {
         <template #content>
             <UCard>
                 <template #header>
-                    <h3 class="text-lg font-semibold">Delete Course</h3>
+                    <h3 class="text-lg font-semibold">{{ t('admin.courseForm.deleteCourseTitle') }}</h3>
                 </template>
 
                 <p class="text-gray-600">
-                    Are you sure you want to delete "<span class="font-semibold">{{ course?.title }}</span>"?
-                    This action cannot be undone and will also delete all associated sessions and lessons.
+                    {{ t('admin.courseForm.deleteCourseConfirm', { title: course?.title }) }}
                 </p>
 
                 <template #footer>
                     <div class="flex justify-end gap-3">
                         <UButton color="neutral" @click="showDeleteModal = false">
-                            Cancel
+                            {{ t('admin.courseForm.cancel') }}
                         </UButton>
                         <UButton color="error" :loading="deleting" @click="onDeleteCourse">
-                            Delete Course
+                            {{ t('admin.courseForm.deleteCourse') }}
                         </UButton>
                     </div>
                 </template>

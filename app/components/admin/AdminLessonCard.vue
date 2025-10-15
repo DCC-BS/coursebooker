@@ -10,6 +10,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { t } = useI18n();
 
 // Emits
 const emit = defineEmits<{
@@ -18,15 +19,15 @@ const emit = defineEmits<{
 }>();
 
 // Dropdown actions
-const actions = [
+const actions = computed(() => [
     [
         {
-            label: "Delete Lesson",
+            label: t("admin.lessonCard.deleteLesson"),
             icon: "i-lucide-trash-2",
             onSelect: () => emit("delete", props.lesson),
         },
     ],
-] as DropdownMenuItem[][];
+] as DropdownMenuItem[][]);
 
 // Utility functions
 function formatDateTime(date: Date): string {
@@ -44,7 +45,7 @@ function formatDuration(start: Date, end: Date): string {
     const diffMs = endTime.getTime() - startTime.getTime();
 
     if (diffMs <= 0) {
-        return "Invalid";
+        return t("admin.lessonCard.invalid");
     }
 
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -65,7 +66,7 @@ function formatDuration(start: Date, end: Date): string {
     <div class="bg-gray-50 border border-gray-200 rounded p-3">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm font-medium text-gray-700">
-                Lesson {{ lessonNumber }}
+                {{ t("admin.lessonCard.lesson") }} {{ lessonNumber }}
             </span>
             <UDropdownMenu :items="actions">
                 <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="xs" />
@@ -82,7 +83,7 @@ function formatDuration(start: Date, end: Date): string {
                 {{ formatDateTime(lesson.end) }}
             </div>
             <div class="text-primary-600 font-medium">
-                Duration: {{ formatDuration(lesson.start, lesson.end) }}
+                {{ t("admin.lessonCard.duration", { duration: formatDuration(lesson.start, lesson.end) }) }}
             </div>
         </div>
     </div>

@@ -51,8 +51,8 @@ watch(
         <div v-else-if="course && me" class="container mx-auto px-4 py-8 max-w-7xl">
             <!-- Hero Section -->
             <motion.div :initial="{ opacity: 0, y: -50 }" :animate="{ opacity: 1, y: 0 }"
-                class="relative overflow-hidden bg-gradient-to-r from-blue-400 to-cyan-600 rounded-3xl shadow-2xl mb-8">
-                <div class="absolute inset-0 bg-black opacity-10"></div>
+                class="relative overflow-hidden bg-purple-50 rounded-3xl shadow-2xl mb-8">
+                <!-- <div class="absolute inset-0 bg-black opacity-10"></div> -->
                 <div class="relative px-8 py-12 md:px-12 md:py-16">
                     <div class="flex flex-col md:flex-row items-start justify-between">
                         <div class="flex-1 mb-6 md:mb-0">
@@ -63,10 +63,10 @@ watch(
                                     {{ t(`courseDetails.${course.type}`) }}
                                 </UBadge>
                             </div>
-                            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+                            <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
                                 {{ course.title }}
                             </h1>
-                            <p class="text-xl text-blue-100 leading-relaxed max-w-3xl">
+                            <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
                                 <MDC :value="course.description"></MDC>
                             </p>
                         </div>
