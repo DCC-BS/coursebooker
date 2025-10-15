@@ -6,7 +6,8 @@ const { courses, isPending, error } = useCourses(false, true);
 
 // Search and filter state
 const searchQuery = ref("");
-const selectedDate = ref("");
+const startDate = ref("");
+const endDate = ref("");
 const selectedDay = ref("");
 const selectedTimeRange = ref("");
 
@@ -54,11 +55,25 @@ function isLessonOnDay(lesson: { start: Date }, day: string): boolean {
     return lesson.start.getDay().toString() === day;
 }
 
-// Helper function to check if a lesson is on a specific date
-function isLessonOnDate(lesson: { start: Date }, date: string): boolean {
-    if (!date) return true;
-    const lessonDate = lesson.start.toISOString().split("T")[0];
-    return lessonDate === date;
+// Helper function to check if a lesson is within a date range
+function isLessonInDateRange(lesson: { start: Date, end: Date }, start: string, end: string): boolean {
+    if (!start && !end) return true;
+
+    // Convert filter dates to Date objects at midnight for accurate comparison
+    const startDateObj = start ? new Date(`${start}T00:00:00.000Z`) : null;
+    const endDateObj = end ? new Date(`${end}T23:59:59.999Z`) : null;
+
+    if (start && end && startDateObj && endDateObj) {
+        return lesson.start >= startDateObj && lesson.end <= endDateObj;
+    }
+    if (start && startDateObj) {
+        return lesson.start >= startDateObj;
+    }
+    if (end && endDateObj) {
+        return lesson.end <= endDateObj;
+    }
+
+    return true;
 }
 
 // Computed property for filtered courses
@@ -85,7 +100,7 @@ const filteredCourses = computed(() => {
         // Check if course has sessions that match the filters
         const hasMatchingSessions = course.sessions.some((session) => {
             return session.lessons.some((lesson) => {
-                const matchesDate = isLessonOnDate(lesson, selectedDate.value);
+                const matchesDate = isLessonInDateRange(lesson, startDate.value, endDate.value);
                 const matchesDay = isLessonOnDay(lesson, selectedDay.value);
                 const matchesTime = isLessonInTimeRange(
                     lesson,
@@ -98,7 +113,8 @@ const filteredCourses = computed(() => {
 
         // If no filters are applied, show all courses
         const noFiltersApplied =
-            !selectedDate.value &&
+            !startDate.value &&
+            !endDate.value &&
             !selectedDay.value &&
             !selectedTimeRange.value;
 
@@ -109,7 +125,8 @@ const filteredCourses = computed(() => {
 // Clear all filters
 function clearFilters() {
     searchQuery.value = "";
-    selectedDate.value = "";
+    startDate.value = "";
+    endDate.value = "";
     selectedDay.value = "";
     selectedTimeRange.value = "";
 }
@@ -149,13 +166,22 @@ const resultsMessage = computed(() => {
                 </div>
 
                 <!-- Filters Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <!-- Date Filter -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <!-- Start Date Filter -->
                     <div>
-                        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ t('home.filterByDate') }}
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ t('home.filterByStartDate') }}
                         </label>
-                        <input id="date" v-model="selectedDate" type="date"
+                        <input id="startDate" v-model="startDate" type="date"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors" />
+                    </div>
+
+                    <!-- End Date Filter -->
+                    <div>
+                        <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ t('home.filterByEndDate') }}
+                        </label>
+                        <input id="endDate" v-model="endDate" type="date"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors" />
                     </div>
 
@@ -195,7 +221,7 @@ const resultsMessage = computed(() => {
                 </div>
 
                 <!-- Active Filters Display -->
-                <div v-if="searchQuery || selectedDate || selectedDay || selectedTimeRange"
+                <div v-if="searchQuery || startDate || endDate || selectedDay || selectedTimeRange"
                     class="mt-4 pt-4 border-t border-gray-200">
                     <p class="text-sm text-gray-600 mb-2">{{ t('home.activeFilters') }}</p>
                     <div class="flex flex-wrap gap-2">
@@ -203,9 +229,10 @@ const resultsMessage = computed(() => {
                             class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                             {{ t('home.search') }}: "{{ searchQuery }}"
                         </span>
-                        <span v-if="selectedDate"
+                        <span v-if="startDate || endDate"
                             class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                            {{ t('home.date') }}: {{ selectedDate }}
+                            {{ t('home.dateRange') }}:
+                            {{ startDate || t('home.anyDate') }} - {{ endDate || t('home.anyDate') }}
                         </span>
                         <span v-if="selectedDay"
                             class="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
