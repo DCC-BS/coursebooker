@@ -210,7 +210,6 @@ const upcomingSessions = computed(() => {
                         class="text-center py-12 bg-gray-50 rounded-lg">
                         <UIcon name="i-lucide-calendar-check" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
                         <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('me.noUpcomingSessions') }}</h3>
-                        <p class="text-gray-600">{{ t('me.allSetForNearFuture') }}</p>
                     </div>
 
                     <div v-else class="space-y-4">

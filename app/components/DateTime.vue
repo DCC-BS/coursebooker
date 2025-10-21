@@ -11,13 +11,9 @@ const model = defineModel<Date>({ required: true });
 const dateString = ref<string>("");
 
 function onDateStringChange() {
-    console.log("Date string changed:", dateString.value);
     if (!dateString.value) return;
 
     model.value = new Date(dateString.value);
-
-    console.log("Date changed:", model.value);
-
     emitFormChange();
 }
 

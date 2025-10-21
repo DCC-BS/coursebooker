@@ -72,6 +72,8 @@ dcc@bs.ch`;
         attachments: [attachment],
     };
 
+    console.log("Sending registration email:", mailOptions);
+
     sendMail(mailOptions);
 }
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Lesson } from "~/../shared/models";
+import { format } from "date-fns";
 
 interface Props {
     lesson: Lesson;
@@ -31,12 +32,7 @@ const actions = computed(() => [
 
 // Utility functions
 function formatDateTime(date: Date): string {
-    return new Date(date).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+    return format(date, "dd.MM.yyyy, HH:mm");
 }
 
 function formatDuration(start: Date, end: Date): string {
