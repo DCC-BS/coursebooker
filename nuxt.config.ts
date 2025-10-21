@@ -94,6 +94,9 @@ export default defineNuxtConfig({
         },
     },
     nitro: {
+        experimental: {
+            openAPI: true,
+        },
         rollupConfig: {
             external: ["node:sqlite"],
         },
