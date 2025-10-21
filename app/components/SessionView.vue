@@ -72,9 +72,6 @@ async function onRegisterSubmit(data: unknown) {
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <UBadge color="success" size="sm">
-                    {{ t("session.lesson", session.lessons.length) }}
-                </UBadge>
                 <UBadge :color="isRegistered ? 'success' : 'neutral'" size="sm">
                     <UIcon :name="isRegistered ? 'i-lucide-check-circle' : 'i-lucide-user-x'" class="h-3 w-3 mr-1" />
                     {{ isRegistered ? t("session.registered") : t("session.notRegistered") }}

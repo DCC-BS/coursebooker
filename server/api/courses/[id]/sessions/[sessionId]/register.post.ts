@@ -102,13 +102,6 @@ export default defineEventHandler(async (event) => {
         ? session?.user.family_name || ""
         : firstCharToUpper(values.userEmail.split(".")[1].split("@")[0]);
 
-    console.log(
-        "Sending registration mail to:",
-        family_name,
-        given_name,
-        values.userEmail,
-    );
-
     sendRegistrationMail(
         family_name,
         given_name,

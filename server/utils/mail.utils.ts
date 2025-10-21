@@ -54,7 +54,7 @@ Kursdetails:
 - Name: ${course.title}
 ${dateStr}
 - Ort: ${session.location}
-- MS Teams Link: ${session.teams_link}
+${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
 
 Im Anhang findest Du eine Kalendereinladung.
 
@@ -107,7 +107,7 @@ dcc@bs.ch`;
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Anmeldung zum Kurs "${course.title}"`,
+        subject: `Abmeldung zum Kurs "${course.title}"`,
         text: body,
     };
 

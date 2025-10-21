@@ -83,6 +83,8 @@
         "refreshSessions": "Refresh Sessions"
     },
     "courseDetails": {
+        "course": "Course",
+        "event": "Event",
         "loadingCourseDetails": "Loading course details...",
         "courseInformation": "Course Information",
         "organizer": "Organizer",
