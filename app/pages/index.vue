@@ -302,8 +302,9 @@ const resultsMessage = computed(() => {
                             </div>
 
                             <div class="space-y-3">
-                                <div v-for="session in course.sessions.slice(0, 3)" :key="session.id"
-                                    class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <NuxtLink :to="`/courses/${course.id}#session-${session.id}`"
+                                    v-for="session in course.sessions.slice(0, 3)" :key="session.id"
+                                    class="bg-gray-50 rounded-lg p-4 border border-gray-200 block hover:bg-gray-100 transition-colors">
                                     <div class="grid grid-cols-1 gap-2 text-sm">
                                         <div class="flex items-center gap-2">
                                             <UIcon name="i-lucide-clock" class="w-4 h-4 text-gray-500" />
@@ -319,7 +320,7 @@ const resultsMessage = computed(() => {
                                             <span>{{ getLessonDate(lesson) }}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </NuxtLink>
 
                                 <!-- More sessions indicator -->
                                 <div v-if="course.sessions.length > 3"

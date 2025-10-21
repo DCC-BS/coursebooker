@@ -127,6 +127,7 @@ watch(
                             </div>
                             <div v-else class="space-y-6">
                                 <div v-for="(session, index) in course.sessions" :key="session.id"
+                                    :id="`session-${session.id}`"
                                     class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
                                     <SessionView :course="course" :index="index" :session="session"
                                         :courseId="course.id" :user="me" :refresh-user="refreshMe" />

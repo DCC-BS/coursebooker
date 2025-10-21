@@ -6,6 +6,7 @@ ENV http_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 ENV https_proxy=http://PROXY_USER:PROXY_PWD@proxy.bs.ch:3128
 
 ENV DATABASE_URL=data/coursebooker.db
+ENV TZ=Europe/Zurich
 
 RUN apk update && apk add git
 ENV NUXT_AZURE_AD_TENANT_ID="?AZURE_AD_TENANT_ID?"
@@ -18,6 +19,11 @@ ENV SMTP_HOST=?SMTP_HOST?
 ENV SMTP_PORT=?SMTP_PORT?
 
 RUN apk update && apk add git
+
+# Install tzdata and set timezone
+RUN apk add --no-cache tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 # Set working directory
 WORKDIR /app
