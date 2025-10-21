@@ -6,8 +6,8 @@ The application is composed of a server-side API built with Nuxt and a client-si
 
 ![GitHub License](https://img.shields.io/github/license/DCC-BS/bs-translator-frontend) [![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev)
 
-**Test**: [https://kurse.stata.pd.intranet.bs.ch](https://kurse.stata.pd.intranet.bs.ch)
-**Prod**: [https://kurse.pdstatasvtapp04.pd.intranet.bs.ch](https://kurse.pdstatasvtapp04.pd.intranet.bs.ch)
+**Test**: [https://kurse.pdstatasvtapp04.pd.intranet.bs.ch](https://kurse.pdstatasvtapp04.pd.intranet.bs.ch)  
+**Prod**: [https://kurse.stata.pd.intranet.bs.ch](https://kurse.stata.pd.intranet.bs.ch)
 
 ## Features
 

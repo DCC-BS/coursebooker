@@ -578,13 +578,6 @@ These endpoints are typically served from the root of your local development ser
 
 ---
 
-## Course ID Format
-
-Course IDs are automatically generated based on the course name, date, and time:
-`{name-kebab-case}-{date}-{time-without-colon}`
-
-Example: `"wissensaustausch-data-science-&-ki-2025-10-23-1530"`
-
 ## Validation Rules
 
 - **Date:** Must be in YYYY-MM-DD format for query params, ISO 8601 for body.
