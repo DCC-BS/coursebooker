@@ -33,6 +33,36 @@ watch(
     },
     { immediate: true },
 );
+
+// Function to scroll to an element by ID
+const scrollToElement = (elementId: string) => {
+    nextTick(() => {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+};
+
+// Watch for changes in the route hash and course data
+watch(
+    [() => route.hash, course],
+    ([newHash]) => {
+        if (newHash && course.value) {
+            const elementId = newHash.substring(1); // Remove the '#'
+            scrollToElement(elementId);
+        }
+    },
+    { immediate: true }
+);
+
+// Ensure scrolling happens on initial load if hash is present
+onMounted(() => {
+    if (route.hash && course.value) {
+        const elementId = route.hash.substring(1); // Remove the '#'
+        scrollToElement(elementId);
+    }
+});
 </script>
 
 <template>
