@@ -73,7 +73,10 @@ function exportCsvFile() {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `registrations_session_${props.session.id}.csv`);
+    link.setAttribute(
+        "download",
+        `registrations_session_${props.session.id}.csv`,
+    );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -127,7 +130,9 @@ function toCsv() {
     const csvContent =
         header.join(",") +
         "\n" +
-        rows.map((r) => r.map((v) => `"${v.replace(/"/g, '""')}"`).join(",")).join("\n");
+        rows
+            .map((r) => r.map((v) => `"${v.replace(/"/g, '""')}"`).join(","))
+            .join("\n");
     return csvContent;
 }
 </script>

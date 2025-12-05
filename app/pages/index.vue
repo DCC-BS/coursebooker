@@ -56,7 +56,11 @@ function isLessonOnDay(lesson: { start: Date }, day: string): boolean {
 }
 
 // Helper function to check if a lesson is within a date range
-function isLessonInDateRange(lesson: { start: Date, end: Date }, start: string, end: string): boolean {
+function isLessonInDateRange(
+    lesson: { start: Date; end: Date },
+    start: string,
+    end: string,
+): boolean {
     if (!start && !end) return true;
 
     // Convert filter dates to Date objects at midnight for accurate comparison
@@ -100,7 +104,11 @@ const filteredCourses = computed(() => {
         // Check if course has sessions that match the filters
         const hasMatchingSessions = course.sessions.some((session) => {
             return session.lessons.some((lesson) => {
-                const matchesDate = isLessonInDateRange(lesson, startDate.value, endDate.value);
+                const matchesDate = isLessonInDateRange(
+                    lesson,
+                    startDate.value,
+                    endDate.value,
+                );
                 const matchesDay = isLessonOnDay(lesson, selectedDay.value);
                 const matchesTime = isLessonInTimeRange(
                     lesson,

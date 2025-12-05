@@ -1,7 +1,6 @@
 <script lang="ts" setup>
+import type { FormKitSchemaNode } from "@formkit/core";
 import type { Course, Session, User } from "~~/shared/models";
-import type { FormKitSchemaNode } from '@formkit/core'
-
 
 const props = defineProps<{
     index: number;
@@ -23,14 +22,15 @@ const isRegisterFormOpen = ref(false);
 
 const formSchema = computed<FormKitSchemaNode[]>(() => {
     try {
-        return JSON.parse(props.course.form_schema || "[]") as FormKitSchemaNode[];
+        return JSON.parse(
+            props.course.form_schema || "[]",
+        ) as FormKitSchemaNode[];
     } catch {
         return [];
     }
 });
 
 async function register() {
-
     console.log(formSchema.value);
     if (formSchema.value.length === 0) {
         await registerForSession(props.user.email);
@@ -51,7 +51,7 @@ async function onRegisterSubmit(data: unknown) {
     await registerForSession(props.user.email, JSON.stringify(data, null, 2));
     props.refreshUser();
     isRegisterFormOpen.value = false;
-};
+}
 </script>
 
 <template>

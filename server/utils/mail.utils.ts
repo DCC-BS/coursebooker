@@ -2,16 +2,20 @@ import { format } from "date-fns";
 import { createEvents, type EventAttributes } from "ics";
 import { createTransport, type SendMailOptions } from "nodemailer";
 import type Mail from "nodemailer/lib/mailer";
-import type { Course, CreateCourse, Lesson, Session } from "~~/shared/models";
+import de from "@/../i18n/locales/de.json";
+import type { Course, Lesson, Session } from "~~/shared/models";
 
 export function sendRegistrationMail(
     familyName: string,
     givenName: string,
     userEmail: string,
-    course: CreateCourse,
+    course: Course,
     session: Session,
     ics_file?: Buffer<ArrayBufferLike>,
 ) {
+    const config = useRuntimeConfig();
+    const siteUrl = config.siteUrl;
+
     const attachment = {
         filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
         contentType: "text/calendar",
@@ -30,6 +34,10 @@ export function sendRegistrationMail(
     }
 
     let dateStr = "";
+    const type =
+        course.type === "course"
+            ? de.courseDetails.course
+            : de.courseDetails.event;
 
     if (session.lessons.length === 1 && session.lessons[0]) {
         dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
@@ -48,13 +56,16 @@ export function sendRegistrationMail(
 
     const body = `Hallo ${givenName} ${familyName},
 
-Vielen Dank für Deine Anmeldung zum Kurs "${course.title}".
+Vielen Dank für Deine Anmeldung zum ${type} "${course.title}".
 
-Kursdetails:
+${type}details:
 - Name: ${course.title}
 ${dateStr}
-- Ort: ${session.location}
+- Ort: ${session.location ?? "Nicht bekannt"}
 ${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
+
+Du kannst an dem Termin doch nicht teilnehmen oder hast dich irrtümlicherweise angemeldet? Über diesen Link kannst du dich wieder vom Event abmelden: 
+${siteUrl}/courses/${course.id}/${session.id}
 
 Im Anhang findest Du eine Kalendereinladung.
 
@@ -67,7 +78,7 @@ dcc@bs.ch`;
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Anmeldung zum Kurs "${course.title}"`,
+        subject: `Anmeldung zum ${type} "${course.title}"`,
         text: body,
         attachments: [attachment],
     };
@@ -81,10 +92,14 @@ export function sendUnregisterMail(
     familyName: string,
     givenName: string,
     userEmail: string,
-    course: CreateCourse,
+    course: Course,
     session: Session,
 ) {
     let dateStr = "";
+    const type =
+        course.type === "course"
+            ? de.courseDetails.course
+            : de.courseDetails.event;
 
     if (session.lessons.length === 1 && session.lessons[0]) {
         dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
@@ -95,9 +110,9 @@ export function sendUnregisterMail(
     // TODO handle many lessons
     const body = `Hallo ${givenName} ${familyName},
 
-Wir haben deine Abmeldung für den Kurs "${course.title}" erhalten.
+Wir haben deine Abmeldung für den ${type} "${course.title}" erhalten.
 
-Kursdetails:
+${type}details:
 - Name: ${course.title}
 ${dateStr}
 - Ort: ${session.location}
@@ -109,7 +124,7 @@ dcc@bs.ch`;
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Abmeldung zum Kurs "${course.title}"`,
+        subject: `Abmeldung zum ${type} "${course.title}"`,
         text: body,
     };
 

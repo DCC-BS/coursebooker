@@ -39,7 +39,7 @@ const scrollToElement = (elementId: string) => {
     nextTick(() => {
         const el = document.getElementById(elementId);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     });
 };
@@ -53,7 +53,7 @@ watch(
             scrollToElement(elementId);
         }
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 // Ensure scrolling happens on initial load if hash is present

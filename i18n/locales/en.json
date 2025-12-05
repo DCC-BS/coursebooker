@@ -97,6 +97,9 @@
         "joinCourseMeeting": "Join Course Meeting",
         "contactOrganizer": "Contact Organizer",
         "backToCourses": "Back to Courses",
+        "backToCourse": "Back to Course",
+        "viewFullCourse": "View Full Course",
+        "sessionDetails": "Session Details",
         "sessionCount": "1 Session | {count} Sessions"
     },
     "session": {

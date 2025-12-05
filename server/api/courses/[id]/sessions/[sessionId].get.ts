@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
             eq(sessionsTable.id, sessionId),
             eq(sessionsTable.courseId, courseId),
         ),
-        columns: { ics_file: true },
         with: {
             lessons: true,
             users: withUsers,

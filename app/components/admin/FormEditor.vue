@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { FormKitSchema } from '@formkit/vue'
-import type { FormKitSchemaNode, FormKitSchemaDefinition } from '@formkit/core'
+import type { FormKitSchemaDefinition, FormKitSchemaNode } from "@formkit/core";
+import { FormKitSchema } from "@formkit/vue";
 
 const formSchemaStr = defineModel<string>();
 const parseError = ref<string>();
 
-const formSchema = computed<FormKitSchemaDefinition>(() => parse(formSchemaStr.value || '[]'));
+const formSchema = computed<FormKitSchemaDefinition>(() =>
+    parse(formSchemaStr.value || "[]"),
+);
 
 const submitResult = ref<string>();
 
@@ -30,10 +32,10 @@ function addCommentField() {
         name: "Anmerkungen",
         label: "Anmerkungen",
         help: "Zusätzliche Anmerkungen",
-        validation: "length:0,500"
+        validation: "length:0,500",
     };
 
-    const schema = parse(formSchemaStr.value || '[]') as FormKitSchemaNode[];
+    const schema = parse(formSchemaStr.value || "[]") as FormKitSchemaNode[];
     schema.push(node);
     formSchemaStr.value = JSON.stringify(schema, null, 2);
 }
@@ -44,10 +46,10 @@ function addNumberField() {
         name: "Teilnehmerzahl",
         label: "Teilnehmerzahl",
         help: "Anzahl der Teilnehmer",
-        validation: "required|integer|min:1"
+        validation: "required|integer|min:1",
     };
 
-    const schema = parse(formSchemaStr.value || '[]') as FormKitSchemaNode[];
+    const schema = parse(formSchemaStr.value || "[]") as FormKitSchemaNode[];
     schema.push(node);
     formSchemaStr.value = JSON.stringify(schema, null, 2);
 }
@@ -58,10 +60,10 @@ function addTextField() {
         name: "Vorname",
         label: "Vorname",
         help: "Dein Vorname",
-        validation: "required|alpha"
+        validation: "required|alpha",
     };
 
-    const schema = parse(formSchemaStr.value || '[]') as FormKitSchemaNode[];
+    const schema = parse(formSchemaStr.value || "[]") as FormKitSchemaNode[];
     schema.push(node);
     formSchemaStr.value = JSON.stringify(schema, null, 2);
 }
@@ -75,12 +77,12 @@ function addOptionsField() {
         options: [
             { value: "fleisch", label: "Fleisch" },
             { value: "vegetarisch", label: "Vegetarisch" },
-            { value: "vegan", label: "Vegan" }
+            { value: "vegan", label: "Vegan" },
         ],
-        validation: "required"
+        validation: "required",
     };
 
-    const schema = parse(formSchemaStr.value || '[]') as FormKitSchemaNode[];
+    const schema = parse(formSchemaStr.value || "[]") as FormKitSchemaNode[];
     schema.push(node);
     formSchemaStr.value = JSON.stringify(schema, null, 2);
 }

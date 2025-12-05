@@ -4,7 +4,7 @@ import { motion } from "motion-v";
 const { t } = useI18n();
 
 const props = defineProps<{
-  message: string;
+    message: string;
 }>();
 </script>
 
