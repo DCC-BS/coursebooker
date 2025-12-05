@@ -63,30 +63,33 @@ const totalRegistrations = computed(() => {
 });
 
 // Dropdown actions
-const actions = computed(() => [
-    [
-        {
-            label: t("admin.courseCard.editCourse"),
-            icon: "i-lucide-square-pen",
-            onSelect: () => emit("edit", props.course),
-        },
-        {
-            label: t("admin.courseCard.manageSessions"),
-            icon: "i-lucide-calendar-days",
-            to: `/admin/courses/${props.course.id}/sessions`,
-        },
-        {
-            label: t("admin.courseCard.duplicateCourse"),
-            icon: "i-lucide-copy",
-            onSelect: () => emit("duplicate", props.course),
-        },
-        {
-            label: t("admin.courseCard.deleteCourse"),
-            icon: "i-lucide-trash-2",
-            onSelect: () => emit("delete", props.course),
-        },
-    ],
-] as DropdownMenuItem[][]);
+const actions = computed(
+    () =>
+        [
+            [
+                {
+                    label: t("admin.courseCard.editCourse"),
+                    icon: "i-lucide-square-pen",
+                    onSelect: () => emit("edit", props.course),
+                },
+                {
+                    label: t("admin.courseCard.manageSessions"),
+                    icon: "i-lucide-calendar-days",
+                    to: `/admin/courses/${props.course.id}/sessions`,
+                },
+                {
+                    label: t("admin.courseCard.duplicateCourse"),
+                    icon: "i-lucide-copy",
+                    onSelect: () => emit("duplicate", props.course),
+                },
+                {
+                    label: t("admin.courseCard.deleteCourse"),
+                    icon: "i-lucide-trash-2",
+                    onSelect: () => emit("delete", props.course),
+                },
+            ],
+        ] as DropdownMenuItem[][],
+);
 </script>
 
 <template>

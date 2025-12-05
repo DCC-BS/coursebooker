@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
-import type { Lesson } from "~/../shared/models";
 import { format } from "date-fns";
+import type { Lesson } from "~/../shared/models";
 
 interface Props {
     lesson: Lesson;
@@ -20,15 +20,18 @@ const emit = defineEmits<{
 }>();
 
 // Dropdown actions
-const actions = computed(() => [
-    [
-        {
-            label: t("admin.lessonCard.deleteLesson"),
-            icon: "i-lucide-trash-2",
-            onSelect: () => emit("delete", props.lesson),
-        },
-    ],
-] as DropdownMenuItem[][]);
+const actions = computed(
+    () =>
+        [
+            [
+                {
+                    label: t("admin.lessonCard.deleteLesson"),
+                    icon: "i-lucide-trash-2",
+                    onSelect: () => emit("delete", props.lesson),
+                },
+            ],
+        ] as DropdownMenuItem[][],
+);
 
 // Utility functions
 function formatDateTime(date: Date): string {

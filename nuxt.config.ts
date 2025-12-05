@@ -12,6 +12,7 @@ export default defineNuxtConfig({
         azureAdClientSecret: process.env.AZURE_AD_CLIENT_SECRET ?? "NA",
         authSecret: process.env.AUTH_SECRET ?? "NA",
         defaultAdmin: process.env.DEFAULT_ADMIN ?? "tobias.bollinger@bs.ch",
+        siteUrl: process.env.NUXT_SITE_URL || "http://localhost:3000",
         public: {
             logger_bs: {
                 loglevel: process.env.LOG_LEVEL || "debug",

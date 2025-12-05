@@ -24,6 +24,7 @@ stages:
     - sed -i "s#?AUTH_ORIGIN?#$AUTH_ORIGIN#g" Dockerfile
     - sed -i "s#?SMTP_HOST?#$SMTP_HOST#g" Dockerfile
     - sed -i "s#?SMTP_PORT?#$SMTP_PORT#g" Dockerfile
+    - sed -i "s#?NUXT_SITE_URL?#$NUXT_SITE_URL#g" Dockerfile
     - find . -type d -exec chmod 755 {} \;
     - find . -type f -exec chmod 644 {} \;
     - docker-compose build
