@@ -44,7 +44,7 @@
         "afternoon": "Afternoon (12:00 - 18:00)",
         "evening": "Evening (18:00 - 24:00)",
         "loadingCourses": "Loading courses & events...",
-        "foundCourses": "Found {count} course/event{plural}",
+        "foundCourses": "No courses or events found | Found 1 cours/event | Found {count} courses/events",
         "noCourses": "No courses or events found",
         "noCoursesMessage": "Try adjusting your search criteria or clearing your filters.",
         "clearAllFilters": "Clear All Filters",

@@ -141,13 +141,8 @@ function clearFilters() {
 
 // Computed property for results count message
 const resultsMessage = computed(() => {
-    if (filteredCourses.value.length === 0) {
-        return t("home.noCourses");
-    }
-    const plural = filteredCourses.value.length === 1 ? "" : "s";
     return t("home.foundCourses", {
         count: filteredCourses.value.length,
-        plural,
     });
 });
 </script>
