@@ -14,6 +14,9 @@ export default defineAdminResponseHandler(async (event) => {
                 ? {
                       with: {
                           session: {
+                              columns: {
+                                  ics_file: false,
+                              },
                               with: {
                                   lessons: true,
                               },
