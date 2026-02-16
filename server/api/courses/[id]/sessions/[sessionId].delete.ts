@@ -87,6 +87,8 @@ export default defineAdminResponseHandler(async (event) => {
         .delete(usersToSessionsTable)
         .where(eq(usersToSessionsTable.sessionId, sessionId));
 
+    await db.delete(lessonsTable).where(eq(lessonsTable.sessionId, sessionId));
+
     const deletedSession = await db
         .delete(sessionsTable)
         .where(eq(sessionsTable.id, sessionId))

@@ -171,7 +171,7 @@
             "editSession": "Edit Session",
             "deleteSession": "Delete Session",
             "deleteSessionTitle": "Delete Session",
-            "deleteSessionConfirm": "Are you sure you want to delete \"{title}\"?",
+            "deleteSessionConfirm": "Are you sure you want to delete the Session?",
             "deleteSessionRegistrations": "All registered users ({count}) will receive an email that the session was cancelled.",
             "deleteSessionPast": "This session is in the past. No emails will be sent.",
             "deleteSessionConfirmButton": "Delete Session",

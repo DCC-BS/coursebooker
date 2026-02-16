@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
 import { defineAdminResponseHandler } from "~~/server/utils/adminAccess";
 import {
     coursesTable,
+    lessonsTable,
     sessionsTable,
     usersToSessionsTable,
 } from "~~/shared/schema";
@@ -26,9 +27,15 @@ export default defineAdminResponseHandler(async (event) => {
     });
 
     if (existingSessions.length > 0) {
+        const sessionIds = existingSessions.map((s) => s.id);
+
         await db
             .delete(usersToSessionsTable)
-            .where(eq(usersToSessionsTable.sessionId, courseId));
+            .where(inArray(usersToSessionsTable.sessionId, sessionIds));
+
+        await db
+            .delete(lessonsTable)
+            .where(inArray(lessonsTable.sessionId, sessionIds));
 
         await db
             .delete(sessionsTable)

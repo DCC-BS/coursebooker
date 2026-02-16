@@ -169,7 +169,7 @@
             "editSession": "Durchführung bearbeiten",
             "deleteSession": "Durchführung löschen",
             "deleteSessionTitle": "Durchführung löschen",
-            "deleteSessionConfirm": "Möchten Sie \"{title}\" wirklich löschen?",
+            "deleteSessionConfirm": "Möchten Sie die Durchführung wirklich löschen?",
             "deleteSessionRegistrations": "Alle angemeldeten Benutzer ({count}) erhalten eine E-Mail, dass die Durchführung abgesagt wurde.",
             "deleteSessionConfirmButton": "Durchführung löschen",
             "cancel": "Abbrechen",

@@ -93,14 +93,26 @@ const actions = computed(
 </script>
 
 <template>
-    <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow duration-200">
+    <div
+        class="bg-white rounded-lg shadow hover:shadow-md transition-shadow duration-200"
+    >
         <div class="p-6">
             <!-- Course Header -->
             <div class="flex items-start justify-between mb-4">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
-                        <UBadge :color="course.type === 'course' ? 'primary' : 'secondary'" size="sm">
-                            {{ course.type.toUpperCase() ?? '' + course.type.slice(1) }}
+                        <UBadge
+                            :color="
+                                course.type === 'course'
+                                    ? 'primary'
+                                    : 'secondary'
+                            "
+                            size="sm"
+                        >
+                            {{
+                                course.type.toUpperCase() ??
+                                "" + course.type.slice(1)
+                            }}
                         </UBadge>
 
                         <span>{{ getNextSession(course) }}</span>
@@ -115,7 +127,12 @@ const actions = computed(
 
                 <!-- Actions Dropdown -->
                 <UDropdownMenu :items="actions">
-                    <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="sm" />
+                    <UButton
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-lucide-ellipsis-vertical"
+                        size="sm"
+                    />
                 </UDropdownMenu>
             </div>
 
@@ -129,10 +146,6 @@ const actions = computed(
                     <UIcon name="i-lucide-mail" class="h-4 w-4 mr-2" />
                     {{ course.organizer_mail }}
                 </div>
-                <div v-if="course.teams_link" class="flex items-center text-sm text-gray-600">
-                    <UIcon name="i-lucide-video" class="h-4 w-4 mr-2" />
-                    {{ t("admin.courseCard.teamsLinkAvailable") }}
-                </div>
             </div>
 
             <!-- Statistics -->
@@ -142,7 +155,11 @@ const actions = computed(
                         {{ course.sessions.length }}
                     </div>
                     <div class="text-xs text-gray-500">
-                        {{ course.sessions.length === 1 ? t("admin.course.sessions") : t("admin.course.sessions") }}
+                        {{
+                            course.sessions.length === 1
+                                ? t("admin.course.sessions")
+                                : t("admin.course.sessions")
+                        }}
                     </div>
                 </div>
                 <div class="text-center">
@@ -150,20 +167,37 @@ const actions = computed(
                         {{ totalRegistrations }}
                     </div>
                     <div class="text-xs text-gray-500">
-                        {{ totalRegistrations === 1 ? t("admin.session.registrations", { count: 1 }) :
-                            t("admin.session.registrations", { count: totalRegistrations }) }}
+                        {{
+                            totalRegistrations === 1
+                                ? t("admin.session.registrations", { count: 1 })
+                                : t("admin.session.registrations", {
+                                      count: totalRegistrations,
+                                  })
+                        }}
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions Footer -->
-        <div class="bg-gray-50 px-6 py-3 flex justify-between items-center rounded-b-lg">
+        <div
+            class="bg-gray-50 px-6 py-3 flex justify-between items-center rounded-b-lg"
+        >
             <div class="flex space-x-2">
-                <UButton size="xs" color="neutral" variant="ghost" @click="$emit('edit', course)">
+                <UButton
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    @click="$emit('edit', course)"
+                >
                     {{ t("admin.courseCard.edit") }}
                 </UButton>
-                <UButton size="xs" color="primary" variant="ghost" :to="`/admin/courses/${course.id}/sessions`">
+                <UButton
+                    size="xs"
+                    color="primary"
+                    variant="ghost"
+                    :to="`/admin/courses/${course.id}/sessions`"
+                >
                     {{ t("admin.courseCard.sessions") }}
                 </UButton>
             </div>
