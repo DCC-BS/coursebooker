@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
 import { defineAdminResponseHandler } from "~~/server/utils/adminAccess";
-import { coursesTable } from "~~/shared/schema";
+import {
+    coursesTable,
+    sessionsTable,
+    usersToSessionsTable,
+} from "~~/shared/schema";
 
 export default defineAdminResponseHandler(async (event) => {
     const { db } = useDb();
@@ -12,6 +16,23 @@ export default defineAdminResponseHandler(async (event) => {
             statusCode: 400,
             statusMessage: "Course ID is required",
         });
+    }
+
+    const existingSessions = await db.query.sessionsTable.findMany({
+        where: eq(sessionsTable.courseId, courseId),
+        columns: {
+            id: true,
+        },
+    });
+
+    if (existingSessions.length > 0) {
+        await db
+            .delete(usersToSessionsTable)
+            .where(eq(usersToSessionsTable.sessionId, courseId));
+
+        await db
+            .delete(sessionsTable)
+            .where(eq(sessionsTable.courseId, courseId));
     }
 
     const deleted = await db

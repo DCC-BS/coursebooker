@@ -145,11 +145,26 @@ async function confirmDelete() {
         courseToDelete.value = null;
         await refresh();
 
-        // Show success toast
-        // You might want to add a toast notification here
+        feedback.showSuccess({ title: "Course deleted successfully" });
     } catch (error) {
         console.error("Error deleting course:", error);
-        // Show error toast
+        const errorMessage = (error as Error).message;
+
+        if (
+            errorMessage?.includes(
+                "Cannot delete course/event when there are still active sessions",
+            )
+        ) {
+            feedback.showError({
+                title: t("admin.course.cannotDeleteWithActiveSessions"),
+                description: t("admin.course.deleteSessionsFirst"),
+            });
+        } else {
+            feedback.showError({
+                title: "Failed to delete course",
+                description: errorMessage,
+            });
+        }
     } finally {
         deleting.value = false;
     }
@@ -218,18 +233,17 @@ useHead({
                     </template>
 
                     <p class="text-gray-600">
-                        Are you sure you want to delete "<span class="font-semibold">{{ courseToDelete?.title
-                            }}</span>"?
-                        This action cannot be undone and will also delete all associated sessions and lessons.
+                        {{ t("admin.course.deleteConfirm", { title: courseToDelete?.title || "this course/event" }) }}
+                        {{ t("admin.course.deleteWarning") }}
                     </p>
 
                     <template #footer>
                         <div class="flex justify-end gap-3">
                             <UButton color="secondary" @click="showDeleteModal = false">
-                                Cancel
+                                {{ t("admin.session.cancel") }}
                             </UButton>
                             <UButton color="error" :loading="deleting" @click="confirmDelete">
-                                Delete Course
+                                {{ t("admin.course.deleteCourse") }}
                             </UButton>
                         </div>
                     </template>

@@ -77,6 +77,7 @@ export const userSchema = createSelectSchema(userTable).extend({
 
 export type User = z.infer<typeof userSchema>;
 export type Course = z.infer<typeof courseSchema>;
+export type CourseWithoutSessions = z.infer<typeof courseSchemaWithoutSessions>;
 export type Session = z.infer<typeof sessionSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 

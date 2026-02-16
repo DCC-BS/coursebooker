@@ -17,6 +17,10 @@ const currentSession = ref<Session>();
 
 // State
 const showSessionModal = ref(false);
+const showDeleteModal = ref(false);
+const sessionToDelete = ref<Session>();
+const sessionIsPast = ref(false);
+const deleting = ref(false);
 
 const { showSuccess, showError } = useUserFeedback();
 
@@ -49,20 +53,43 @@ function editSession(session: Session) {
     showSessionModal.value = true;
 }
 
-async function deleteSession(session: Session) {
-    try {
-        await $fetch(`/api/courses/${courseId}/sessions/${session.id}`, {
-            method: "DELETE",
-        });
+function deleteSession(session: Session) {
+    sessionToDelete.value = session;
 
+    const now = new Date();
+    const isInPast = session.lessons.every((lesson) => lesson.end < now);
+    sessionIsPast.value = isInPast;
+
+    showDeleteModal.value = true;
+}
+
+async function confirmDeleteSession() {
+    if (!sessionToDelete.value) return;
+
+    deleting.value = true;
+    try {
+        await $fetch(
+            `/api/courses/${courseId}/sessions/${sessionToDelete.value.id}`,
+            {
+                method: "DELETE",
+            },
+        );
+
+        showDeleteModal.value = false;
+        sessionToDelete.value = undefined;
         await refresh();
-        showSuccess({ title: t("admin.course.sessionDeletedSuccessfully") });
+
+        showSuccess({
+            title: t("admin.course.sessionDeletedSuccessfully"),
+        });
     } catch (error) {
         console.error("Error deleting session:", error);
         showError({
             title: t("admin.course.failedToDeleteSession"),
             description: (error as Error).message,
         });
+    } finally {
+        deleting.value = false;
     }
 }
 
@@ -164,6 +191,42 @@ useHead({
             <template #content>
                 <AdminSessionForm :course-id="courseId" :session="currentSession" @cancel="showSessionModal = false"
                     @update="(_) => { refresh(); showSessionModal = false }" />
+            </template>
+        </UModal>
+
+        <!-- Delete Session Confirmation Modal -->
+        <UModal v-model:open="showDeleteModal">
+            <template #content>
+                <UCard>
+                    <template #header>
+                        <h3 class="text-lg font-semibold">{{ t("admin.session.deleteSessionTitle") }}</h3>
+                    </template>
+
+                    <p class="text-gray-600 mb-4">
+                        {{ t("admin.session.deleteSessionConfirm", { title: sessionToDelete?.title || "this session" }) }}
+                    </p>
+
+                    <p v-if="sessionIsPast" class="text-amber-600 mb-4">
+                        <UIcon name="i-lucide-info" class="h-4 w-4 inline mr-1" />
+                        {{ t("admin.session.deleteSessionPast") }}
+                    </p>
+
+                    <p v-if="sessionToDelete?.registrations && sessionToDelete.registrations.length > 0 && !sessionIsPast" class="text-amber-600 mb-4">
+                        <UIcon name="i-lucide-mail" class="h-4 w-4 inline mr-1" />
+                        {{ t("admin.session.deleteSessionRegistrations", { count: sessionToDelete.registrations.length }) }}
+                    </p>
+
+                    <template #footer>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="secondary" @click="showDeleteModal = false">
+                                {{ t("admin.session.cancel") }}
+                            </UButton>
+                            <UButton color="error" :loading="deleting" @click="confirmDeleteSession">
+                                {{ t("admin.session.deleteSessionConfirmButton") }}
+                            </UButton>
+                        </div>
+                    </template>
+                </UCard>
             </template>
         </UModal>
     </div>

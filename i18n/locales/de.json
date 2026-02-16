@@ -158,11 +158,22 @@
             "noSessionsYet": "Noch keine Durchführungen",
             "getStartedAddSession": "Beginnen Sie, indem Sie Ihre erste Durchführung hinzufügen.",
             "sessionDeletedSuccessfully": "Durchführung erfolgreich gelöscht",
-            "failedToDeleteSession": "Durchführung konnte nicht gelöscht werden"
+            "failedToDeleteSession": "Durchführung konnte nicht gelöscht werden",
+            "deleteConfirm": "Möchten Sie \"{title}\" wirklich löschen?",
+            "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
+            "deleteCourse": "Kurs/Event löschen",
+            "cannotDeleteWithActiveSessions": "Kurs/Event kann nicht gelöscht werden, da noch aktive Durchführungen vorhanden sind",
+            "deleteSessionsFirst": "Bitte löschen Sie zuerst alle Durchführungen, bevor Sie diesen Kurs/Event löschen."
         },
         "session": {
             "editSession": "Durchführung bearbeiten",
             "deleteSession": "Durchführung löschen",
+            "deleteSessionTitle": "Durchführung löschen",
+            "deleteSessionConfirm": "Möchten Sie \"{title}\" wirklich löschen?",
+            "deleteSessionRegistrations": "Alle angemeldeten Benutzer ({count}) erhalten eine E-Mail, dass die Durchführung abgesagt wurde.",
+            "deleteSessionConfirmButton": "Durchführung löschen",
+            "cancel": "Abbrechen",
+            "deleteSessionPast": "Diese Durchführung liegt in der Vergangenheit. Es werden keine E-Mails versendet.",
             "noLessons": "Keine Lektionen",
             "lessons": "Lektionen",
             "registrations": "keine Anmeldungen | 1 Anmeldung | {count} Anmeldungen",

@@ -160,11 +160,22 @@
             "noSessionsYet": "No sessions yet",
             "getStartedAddSession": "Get started by adding your first session.",
             "sessionDeletedSuccessfully": "Session deleted successfully",
-            "failedToDeleteSession": "Failed to delete session"
+            "failedToDeleteSession": "Failed to delete session",
+            "deleteConfirm": "Are you sure you want to delete \"{title}\"?",
+            "deleteWarning": "This action cannot be undone.",
+            "deleteCourse": "Delete Course/Event",
+            "cannotDeleteWithActiveSessions": "Cannot delete course/event when there are still active sessions",
+            "deleteSessionsFirst": "Please delete all sessions first before deleting this course/event."
         },
         "session": {
             "editSession": "Edit Session",
             "deleteSession": "Delete Session",
+            "deleteSessionTitle": "Delete Session",
+            "deleteSessionConfirm": "Are you sure you want to delete \"{title}\"?",
+            "deleteSessionRegistrations": "All registered users ({count}) will receive an email that the session was cancelled.",
+            "deleteSessionPast": "This session is in the past. No emails will be sent.",
+            "deleteSessionConfirmButton": "Delete Session",
+            "cancel": "Cancel",
             "noLessons": "No Lessons",
             "lessons": "Lessons",
             "registrations": "no Registrations | 1 Registration | {count} Registrations",
