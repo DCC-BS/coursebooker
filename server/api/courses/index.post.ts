@@ -8,7 +8,7 @@ export default defineAdminResponseHandler(async (event) => {
     const { db } = useDb();
     const body = createCourseSchema.parse(await readBody(event));
 
-    body.id = uuidv7();
-    const course = await db.insert(coursesTable).values(body).returning();
+    const params = { ...body, id: uuidv7() };
+    const course = await db.insert(coursesTable).values(params).returning();
     return course[0];
 });

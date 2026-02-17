@@ -42,7 +42,7 @@ export const coursesSchema = z.array(courseSchema);
 
 export const createCourseSchema = createInsertSchema(coursesTable, {
     organizer_mail: z.email(),
-    id: z.undefined().optional(),
+    id: z.string().optional(),
 });
 
 export const updateCourseSchema = createUpdateSchema(coursesTable, {

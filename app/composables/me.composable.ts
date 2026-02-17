@@ -1,7 +1,11 @@
 import { userSchema } from "~~/shared/models";
-import { fetchWithSchema, useSchemaFetch } from "./useApiFetch.composable";
+import {
+    type FetchOptions,
+    fetchWithSchema,
+    useSchemaFetch,
+} from "./useApiFetch.composable";
 
-export async function fetchMe(options: RequestInit = {}) {
+export async function fetchMe(options: FetchOptions = {}) {
     return fetchWithSchema("/api/me", userSchema, options);
 }
 

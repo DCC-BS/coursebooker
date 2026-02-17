@@ -14,7 +14,7 @@ export function sendRegistrationMail(
     familyName: string,
     givenName: string,
     userEmail: string,
-    course: Course,
+    course: Omit<Course, "sessions">,
     session: Session,
     ics_file?: Buffer<ArrayBufferLike>,
 ) {
@@ -97,7 +97,7 @@ export function sendUnregisterMail(
     familyName: string,
     givenName: string,
     userEmail: string,
-    course: Course,
+    course: Omit<Course, "sessions">,
     session: Session,
 ) {
     let dateStr = "";

@@ -96,11 +96,11 @@ export default defineEventHandler(async (event) => {
 
     const given_name = registrationIsForMe
         ? session?.user.given_name || ""
-        : firstCharToUpper(values.userEmail.split(".")[0]);
+        : firstCharToUpper(values.userEmail.split(".")[0] ?? "");
 
     const family_name = registrationIsForMe
         ? session?.user.family_name || ""
-        : firstCharToUpper(values.userEmail.split(".")[1].split("@")[0]);
+        : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
     sendRegistrationMail(
         family_name,
