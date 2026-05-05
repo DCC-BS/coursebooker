@@ -14,20 +14,17 @@ const { t } = useI18n();
 const { showError, showSuccess } = useUserFeedback();
 const router = useRouter();
 
-// Form state
 const submitting = ref(false);
 const deleting = ref(false);
 const showDeleteModal = ref(false);
 const schema = createCourseSchema;
 type Schema = z.infer<typeof schema>;
 
-// Course type options
 const typeOptions = computed(() => [
     { label: t("admin.courseForm.course"), value: "course" },
     { label: t("admin.courseForm.event"), value: "event" },
 ]);
 
-// Form data - initialize with course data
 const form = ref({
     type: "course" as "course" | "event",
     title: "",
@@ -54,7 +51,6 @@ watch(
     { immediate: true },
 );
 
-// Methods
 function onCancel() {
     const routes = router.getRoutes();
     if (routes.length > 1) {
@@ -66,7 +62,6 @@ function onCancel() {
 
 async function submitForm(event: FormSubmitEvent<Schema>) {
     try {
-        // Prepare the update data
         const data = {
             type: event.data.type,
             title: event.data.title.trim(),
@@ -76,17 +71,16 @@ async function submitForm(event: FormSubmitEvent<Schema>) {
             form_schema: event.data.form_schema || "[]",
         };
 
-        // Update via API
         if (!props.courseId) {
             const createdCourse = await createCourse(data);
             showSuccess({ title: t("admin.courseForm.courseCreated") });
             await router.push(`/admin/courses/${createdCourse.id}/edit`);
-        } else {
-            await updateCourse(props.courseId, data);
-            // Refresh course data
-            await props.refresh?.();
-            showSuccess({ title: t("admin.courseForm.courseUpdated") });
+            return;
         }
+
+        await updateCourse(props.courseId, data);
+        await props.refresh?.();
+        showSuccess({ title: t("admin.courseForm.courseUpdated") });
     } catch (error) {
         console.error("Error updating course:", error);
         showError({
@@ -105,7 +99,6 @@ async function onDeleteCourse() {
     try {
         await deleteCourse(props.courseId);
 
-        // Redirect to course list
         await navigateTo("/admin/courses");
         showSuccess({ title: t("admin.courseForm.courseDeleted") });
     } catch (error) {
@@ -125,24 +118,20 @@ async function onDeleteCourse() {
     <div>
         <UForm :state="form" :schema="schema" @submit="submitForm" @error="(e) => console.error('Form error:', e)"
             class="p-6 space-y-6">
-            <!-- Course Type -->
             <UFormField :label="t('admin.courseForm.courseType')" name="type">
                 <USelect v-model="form.type" :items="typeOptions" value-key="value"
                     :placeholder="t('admin.courseForm.selectCourseType')" size="lg" required />
             </UFormField>
 
-            <!-- Course Title -->
             <UFormField :label="t('admin.courseForm.courseTitle')" name="title">
                 <UInput v-model="form.title" :placeholder="t('admin.courseForm.enterCourseTitle')" size="lg" required />
             </UFormField>
 
-            <!-- Course Description -->
             <UFormField :label="t('admin.courseForm.courseDescription')" name="description">
                 <UTextarea v-model="form.description" :placeholder="t('admin.courseForm.describeCourse')" :rows="4"
                     resize required class="justify-stretch w-full" />
             </UFormField>
 
-            <!-- Organizer Information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <UFormField :label="t('admin.courseForm.organizerName')" name="organizer_name">
@@ -165,7 +154,6 @@ async function onDeleteCourse() {
                 </UDrawer>
             </div>
 
-            <!-- Form Actions -->
             <div class="flex justify-between pt-6 border-t border-gray-200">
                 <div>
                     <UButton v-if="props.course" type="button" color="error" variant="outline" icon="i-lucide-trash-2"
@@ -185,7 +173,6 @@ async function onDeleteCourse() {
         </UForm>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <UModal v-model:open="showDeleteModal">
         <template #content>
             <UCard>

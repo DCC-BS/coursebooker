@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { useDb } from "~~/server/composables/db.composable";
 import { defineAdminResponseHandler } from "~~/server/utils/adminAccess";
 import {

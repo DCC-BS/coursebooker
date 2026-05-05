@@ -23,15 +23,13 @@ function toggleShowRegistrations(sessionId: string) {
     }
 }
 
-// Emits
 const emit = defineEmits<{
     edit: [session: Session];
     delete: [session: Session];
     "add-lesson": [session: Session];
 }>();
 
-// Dropdown actions
-const actions = [
+const actions = computed(() => [
     [
         {
             label: t("admin.session.editSession"),
@@ -39,14 +37,18 @@ const actions = [
             onSelect: () => emit("edit", props.session),
         },
         {
+            label: "Benachrichtigung senden",
+            icon: "i-lucide-mail",
+            to: `/admin/courses/${props.courseId}/sessions/${props.session.id}/notify`,
+        },
+        {
             label: t("admin.session.deleteSession"),
             icon: "i-lucide-trash-2",
             onSelect: () => emit("delete", props.session),
         },
     ],
-];
+]);
 
-// Methods
 async function deleteLesson(lesson: Lesson) {
     try {
         await $fetch(
@@ -107,32 +109,35 @@ async function deleteLesson(lesson: Lesson) {
 
             </div>
 
-            <!-- Actions Dropdown -->
             <UDropdownMenu :items="actions">
                 <UButton color="neutral" variant="ghost" icon="i-lucide-ellipsis-vertical" size="sm" />
             </UDropdownMenu>
         </div>
 
-        <!-- Lessons List -->
         <div v-if="props.session.lessons.length > 0" class="space-y-3">
             <h5 class="text-sm font-medium text-gray-700 border-b border-gray-200 pb-2">
                 {{ t("admin.session.lessons") }}
             </h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <AdminLessonCard v-for="(lesson, index) in props.session.lessons" :key="lesson.id" :lesson="lesson"
-                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id" @delete="deleteLesson" />
+                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id"
+                    @delete="deleteLesson" />
             </div>
         </div>
 
         <div class="mt-2">
-            <AdminLessonForm :course-id="courseId" :session-id="session.id" @created="refreshSession" />
+            <AdminLessonForm :course-id="courseId" :session-id="session.id" :session="session"
+                @created="refreshSession" />
         </div>
 
-        <!-- Quick Actions -->
         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
             <div class="flex space-x-2">
                 <UButton size="xs" color="neutral" variant="ghost" @click="$emit('edit', session)">
                     {{ t("admin.session.editSession") }}
+                </UButton>
+                <UButton size="xs" color="primary" variant="ghost"
+                    :to="`/admin/courses/${courseId}/sessions/${session.id}/notify`">
+                    Benachrichtigen
                 </UButton>
             </div>
             <div class="text-xs text-gray-500">

@@ -73,7 +73,7 @@ export default defineAdminResponseHandler(async (event) => {
                 userEmail.split(".")[1]?.split("@")[0] || "",
             );
 
-            sendCancellationMail(
+            await sendCancellationMail(
                 family_name,
                 given_name,
                 userEmail,

@@ -87,8 +87,6 @@ function endFromDuration() {
         }
     }
 
-    console.log("start", state.start, "totalMinutes", totalMinutes);
-
     state.end = add(state.start, { minutes: totalMinutes });
 }
 

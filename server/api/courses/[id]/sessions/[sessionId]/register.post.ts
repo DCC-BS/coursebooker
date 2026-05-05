@@ -2,6 +2,8 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
 import { getUserSession } from "~~/server/utils/getUserSession.utils";
+import { getOrCreateCurrentVersion } from "~~/server/utils/icsVersion.utils";
+import { sendRegistrationMail } from "~~/server/utils/mail.utils";
 import { firstCharToUpper } from "~~/server/utils/string.utils";
 import type { Session } from "~~/shared/models";
 import {
@@ -88,10 +90,13 @@ export default defineEventHandler(async (event) => {
         });
     }
 
+    const currentVersion = await getOrCreateCurrentVersion(sessionId);
+
     await db.insert(usersToSessionsTable).values({
         sessionId: sessionId,
         userEmail: values.userEmail,
         additional_data: values.additionalData,
+        ics_version_received: currentVersion.version,
     });
 
     const given_name = registrationIsForMe

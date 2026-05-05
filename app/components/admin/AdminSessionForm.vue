@@ -3,7 +3,6 @@ import {
     type CreateSession,
     createSessionSchema,
     type Session,
-    type UpdateSession,
 } from "~/../shared/models";
 
 interface Props {
@@ -45,8 +44,6 @@ const emit = defineEmits<{
 async function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
-
-    console.log(target.files[0]);
 
     const arrayBuffer = await target.files[0]?.arrayBuffer();
     state.ics_file = arrayBuffer ? new Blob([arrayBuffer]) : undefined;
@@ -98,17 +95,11 @@ function updateSession() {
         throw new Error("No session to update");
     }
 
-    const body = {
-        location: state.location,
-        teams_link: state.teams_link,
-        ics_file: state.ics_file,
-    } as UpdateSession;
-
     const formData = new FormData();
-    formData.append("location", body.location || "");
-    formData.append("teams_link", body.teams_link || "");
-    if (body.ics_file) {
-        formData.append("ics_file", body.ics_file);
+    formData.append("location", state.location || "");
+    formData.append("teams_link", state.teams_link || "");
+    if (state.ics_file) {
+        formData.append("ics_file", state.ics_file);
     }
 
     $fetch<Session>(
@@ -124,10 +115,12 @@ function updateSession() {
         })
         .catch((error) => {
             console.error("Error updating session:", error);
-
             showError({
                 title: "Failed to update session. Please try again.",
             });
+        })
+        .finally(() => {
+            creating.value = false;
         });
 }
 
@@ -144,7 +137,6 @@ function removeIcsFile() {
         })
         .catch((error) => {
             console.error("Error removing ICS file:", error);
-
             showError({
                 title: "Failed to remove ICS file. Please try again.",
             });
