@@ -18,6 +18,9 @@ const sessionId = route.params.sessionId as string;
 const message = ref("");
 const includeIcs = ref(true);
 const isSending = ref(false);
+const activeTab = ref<"compose" | "preview">("compose");
+const previewData = ref<{ subject: string; body: string } | null>(null);
+const isLoadingPreview = ref(false);
 
 const statusFilter = ref<"all" | "current" | "outdated" | "none">("all");
 const versionFilter = ref<string>("all");
@@ -184,6 +187,40 @@ async function sendNotification() {
         });
     } finally {
         isSending.value = false;
+    }
+}
+
+async function loadPreview() {
+    if (!message.value.trim()) return;
+
+    isLoadingPreview.value = true;
+    try {
+        const result = await $fetch<{
+            subject: string;
+            body: string;
+            includeIcs: boolean;
+        }>(`/api/courses/${courseId}/sessions/${sessionId}/notify/preview`, {
+            method: "POST",
+            body: {
+                message: message.value,
+                includeIcs: includeIcs.value,
+            },
+        });
+        previewData.value = result;
+    } catch (error) {
+        console.error("Error loading preview:", error);
+        feedback.showError({
+            title: "Fehler beim Laden der Vorschau",
+        });
+    } finally {
+        isLoadingPreview.value = false;
+    }
+}
+
+function switchTab(tab: "compose" | "preview") {
+    activeTab.value = tab;
+    if (tab === "preview" && message.value.trim()) {
+        loadPreview();
     }
 }
 </script>
@@ -441,11 +478,41 @@ async function sendNotification() {
                     </div>
 
                     <div class="bg-white shadow rounded-lg p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">
-                            Benachrichtigung verfassen
-                        </h2>
+                        <div class="flex items-center gap-1 mb-4 border-b border-gray-200 pb-3">
+                            <button
+                                class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors"
+                                :class="
+                                    activeTab === 'compose'
+                                        ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                "
+                                @click="switchTab('compose')"
+                            >
+                                <UIcon
+                                    name="i-lucide-pen-line"
+                                    class="mr-1.5 inline-block align-text-bottom"
+                                />
+                                Verfassen
+                            </button>
+                            <button
+                                class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors"
+                                :class="
+                                    activeTab === 'preview'
+                                        ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                "
+                                :disabled="!message.trim()"
+                                @click="switchTab('preview')"
+                            >
+                                <UIcon
+                                    name="i-lucide-eye"
+                                    class="mr-1.5 inline-block align-text-bottom"
+                                />
+                                Vorschau
+                            </button>
+                        </div>
 
-                        <div class="space-y-4">
+                        <div v-if="activeTab === 'compose'" class="space-y-4">
                             <div>
                                 <label
                                     class="block text-sm font-medium text-gray-700 mb-1"
@@ -486,6 +553,106 @@ async function sendNotification() {
                                 >
                                     Benachrichtigung senden
                                 </UButton>
+                            </div>
+                        </div>
+
+                        <div v-else class="space-y-4">
+                            <div v-if="isLoadingPreview" class="space-y-3">
+                                <USkeleton class="h-6 w-1/3" />
+                                <USkeleton class="h-40 w-full" />
+                            </div>
+
+                            <div v-else-if="previewData">
+                                <div class="mb-4">
+                                    <label
+                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1"
+                                    >
+                                        Betreff
+                                    </label>
+                                    <div
+                                        class="text-sm font-semibold text-gray-900 bg-gray-50 rounded-lg px-4 py-2"
+                                    >
+                                        {{ previewData.subject }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label
+                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1"
+                                    >
+                                        Empfänger (Beispiel)
+                                    </label>
+                                    <div
+                                        class="text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-2"
+                                    >
+                                        vorname.nachname@bs.ch
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label
+                                            class="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        >
+                                            Nachricht
+                                        </label>
+                                        <UBadge
+                                            v-if="previewData.includeIcs"
+                                            color="primary"
+                                            size="sm"
+                                        >
+                                            <UIcon
+                                                name="i-lucide-paperclip"
+                                                class="mr-1"
+                                            />
+                                            ICS-Anhang
+                                        </UBadge>
+                                    </div>
+                                    <div
+                                        class="text-sm text-gray-800 bg-gray-50 rounded-lg px-4 py-3 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200"
+                                    >
+                                        {{ previewData.body }}
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="flex justify-between items-center pt-4 border-t"
+                                >
+                                    <div class="text-sm text-gray-500">
+                                        Empfänger:
+                                        {{ selectedEmails.size }} Personen
+                                        ausgewählt
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <UButton
+                                            color="neutral"
+                                            variant="outline"
+                                            @click="switchTab('compose')"
+                                        >
+                                            Bearbeiten
+                                        </UButton>
+                                        <UButton
+                                            color="primary"
+                                            :loading="isSending"
+                                            :disabled="
+                                                !message.trim() ||
+                                                selectedEmails.size === 0
+                                            "
+                                            @click="sendNotification"
+                                        >
+                                            Benachrichtigung senden
+                                        </UButton>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                v-else
+                                class="text-center text-sm text-gray-500 py-8"
+                            >
+                                Geben Sie eine Nachricht ein und wechseln Sie
+                                zur Vorschau, um eine Vorschau der E-Mail zu
+                                sehen.
                             </div>
                         </div>
                     </div>

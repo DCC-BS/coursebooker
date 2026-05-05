@@ -628,15 +628,13 @@ function sendMail(mailOptions: SendMailOptions) {
     });
 }
 
-export function sendCustomNotificationMail(
-    familyName: string,
+export function buildCustomNotificationMailContent(
     givenName: string,
-    userEmail: string,
+    familyName: string,
     course: CourseWithoutSessions,
     session: Session,
     customMessage: string,
-    sequence: number,
-) {
+): { subject: string; body: string } {
     const config = useRuntimeConfig();
     const siteUrl = config.siteUrl;
 
@@ -658,23 +656,6 @@ export function sendCustomNotificationMail(
         dateStr = `- Daten:\n${dateStr}`;
     }
 
-    const icss = createUpdateIcsEvents(course, session, sequence);
-    const ics = createEvents(icss);
-
-    const attachment: Mail.Attachment = {
-        filename: `update-${course.id}-${session.id}.ics`,
-        contentType: "text/calendar",
-    };
-
-    if (ics.error) {
-        console.error(
-            "Error creating custom notification ICS event:",
-            ics.error,
-        );
-    } else {
-        attachment.content = ics.value;
-    }
-
     const body = `Hallo ${givenName} ${familyName},
 
 ${customMessage}
@@ -694,10 +675,50 @@ Liebe Grüsse,
 DCC - Data Competence Center
 dcc@bs.ch`;
 
+    return {
+        subject: `Update: ${type} "${course.title}"`,
+        body,
+    };
+}
+
+export function sendCustomNotificationMail(
+    familyName: string,
+    givenName: string,
+    userEmail: string,
+    course: CourseWithoutSessions,
+    session: Session,
+    customMessage: string,
+    sequence: number,
+) {
+    const icss = createUpdateIcsEvents(course, session, sequence);
+    const ics = createEvents(icss);
+
+    const attachment: Mail.Attachment = {
+        filename: `update-${course.id}-${session.id}.ics`,
+        contentType: "text/calendar",
+    };
+
+    if (ics.error) {
+        console.error(
+            "Error creating custom notification ICS event:",
+            ics.error,
+        );
+    } else {
+        attachment.content = ics.value;
+    }
+
+    const { subject, body } = buildCustomNotificationMailContent(
+        givenName,
+        familyName,
+        course,
+        session,
+        customMessage,
+    );
+
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Update: ${type} "${course.title}"`,
+        subject,
         text: body,
         attachments: [attachment],
     };
