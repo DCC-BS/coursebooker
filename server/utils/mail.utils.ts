@@ -1,7 +1,5 @@
 import { format } from "date-fns";
-import { createEvents, type EventAttributes } from "ics";
 import { createTransport, type SendMailOptions } from "nodemailer";
-import type Mail from "nodemailer/lib/mailer";
 import de from "@/../i18n/locales/de.json";
 import type {
     Course,
@@ -9,7 +7,12 @@ import type {
     Lesson,
     Session,
 } from "~~/shared/models";
-import { getCurrentVersionNumber } from "./icsVersion.utils";
+import {
+    createCancellationIcsAttachment,
+    createIcsAttachment,
+    createUpdateIcsAttachment,
+} from "./ics.utils";
+import { renderTemplate } from "./template.utils";
 
 export interface SessionChanges {
     location?: { old: string | null; new: string | null };
@@ -102,6 +105,58 @@ export function formatCourseChangesGerman(changes: CourseChanges): string {
     return lines.join("\n");
 }
 
+function formatDateStr(lessons: Lesson[]): string {
+    if (lessons.length === 1 && lessons[0]) {
+        return format(lessons[0].start, "dd.MM.yyyy");
+    }
+    return lessons
+        .map(
+            (l, i) =>
+                `${i + 1}. ${format(l.start, "dd.MM.yyyy")} ${format(l.start, "HH:mm")} - ${format(l.end, "HH:mm")}`,
+        )
+        .join("\n");
+}
+
+function formatTimeStr(lessons: Lesson[]): string | null {
+    if (lessons.length === 1 && lessons[0]) {
+        return `${format(lessons[0].start, "HH:mm")} - ${format(lessons[0].end, "HH:mm")}`;
+    }
+    return null;
+}
+
+function buildCourseContext(
+    givenName: string,
+    familyName: string,
+    course: CourseWithoutSessions | Omit<Course, "sessions">,
+    session: Session,
+    extras?: Record<string, unknown>,
+): Record<string, unknown> {
+    const config = useRuntimeConfig();
+
+    return {
+        givenName,
+        familyName,
+        courseTitle: course.title,
+        courseTypeLabel:
+            course.type === "course"
+                ? de.courseDetails.course
+                : de.courseDetails.event,
+        dateStr: formatDateStr(session.lessons),
+        timeStr: formatTimeStr(session.lessons),
+        isSingleLesson: session.lessons.length === 1,
+        location: session.location ?? "Nicht bekannt",
+        teamsLink: session.teams_link ?? null,
+        siteUrl: config.siteUrl,
+        courseId: course.id,
+        sessionId: session.id,
+        ...extras,
+    };
+}
+
+function typeLabel(type: string): string {
+    return type === "course" ? de.courseDetails.course : de.courseDetails.event;
+}
+
 export async function sendRegistrationMail(
     familyName: string,
     givenName: string,
@@ -110,73 +165,26 @@ export async function sendRegistrationMail(
     session: Session,
     ics_file?: Buffer<ArrayBufferLike>,
 ): Promise<boolean> {
-    const config = useRuntimeConfig();
-    const siteUrl = config.siteUrl;
+    const attachment = ics_file
+        ? {
+              filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
+              contentType: "text/calendar",
+              content: ics_file,
+          }
+        : createIcsAttachment(course, session);
 
-    const attachment = {
-        filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
-        contentType: "text/calendar",
-    } as Mail.Attachment;
+    const context = buildCourseContext(givenName, familyName, course, session, {
+        hasIcsAttachment: true,
+    });
 
-    if (ics_file) {
-        attachment.content = ics_file;
-    } else {
-        const icss = createIcsEvents(course as Course, session);
-        const ics = createEvents(icss);
-        if (ics.error) {
-            console.error("Error creating ICS event:", ics.error);
-        } else {
-            attachment.content = ics.value;
-        }
-    }
-
-    let dateStr = "";
-    const type =
-        course.type === "course"
-            ? de.courseDetails.course
-            : de.courseDetails.event;
-
-    if (session.lessons.length === 1 && session.lessons[0]) {
-        dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
-- Uhrzeit: ${format(session.lessons[0].start, "HH:mm")} - ${format(session.lessons[0].end, "HH:mm")}`;
-    } else {
-        dateStr = session.lessons
-            .map((lesson, index) => {
-                return `  ${index + 1}. ${format(lesson.start, "dd.MM.yyyy")} ${format(
-                    lesson.start,
-                    "HH:mm",
-                )} - ${format(lesson.end, "HH:mm")}`;
-            })
-            .join("\n");
-        dateStr = `- Daten:\n${dateStr}`;
-    }
-
-    const body = `Hallo ${givenName} ${familyName},
-
-Vielen Dank für Deine Anmeldung zum ${type} "${course.title}".
-
-${type}details:
-- Name: ${course.title}
-${dateStr}
-- Ort: ${session.location ?? "Nicht bekannt"}
-${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
-
-Du kannst an dem Termin doch nicht teilnehmen oder hast dich irrtümlicherweise angemeldet? Über diesen Link kannst du dich wieder vom Event abmelden:
-${siteUrl}/courses/${course.id}/${session.id}
-
-Im Anhang findest Du eine Kalendereinladung.
-
-Wir freuen uns auf Deine Teilnahme!
-
-Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
+    const { html, text } = renderTemplate("registration", context);
 
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Anmeldung zum ${type} "${course.title}"`,
-        text: body,
+        subject: `Anmeldung zum ${typeLabel(course.type)} "${course.title}"`,
+        html,
+        text,
         attachments: [attachment],
     };
 
@@ -192,37 +200,16 @@ export async function sendUnregisterMail(
     course: Omit<Course, "sessions">,
     session: Session,
 ): Promise<boolean> {
-    let dateStr = "";
-    const type =
-        course.type === "course"
-            ? de.courseDetails.course
-            : de.courseDetails.event;
+    const context = buildCourseContext(givenName, familyName, course, session);
 
-    if (session.lessons.length === 1 && session.lessons[0]) {
-        dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
-- Uhrzeit: ${format(session.lessons[0].start, "HH:mm")} - ${format(session.lessons[0].end, "HH:mm")}`;
-    } else {
-    }
-
-    // TODO handle many lessons
-    const body = `Hallo ${givenName} ${familyName},
-
-Wir haben deine Abmeldung für den ${type} "${course.title}" erhalten.
-
-${type}details:
-- Name: ${course.title}
-${dateStr}
-- Ort: ${session.location}
-
-Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
+    const { html, text } = renderTemplate("unregister", context);
 
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Abmeldung zum ${type} "${course.title}"`,
-        text: body,
+        subject: `Abmeldung zum ${typeLabel(course.type)} "${course.title}"`,
+        html,
+        text,
     };
 
     return sendMail(mailOptions);
@@ -235,226 +222,22 @@ export async function sendCancellationMail(
     course: CourseWithoutSessions,
     session: Session,
 ): Promise<boolean> {
-    let dateStr = "";
-    const type =
-        course.type === "course"
-            ? de.courseDetails.course
-            : de.courseDetails.event;
+    const attachment = await createCancellationIcsAttachment(course, session);
 
-    if (session.lessons.length === 1 && session.lessons[0]) {
-        dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
-- Uhrzeit: ${format(session.lessons[0].start, "HH:mm")} - ${format(session.lessons[0].end, "HH:mm")}`;
-    } else {
-        dateStr = session.lessons
-            .map((lesson, index) => {
-                return `  ${index + 1}. ${format(lesson.start, "dd.MM.yyyy")} ${format(
-                    lesson.start,
-                    "HH:mm",
-                )} - ${format(lesson.end, "HH:mm")}`;
-            })
-            .join("\n");
-        dateStr = `- Daten:\n${dateStr}`;
-    }
+    const context = buildCourseContext(givenName, familyName, course, session);
 
-    const attachment = {
-        filename: `cancellation-${Math.random().toString(36).substring(2, 15)}.ics`,
-        contentType: "text/calendar",
-    } as Mail.Attachment;
-
-    const icss = await createCancellationIcsEvents(course, session);
-    const ics = createEvents(icss);
-    if (ics.error) {
-        console.error("Error creating cancellation ICS event:", ics.error);
-    } else {
-        attachment.content = ics.value;
-    }
-
-    const body = `Hallo ${givenName} ${familyName},
-
-Leider wurde der ${type} "${course.title}" abgesagt.
-
-${type}details:
-- Name: ${course.title}
-${dateStr}
-- Ort: ${session.location ?? "Nicht bekannt"}
-
-Wir bitten um Entschuldigung für die Umstände.
-
-Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
+    const { html, text } = renderTemplate("cancellation", context);
 
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject: `Absage: ${type} "${course.title}"`,
-        text: body,
+        subject: `Absage: ${typeLabel(course.type)} "${course.title}"`,
+        html,
+        text,
         attachments: [attachment],
     };
 
     return sendMail(mailOptions);
-}
-
-function createIcsEvents(course: Course, session: Session): EventAttributes[] {
-    let descriptionPostfix = "";
-
-    let teams_link: string | undefined;
-    if (session.teams_link && session.teams_link.length > 0) {
-        teams_link = session.teams_link;
-    }
-
-    if (teams_link) {
-        descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
-    }
-
-    const now = new Date();
-    const dtstamp = [
-        now.getFullYear(),
-        now.getMonth() + 1,
-        now.getDate(),
-        now.getHours(),
-        now.getMinutes(),
-    ] as [number, number, number, number, number];
-
-    return session.lessons.map((lesson: Lesson) => ({
-        uid: `${course.id}-${session.id}-${lesson.id}`,
-        title: course.title,
-        description: course.description + descriptionPostfix,
-        start: [
-            lesson.start.getFullYear(),
-            lesson.start.getMonth() + 1,
-            lesson.start.getDate(),
-            lesson.start.getHours(),
-            lesson.start.getMinutes(),
-        ],
-        end: [
-            lesson.end.getFullYear(),
-            lesson.end.getMonth() + 1,
-            lesson.end.getDate(),
-            lesson.end.getHours(),
-            lesson.end.getMinutes(),
-        ],
-        dtstamp,
-        organizer: {
-            name: course.organizer_name,
-            email: course.organizer_mail,
-        },
-        location: session.location ?? undefined,
-        url: teams_link,
-    }));
-}
-
-async function createCancellationIcsEvents(
-    course: CourseWithoutSessions,
-    session: Session,
-): Promise<EventAttributes[]> {
-    let descriptionPostfix = "";
-
-    let teams_link: string | undefined;
-    if (session.teams_link && session.teams_link.length > 0) {
-        teams_link = session.teams_link;
-    }
-
-    if (teams_link) {
-        descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
-    }
-
-    const now = new Date();
-    const dtstamp = [
-        now.getFullYear(),
-        now.getMonth() + 1,
-        now.getDate(),
-        now.getHours(),
-        now.getMinutes(),
-    ] as [number, number, number, number, number];
-
-    const currentVersion = await getCurrentVersionNumber(session.id);
-    const sequence = currentVersion + 1;
-
-    return session.lessons.map((lesson: Lesson) => ({
-        uid: `${course.id}-${session.id}-${lesson.id}`,
-        lastModified: Date.now(),
-        dtstamp,
-        sequence,
-        title: `CANCELLED: ${course.title}`,
-        description: `ABGESAGT\n\n${course.description}${descriptionPostfix}`,
-        start: [
-            lesson.start.getFullYear(),
-            lesson.start.getMonth() + 1,
-            lesson.start.getDate(),
-            lesson.start.getHours(),
-            lesson.start.getMinutes(),
-        ],
-        end: [
-            lesson.end.getFullYear(),
-            lesson.end.getMonth() + 1,
-            lesson.end.getDate(),
-            lesson.end.getHours(),
-            lesson.end.getMinutes(),
-        ],
-        status: "CANCELLED",
-        organizer: {
-            name: course.organizer_name,
-            email: course.organizer_mail,
-        },
-        location: session.location ?? undefined,
-        url: teams_link,
-    }));
-}
-
-function createUpdateIcsEvents(
-    course: CourseWithoutSessions,
-    session: Session,
-    sequence: number,
-): EventAttributes[] {
-    let descriptionPostfix = "";
-
-    let teams_link: string | undefined;
-    if (session.teams_link && session.teams_link.length > 0) {
-        teams_link = session.teams_link;
-    }
-
-    if (teams_link) {
-        descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
-    }
-
-    const now = new Date();
-    const dtstamp = [
-        now.getFullYear(),
-        now.getMonth() + 1,
-        now.getDate(),
-        now.getHours(),
-        now.getMinutes(),
-    ] as [number, number, number, number, number];
-
-    return session.lessons.map((lesson: Lesson) => ({
-        uid: `${course.id}-${session.id}-${lesson.id}`,
-        lastModified: Date.now(),
-        dtstamp,
-        sequence,
-        title: course.title,
-        description: course.description + descriptionPostfix,
-        start: [
-            lesson.start.getFullYear(),
-            lesson.start.getMonth() + 1,
-            lesson.start.getDate(),
-            lesson.start.getHours(),
-            lesson.start.getMinutes(),
-        ],
-        end: [
-            lesson.end.getFullYear(),
-            lesson.end.getMonth() + 1,
-            lesson.end.getDate(),
-            lesson.end.getHours(),
-            lesson.end.getMinutes(),
-        ],
-        organizer: {
-            name: course.organizer_name,
-            email: course.organizer_mail,
-        },
-        location: session.location ?? undefined,
-        url: teams_link,
-    }));
 }
 
 const sharedTransporter = createTransport({
@@ -484,48 +267,16 @@ export function buildCustomNotificationMailContent(
     customMessage: string,
     hasIcsAttached: boolean,
 ): { subject: string; body: string } {
-    const config = useRuntimeConfig();
-    const siteUrl = config.siteUrl;
+    const context = buildCourseContext(givenName, familyName, course, session, {
+        customMessage,
+        hasIcsAttachment: hasIcsAttached,
+    });
 
-    const type =
-        course.type === "course"
-            ? de.courseDetails.course
-            : de.courseDetails.event;
-
-    let dateStr = "";
-    if (session.lessons.length === 1 && session.lessons[0]) {
-        dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
-- Uhrzeit: ${format(session.lessons[0].start, "HH:mm")} - ${format(session.lessons[0].end, "HH:mm")}`;
-    } else {
-        dateStr = session.lessons
-            .map((lesson, index) => {
-                return `  ${index + 1}. ${format(lesson.start, "dd.MM.yyyy")} ${format(lesson.start, "HH:mm")} - ${format(lesson.end, "HH:mm")}`;
-            })
-            .join("\n");
-        dateStr = `- Daten:\n${dateStr}`;
-    }
-
-    const body = `Hallo ${givenName} ${familyName},
-
-${customMessage}
-
-${type}details:
-- Name: ${course.title}
-${dateStr}
-- Ort: ${session.location ?? "Nicht bekannt"}
-${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
-
-Du kannst den Termin hier einsehen oder dich abmelden:
-${siteUrl}/courses/${course.id}/${session.id}
-
-${hasIcsAttached ? "Im Anhang findest Du die aktualisierte Kalendereinladung.\n" : ""}
-Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
+    const { text } = renderTemplate("custom-notification", context);
 
     return {
-        subject: `Update: ${type} "${course.title}"`,
-        body,
+        subject: `Update: ${typeLabel(course.type)} "${course.title}"`,
+        body: text,
     };
 }
 
@@ -542,40 +293,23 @@ export async function sendCustomNotificationMail(
     const attachments = [];
 
     if (attachIcs) {
-        const icss = createUpdateIcsEvents(course, session, sequence);
-        const ics = createEvents(icss);
-
-        const attachment: Mail.Attachment = {
-            filename: `update-${course.id}-${session.id}.ics`,
-            contentType: "text/calendar",
-        };
-
-        if (ics.error) {
-            console.error(
-                "Error creating custom notification ICS event:",
-                ics.error,
-            );
-        } else {
-            attachment.content = ics.value;
-        }
-        attachments.push(attachment);
+        attachments.push(createUpdateIcsAttachment(course, session, sequence));
     }
 
-    const { subject, body } = buildCustomNotificationMailContent(
-        givenName,
-        familyName,
-        course,
-        session,
+    const context = buildCourseContext(givenName, familyName, course, session, {
         customMessage,
-        attachIcs,
-    );
+        hasIcsAttachment: attachIcs,
+    });
+
+    const { html, text } = renderTemplate("custom-notification", context);
 
     const mailOptions: SendMailOptions = {
         from: "dcc@bs.ch",
         to: userEmail,
-        subject,
-        text: body,
-        attachments: attachments,
+        subject: `Update: ${typeLabel(course.type)} "${course.title}"`,
+        html,
+        text,
+        attachments,
     };
 
     return sendMail(mailOptions);
@@ -586,13 +320,12 @@ export function generateIcsAttachment(
     session: Session,
     sequence: number,
 ): Buffer | null {
-    const icss = createUpdateIcsEvents(course, session, sequence);
-    const ics = createEvents(icss);
-
-    if (ics.error) {
-        console.error("Error creating ICS events:", ics.error);
-        return null;
+    const icss = createUpdateIcsAttachment(course, session, sequence);
+    if (typeof icss.content === "string") {
+        return Buffer.from(icss.content);
     }
-
-    return Buffer.from(ics.value as string);
+    if (Buffer.isBuffer(icss.content)) {
+        return icss.content;
+    }
+    return null;
 }
