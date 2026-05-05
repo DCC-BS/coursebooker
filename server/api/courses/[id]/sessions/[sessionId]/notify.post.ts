@@ -4,7 +4,6 @@ import { useDb } from "~~/server/composables/db.composable";
 import { defineAdminResponseHandler } from "~~/server/utils/adminAccess";
 import {
     createOrUpdateVersion,
-    getCurrentVersion,
     getUsersWithVersionStatus,
     setUserIcsVersion,
 } from "~~/server/utils/icsVersion.utils";
@@ -70,9 +69,6 @@ export default defineAdminResponseHandler(async (event) => {
 
     const usersWithVersion = await getUsersWithVersionStatus(sessionId);
 
-    const currentVersion = await getCurrentVersion(sessionId);
-    const newVersion = (currentVersion?.version ?? 0) + 1;
-
     const recipients = usersWithVersion.filter((u) =>
         body.recipients.includes(u.userEmail),
     );
@@ -81,47 +77,88 @@ export default defineAdminResponseHandler(async (event) => {
         return {
             success: true,
             sentCount: 0,
+            failedCount: 0,
             message: "No recipients to notify",
         };
     }
 
+    let actualVersion = 0;
+
     if (body.includeIcs) {
-        await createOrUpdateVersion(
+        const version = await createOrUpdateVersion(
             sessionId,
             [{ type: "manual", description: body.message.substring(0, 100) }],
             "admin",
         );
+        actualVersion = version.version;
     }
 
+    const BATCH_SIZE = 20;
     let sentCount = 0;
+    let failedCount = 0;
+    const failedRecipients: string[] = [];
 
-    for (const recipient of recipients) {
-        const userEmail = recipient.userEmail;
-        const givenName = firstCharToUpper(userEmail.split(".")[0] || "");
-        const familyName = firstCharToUpper(
-            userEmail.split(".")[1]?.split("@")[0] || "",
+    for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+        const batch = recipients.slice(i, i + BATCH_SIZE);
+
+        const results = await Promise.allSettled(
+            batch.map(async (recipient) => {
+                const userEmail = recipient.userEmail;
+                const givenName = firstCharToUpper(
+                    userEmail.split(".")[0] || "",
+                );
+                const familyName = firstCharToUpper(
+                    userEmail.split(".")[1]?.split("@")[0] || "",
+                );
+
+                const success = await sendCustomNotificationMail(
+                    familyName,
+                    givenName,
+                    userEmail,
+                    course,
+                    session as Session,
+                    body.message,
+                    actualVersion,
+                    body.includeIcs,
+                );
+
+                if (!success) {
+                    return { email: userEmail, success: false };
+                }
+
+                if (body.includeIcs) {
+                    await setUserIcsVersion(
+                        userEmail,
+                        sessionId,
+                        actualVersion,
+                    );
+                }
+
+                return { email: userEmail, success: true };
+            }),
         );
 
-        sendCustomNotificationMail(
-            familyName,
-            givenName,
-            userEmail,
-            course,
-            session as Session,
-            body.message,
-            body.includeIcs ? newVersion : currentVersion,
-        );
-
-        if (body.includeIcs) {
-            await setUserIcsVersion(userEmail, sessionId, newVersion);
+        for (const result of results) {
+            if (result.status === "fulfilled" && result.value.success) {
+                sentCount++;
+            } else {
+                failedCount++;
+                if (result.status === "fulfilled" && !result.value.success) {
+                    failedRecipients.push(result.value.email);
+                }
+            }
         }
 
-        sentCount++;
+        if (i + BATCH_SIZE < recipients.length) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
     }
 
     return {
-        success: true,
+        success: failedCount === 0,
         sentCount,
-        newVersion: body.includeIcs ? newVersion : currentVersion,
+        failedCount,
+        failedRecipients,
+        newVersion: actualVersion,
     };
 });

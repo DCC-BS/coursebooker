@@ -107,7 +107,7 @@ export default defineEventHandler(async (event) => {
         ? session?.user.family_name || ""
         : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
-    sendRegistrationMail(
+    await sendRegistrationMail(
         family_name,
         given_name,
         values.userEmail,

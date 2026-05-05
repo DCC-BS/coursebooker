@@ -64,6 +64,7 @@ export default defineAdminResponseHandler(async (event) => {
         course,
         session as Session,
         body.message,
+        body.includeIcs,
     );
 
     return {

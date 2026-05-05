@@ -1,1 +1,1 @@
-ALTER TABLE `sessions` DROP COLUMN `sequence`;
+SELECT 1;

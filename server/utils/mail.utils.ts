@@ -9,7 +9,7 @@ import type {
     Lesson,
     Session,
 } from "~~/shared/models";
-import { getCurrentVersion, getCurrentVersionNumber } from "./icsVersion.utils";
+import { getCurrentVersionNumber } from "./icsVersion.utils";
 
 export interface SessionChanges {
     location?: { old: string | null; new: string | null };
@@ -102,14 +102,14 @@ export function formatCourseChangesGerman(changes: CourseChanges): string {
     return lines.join("\n");
 }
 
-export function sendRegistrationMail(
+export async function sendRegistrationMail(
     familyName: string,
     givenName: string,
     userEmail: string,
     course: Omit<Course, "sessions">,
     session: Session,
     ics_file?: Buffer<ArrayBufferLike>,
-) {
+): Promise<boolean> {
     const config = useRuntimeConfig();
     const siteUrl = config.siteUrl;
 
@@ -182,16 +182,16 @@ dcc@bs.ch`;
 
     console.log("Sending registration email:", mailOptions);
 
-    sendMail(mailOptions);
+    return sendMail(mailOptions);
 }
 
-export function sendUnregisterMail(
+export async function sendUnregisterMail(
     familyName: string,
     givenName: string,
     userEmail: string,
     course: Omit<Course, "sessions">,
     session: Session,
-) {
+): Promise<boolean> {
     let dateStr = "";
     const type =
         course.type === "course"
@@ -225,7 +225,7 @@ dcc@bs.ch`;
         text: body,
     };
 
-    sendMail(mailOptions);
+    return sendMail(mailOptions);
 }
 
 export async function sendCancellationMail(
@@ -234,7 +234,7 @@ export async function sendCancellationMail(
     userEmail: string,
     course: CourseWithoutSessions,
     session: Session,
-) {
+): Promise<boolean> {
     let dateStr = "";
     const type =
         course.type === "course"
@@ -292,163 +292,7 @@ dcc@bs.ch`;
         attachments: [attachment],
     };
 
-    sendMail(mailOptions);
-}
-
-// export function sendSessionUpdateMail(
-//     familyName: string,
-//     givenName: string,
-//     userEmail: string,
-//     course: CourseWithoutSessions,
-//     session: Session,
-//     changes: SessionChanges,
-// ) {
-//     const config = useRuntimeConfig();
-//     const siteUrl = config.siteUrl;
-
-//     let dateStr = "";
-//     const type =
-//         course.type === "course"
-//             ? de.courseDetails.course
-//             : de.courseDetails.event;
-
-//     if (session.lessons.length === 1 && session.lessons[0]) {
-//         dateStr = `- Datum: ${format(session.lessons[0].start, "dd.MM.yyyy")}
-// - Uhrzeit: ${format(session.lessons[0].start, "HH:mm")} - ${format(session.lessons[0].end, "HH:mm")}`;
-//     } else {
-//         dateStr = session.lessons
-//             .map((lesson, index) => {
-//                 return `  ${index + 1}. ${format(lesson.start, "dd.MM.yyyy")} ${format(
-//                     lesson.start,
-//                     "HH:mm",
-//                 )} - ${format(lesson.end, "HH:mm")}`;
-//             })
-//             .join("\n");
-//         dateStr = `- Daten:\n${dateStr}`;
-//     }
-
-//     const changesText = formatChangesGerman(changes);
-
-//     const attachment = {
-//         filename: `update-${Math.random().toString(36).substring(2, 15)}.ics`,
-//         contentType: "text/calendar",
-//     } as Mail.Attachment;
-
-//     const currentVersion = await getCurrentVersion(session.id);
-//     const sequence = session.sequence ?? 0;
-//     const icss = createUpdateIcsEvents(course, session, sequence);
-//     const ics = createEvents(icss);
-//     if (ics.error) {
-//         console.error("Error creating update ICS event:", ics.error);
-//     } else {
-//         attachment.content = ics.value;
-//     }
-
-//     const body = `Hallo ${givenName} ${familyName},
-
-// Der ${type} "${course.title}" wurde aktualisiert.
-
-// Änderungen:
-// ${changesText}
-
-// Aktuelle ${type}details:
-// - Name: ${course.title}
-// ${dateStr}
-// - Ort: ${session.location ?? "Nicht bekannt"}
-// ${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
-
-// Du kannst den Termin hier einsehen oder dich abmelden:
-// ${siteUrl}/courses/${course.id}/${session.id}
-
-// Im Anhang findest Du die aktualisierte Kalendereinladung.
-
-// Liebe Grüsse,
-// DCC - Data Competence Center
-// dcc@bs.ch`;
-
-//     const mailOptions: SendMailOptions = {
-//         from: "dcc@bs.ch",
-//         to: userEmail,
-//         subject: `Aktualisierung: ${type} "${course.title}"`,
-//         text: body,
-//         attachments: [attachment],
-//     };
-
-//     sendMail(mailOptions);
-// }
-
-export async function sendCourseUpdateMail(
-    familyName: string,
-    givenName: string,
-    userEmail: string,
-    course: Course,
-    sessions: Session[],
-    changes: CourseChanges,
-) {
-    const config = useRuntimeConfig();
-    const siteUrl = config.siteUrl;
-
-    const type =
-        course.type === "course"
-            ? de.courseDetails.course
-            : de.courseDetails.event;
-
-    const changesText = formatCourseChangesGerman(changes);
-
-    const attachments: Mail.Attachment[] = [];
-
-    for (const session of sessions) {
-        const currentVersion = await getCurrentVersionNumber(session.id);
-        const sequence = currentVersion + 1;
-        const icss = createUpdateIcsEvents(course, session, sequence);
-        const ics = createEvents(icss);
-        if (ics.error) {
-            console.error("Error creating course update ICS event:", ics.error);
-        } else {
-            attachments.push({
-                filename: `update-${course.id}-${session.id}.ics`,
-                content: ics.value,
-                contentType: "text/calendar",
-            });
-        }
-    }
-
-    const sessionLinks = sessions
-        .map(
-            (session, index) =>
-                `  ${index + 1}. ${siteUrl}/courses/${course.id}/${session.id}`,
-        )
-        .join("\n");
-
-    const body = `Hallo ${givenName} ${familyName},
-
-Der ${type} "${course.title}" wurde aktualisiert.
-
-Änderungen:
-${changesText}
-
-Aktuelle ${type}details:
-- Name: ${course.title}
-- Beschreibung: ${course.description}
-
-Du kannst die Sessions hier einsehen oder dich abmelden:
-${sessionLinks}
-
-Im Anhang findest Du die aktualisierten Kalendereinladungen für deine angemeldeten Sessions.
-
-Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
-
-    const mailOptions: SendMailOptions = {
-        from: "dcc@bs.ch",
-        to: userEmail,
-        subject: `Aktualisierung: ${type} "${course.title}"`,
-        text: body,
-        attachments,
-    };
-
-    sendMail(mailOptions);
+    return sendMail(mailOptions);
 }
 
 function createIcsEvents(course: Course, session: Session): EventAttributes[] {
@@ -613,19 +457,23 @@ function createUpdateIcsEvents(
     }));
 }
 
-function sendMail(mailOptions: SendMailOptions) {
-    const transporter = createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-    });
+const sharedTransporter = createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    pool: true,
+    maxConnections: 5,
+    rateLimit: 10,
+});
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error("Error sending email:", error);
-        } else {
-            console.log("Email sent:", info.response);
-        }
-    });
+async function sendMail(mailOptions: SendMailOptions): Promise<boolean> {
+    try {
+        const info = await sharedTransporter.sendMail(mailOptions);
+        console.log("Email sent:", info.response);
+        return true;
+    } catch (error: unknown) {
+        console.error("Error sending email:", error);
+        return false;
+    }
 }
 
 export function buildCustomNotificationMailContent(
@@ -634,6 +482,7 @@ export function buildCustomNotificationMailContent(
     course: CourseWithoutSessions,
     session: Session,
     customMessage: string,
+    hasIcsAttached: boolean,
 ): { subject: string; body: string } {
     const config = useRuntimeConfig();
     const siteUrl = config.siteUrl;
@@ -669,8 +518,7 @@ ${session.teams_link ? `- MS Teams Link: ${session.teams_link}` : ""}
 Du kannst den Termin hier einsehen oder dich abmelden:
 ${siteUrl}/courses/${course.id}/${session.id}
 
-Im Anhang findest Du die aktualisierte Kalendereinladung.
-
+${hasIcsAttached ? "Im Anhang findest Du die aktualisierte Kalendereinladung.\n" : ""}
 Liebe Grüsse,
 DCC - Data Competence Center
 dcc@bs.ch`;
@@ -681,7 +529,7 @@ dcc@bs.ch`;
     };
 }
 
-export function sendCustomNotificationMail(
+export async function sendCustomNotificationMail(
     familyName: string,
     givenName: string,
     userEmail: string,
@@ -689,22 +537,28 @@ export function sendCustomNotificationMail(
     session: Session,
     customMessage: string,
     sequence: number,
-) {
-    const icss = createUpdateIcsEvents(course, session, sequence);
-    const ics = createEvents(icss);
+    attachIcs: boolean,
+): Promise<boolean> {
+    const attachments = [];
 
-    const attachment: Mail.Attachment = {
-        filename: `update-${course.id}-${session.id}.ics`,
-        contentType: "text/calendar",
-    };
+    if (attachIcs) {
+        const icss = createUpdateIcsEvents(course, session, sequence);
+        const ics = createEvents(icss);
 
-    if (ics.error) {
-        console.error(
-            "Error creating custom notification ICS event:",
-            ics.error,
-        );
-    } else {
-        attachment.content = ics.value;
+        const attachment: Mail.Attachment = {
+            filename: `update-${course.id}-${session.id}.ics`,
+            contentType: "text/calendar",
+        };
+
+        if (ics.error) {
+            console.error(
+                "Error creating custom notification ICS event:",
+                ics.error,
+            );
+        } else {
+            attachment.content = ics.value;
+        }
+        attachments.push(attachment);
     }
 
     const { subject, body } = buildCustomNotificationMailContent(
@@ -713,6 +567,7 @@ export function sendCustomNotificationMail(
         course,
         session,
         customMessage,
+        attachIcs,
     );
 
     const mailOptions: SendMailOptions = {
@@ -720,10 +575,10 @@ export function sendCustomNotificationMail(
         to: userEmail,
         subject,
         text: body,
-        attachments: [attachment],
+        attachments: attachments,
     };
 
-    sendMail(mailOptions);
+    return sendMail(mailOptions);
 }
 
 export function generateIcsAttachment(

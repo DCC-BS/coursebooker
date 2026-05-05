@@ -93,7 +93,7 @@ export default defineEventHandler(async (event) => {
         ? session?.user.family_name || ""
         : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
-    sendUnregisterMail(
+    await sendUnregisterMail(
         family_name,
         given_name,
         values.userEmail,
