@@ -12,6 +12,9 @@
 - `bun run check` - Run Biome linter and auto-fix issues (run before committing)
 - `bun run lint` - Format code with Biome
 
+### Environment
+- `bun run env:check` - Validate environment variables with varlock
+
 ### Database
 - `bun run db:push` - Push schema changes to database
 - `bun run db:studio` - Open Drizzle Studio for database inspection

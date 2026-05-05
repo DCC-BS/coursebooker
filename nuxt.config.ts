@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { varlockVitePlugin } from "@varlock/vite-integration";
+
 export default defineNuxtConfig({
+    vite: {
+        plugins: [varlockVitePlugin({ ssrInjectMode: "resolved-env" })],
+    },
     compatibilityDate: "2024-11-01",
     build: {
         analyze: false,

@@ -17,6 +17,8 @@
         "@nuxtjs/mdc": "0.17.4",
         "@sidebase/nuxt-auth": "1.1.0",
         "@types/better-sqlite3": "^7.6.13",
+        "@varlock/proton-pass-plugin": "^1.0.0",
+        "@varlock/vite-integration": "^1.1.0",
         "better-sqlite3": "^12.4.1",
         "date-fns": "^4.1.0",
         "drizzle-orm": "^0.44.5",
@@ -855,6 +857,10 @@
     "@ungap/structured-clone": ["@ungap/structured-clone@1.3.0", "", {}, "sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g=="],
 
     "@unhead/vue": ["@unhead/vue@2.0.17", "", { "dependencies": { "hookable": "^5.5.3", "unhead": "2.0.17" }, "peerDependencies": { "vue": ">=3.5.18" } }, "sha512-jzmGZYeMAhETV6qfetmLbZzUjjx1TjdNvFSobeFZb73D7dwD9wl/nOAx36qq+TvjZsLJdF5PQWToz2oDGAUqCg=="],
+
+    "@varlock/proton-pass-plugin": ["@varlock/proton-pass-plugin@1.0.0", "", { "peerDependencies": { "varlock": "^1.0.0" } }, "sha512-CNu+8CV26g/V/vVIFUP2q+6bzNUoWqLIj0uRzZphH5wuo+7n5SWLUuXnuJqjI+Y4SCVE70ASW9H1KsBuKhLOTQ=="],
+
+    "@varlock/vite-integration": ["@varlock/vite-integration@1.1.0", "", { "peerDependencies": { "varlock": "^1.1.0", "vite": ">=5" } }, "sha512-iykvnz6bhVyGBnbFQQr031Y935MXCE2gzQPzE6P6holGe8yR9Svs0Ah/NPo1dhjS6qj2RVRbkUME3K2JhDnDPg=="],
 
     "@vercel/nft": ["@vercel/nft@0.30.2", "", { "dependencies": { "@mapbox/node-pre-gyp": "^2.0.0", "@rollup/pluginutils": "^5.1.3", "acorn": "^8.6.0", "acorn-import-attributes": "^1.9.5", "async-sema": "^3.1.1", "bindings": "^1.4.0", "estree-walker": "2.0.2", "glob": "^10.4.5", "graceful-fs": "^4.2.9", "node-gyp-build": "^4.2.2", "picomatch": "^4.0.2", "resolve-from": "^5.0.0" }, "bin": { "nft": "out/cli.js" } }, "sha512-pquXF3XZFg/T3TBor08rUhIGgOhdSilbn7WQLVP/aVSSO+25Rs4H/m3nxNDQ2x3znX7Z3yYjryN8xaLwypcwQg=="],
 
@@ -2233,6 +2239,8 @@
     "util-deprecate": ["util-deprecate@1.0.2", "", {}, "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="],
 
     "uuid": ["uuid@13.0.0", "", { "bin": "dist-node/bin/uuid" }, "sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w=="],
+
+    "varlock": ["varlock@1.1.0", "", { "bin": { "varlock": "bin/cli.js" } }, "sha512-S6wE06TzoGBtVM0CKHN1Z4D9lW6eA3fQ8RmsPx6gZ/nkQtye19fel0gvpPMk37YOCEtHY/vaxkMIVziX6NRFCg=="],
 
     "vaul-vue": ["vaul-vue@0.4.1", "", { "dependencies": { "@vueuse/core": "^10.8.0", "reka-ui": "^2.0.0", "vue": "^3.4.5" }, "peerDependencies": { "reka-ui": "^2.0.0", "vue": "^3.3.0" } }, "sha512-A6jOWOZX5yvyo1qMn7IveoWN91mJI5L3BUKsIwkg6qrTGgHs1Sb1JF/vyLJgnbN1rH4OOOxFbtqL9A46bOyGUQ=="],
 
