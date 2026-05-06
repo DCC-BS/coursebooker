@@ -1,0 +1,253 @@
+{
+    "version": "6",
+    "dialect": "sqlite",
+    "id": "db206705-ec18-4a1e-890c-52d911a5568c",
+    "prevId": "5c0a05af-38a5-476a-8aea-19d250730bca",
+    "tables": {
+        "courses": {
+            "name": "courses",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "title": {
+                    "name": "title",
+                    "type": "text(255)",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "description": {
+                    "name": "description",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "type": {
+                    "name": "type",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "organizer_name": {
+                    "name": "organizer_name",
+                    "type": "text(100)",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "organizer_mail": {
+                    "name": "organizer_mail",
+                    "type": "text(100)",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "checkConstraints": {}
+        },
+        "lessons": {
+            "name": "lessons",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "sessionId": {
+                    "name": "sessionId",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "start": {
+                    "name": "start",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "end": {
+                    "name": "end",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "lessons_sessionId_sessions_id_fk": {
+                    "name": "lessons_sessionId_sessions_id_fk",
+                    "tableFrom": "lessons",
+                    "tableTo": "sessions",
+                    "columnsFrom": ["sessionId"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "checkConstraints": {}
+        },
+        "sessions": {
+            "name": "sessions",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "courseId": {
+                    "name": "courseId",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "location": {
+                    "name": "location",
+                    "type": "text(255)",
+                    "primaryKey": false,
+                    "notNull": false,
+                    "autoincrement": false
+                },
+                "teams_link": {
+                    "name": "teams_link",
+                    "type": "text(500)",
+                    "primaryKey": false,
+                    "notNull": false,
+                    "autoincrement": false
+                },
+                "ics_file": {
+                    "name": "ics_file",
+                    "type": "blob",
+                    "primaryKey": false,
+                    "notNull": false,
+                    "autoincrement": false
+                },
+                "ics_url": {
+                    "name": "ics_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false,
+                    "autoincrement": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "sessions_courseId_courses_id_fk": {
+                    "name": "sessions_courseId_courses_id_fk",
+                    "tableFrom": "sessions",
+                    "tableTo": "courses",
+                    "columnsFrom": ["courseId"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "checkConstraints": {}
+        },
+        "users": {
+            "name": "users",
+            "columns": {
+                "email": {
+                    "name": "email",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "isAdmin": {
+                    "name": "isAdmin",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false,
+                    "default": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "checkConstraints": {}
+        },
+        "users_sessions": {
+            "name": "users_sessions",
+            "columns": {
+                "user_email": {
+                    "name": "user_email",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                },
+                "session_id": {
+                    "name": "session_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "autoincrement": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "users_sessions_user_email_users_email_fk": {
+                    "name": "users_sessions_user_email_users_email_fk",
+                    "tableFrom": "users_sessions",
+                    "tableTo": "users",
+                    "columnsFrom": ["user_email"],
+                    "columnsTo": ["email"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                },
+                "users_sessions_session_id_sessions_id_fk": {
+                    "name": "users_sessions_session_id_sessions_id_fk",
+                    "tableFrom": "users_sessions",
+                    "tableTo": "sessions",
+                    "columnsFrom": ["session_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {
+                "users_sessions_user_email_session_id_pk": {
+                    "columns": ["user_email", "session_id"],
+                    "name": "users_sessions_user_email_session_id_pk"
+                }
+            },
+            "uniqueConstraints": {},
+            "checkConstraints": {}
+        }
+    },
+    "views": {},
+    "enums": {},
+    "_meta": {
+        "schemas": {},
+        "tables": {},
+        "columns": {}
+    },
+    "internal": {
+        "indexes": {}
+    }
+}

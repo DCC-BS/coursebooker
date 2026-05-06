@@ -1,0 +1,8 @@
+./node_modules
+./.vscode
+./.git
+./.editorconfig
+./.nuxt
+Dockerfile
+Dockerfile.template
+.dockerignore

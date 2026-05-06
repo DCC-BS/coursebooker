@@ -1,0 +1,9 @@
+version: '3'
+services:
+    coursebooker:
+        restart: always
+        build: .
+        volumes:
+            - ./data:/app/data
+        ports:
+            - 8502:3000
