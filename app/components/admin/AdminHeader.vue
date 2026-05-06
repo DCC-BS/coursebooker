@@ -7,6 +7,8 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+
+const router = useRouter();
 </script>
 
 <template>
@@ -14,7 +16,7 @@ const { t } = useI18n();
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-6">
                 <div class="flex items-center space-x-4">
-                    <NuxtLink to="/admin" class="text-primary-600 hover:text-primary-700 transition-colors">
+                    <NuxtLink @click="router.back()" class="text-primary-600 hover:text-primary-700 transition-colors">
                         <UIcon name="i-lucide-arrow-left" class="h-5 w-5" />
                     </NuxtLink>
                     <h1 class="text-3xl font-bold text-gray-900">{{ title }}</h1>
