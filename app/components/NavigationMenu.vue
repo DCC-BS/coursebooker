@@ -2,7 +2,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const { t, locale, locales, setLocale } = useI18n();
-const { data, signOut } = useAuth();
+const { data, signOut } = useAppAuth();
 
 const userImage = computed(() => {
     const base64 = data.value?.user?.image;

@@ -9,18 +9,18 @@ export default defineNuxtConfig({
     build: {
         analyze: false,
     },
+    extends: [
+        ["github:DCC-BS/nuxt-layers/auth"],
+        ["github:DCC-BS/nuxt-layers/azure-auth", { install: true }],
+        ["github:DCC-BS/nuxt-layers/logger"],
+    ],
     runtimeConfig: {
-        githubToken: process.env.GITHUB_TOKEN,
         apiUrl: process.env.API_URL,
-        azureAdTenantId: process.env.AZURE_AD_TENANT_ID ?? "NA",
-        azureAdClientId: process.env.AZURE_AD_CLIENT_ID ?? "NA",
-        azureAdClientSecret: process.env.AZURE_AD_CLIENT_SECRET ?? "NA",
-        authSecret: process.env.AUTH_SECRET ?? "NA",
         mailFrom: process.env.MAIL_FROM ?? "noreply@example.com",
         defaultAdmin: process.env.DEFAULT_ADMIN ?? "",
         siteUrl: process.env.NUXT_SITE_URL || "http://localhost:3000",
         public: {
-            logger_bs: {
+            logger: {
                 loglevel: process.env.LOG_LEVEL || "debug",
             },
         },
@@ -53,22 +53,13 @@ export default defineNuxtConfig({
     modules: [
         "@nuxt/ui",
         "@nuxtjs/i18n",
-        "@dcc-bs/logger.bs.js",
-        "@dcc-bs/feedback-control.bs.js",
         "@dcc-bs/common-ui.bs.js",
         "@nuxtjs/mdc",
-        "@sidebase/nuxt-auth",
         "@nuxt/fonts",
         "@formkit/nuxt",
     ],
     devtools: { enabled: true },
     css: ["~/assets/css/main.css"],
-    "feedback-control.bs.js": {
-        repo: "Feedback",
-        owner: "DCC-BS",
-        project: "CourseBooker",
-        githubToken: process.env.GITHUB_TOKEN,
-    },
     // localization
     i18n: {
         locales: [
