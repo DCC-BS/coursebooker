@@ -585,7 +585,7 @@ function switchTab(tab: "compose" | "preview") {
                                     <div
                                         class="text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-2"
                                     >
-                                        vorname.nachname@bs.ch
+                                        firstname.lastname@example.com
                                     </div>
                                 </div>
 

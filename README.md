@@ -13,7 +13,7 @@ The application is composed of a server-side API built with Nuxt and a client-si
 - **Database Integration**: Utilizes a SQLite database with schema managed by Drizzle ORM.
 - **Authentication & Authorization**: Secure user authentication via Azure AD and role-based access control for admin functionalities.
 - **Automated Migrations**: Database migrations are automatically run on server startup using the `server/plugins/migrateDb.ts` plugin.
-- **Mail Services**: Transactional emails (registration confirmations, cancellations, custom notifications) rendered via Handlebars templates in `server/templates/`.
+- ** Services**: Transactional emails (registration confirmations, cancellations, custom notifications) rendered via Handlebars templates in `server/templates/`.
 - **ICS Calendar Support**: Generates and versions iCalendar files for session bookings.
 - **OpenAPI Documentation**: Auto-generated API docs available at `/_openapi.json`, `/_scalar`, and `/_swagger`.
 
@@ -143,6 +143,7 @@ Copy the `.env.schema` file to `.env` and fill in the required values. The proje
 | `SMTP_HOST` | No | SMTP server host (default: `localhost`) |
 | `SMTP_PORT` | No | SMTP server port (default: `1030`) |
 | `GITHUB_TOKEN` | No | GitHub token for feedback control integration |
+| `MAIL_FROM` | No | Sender email address for outgoing mails (default: `noreply@example.com`) |
 | `DEFAULT_ADMIN` | No | Default admin user email (build time) |
 | `NUXT_DEFAULT_ADMIN` | No | Default admin user email (runtime, overrides `DEFAULT_ADMIN`) |
 | `NUXT_SITE_URL` | No | Site URL (default: `http://localhost:3000`) |

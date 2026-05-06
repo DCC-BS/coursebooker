@@ -182,7 +182,7 @@ export async function sendRegistrationMail(
     const { html, text } = renderTemplate("registration", context);
 
     const mailOptions: SendMailOptions = {
-        from: "dcc@bs.ch",
+        from: useRuntimeConfig().mailFrom,
         to: userEmail,
         subject: `Anmeldung zum ${typeLabel(course.type)} "${course.title}"`,
         html,
@@ -207,7 +207,7 @@ export async function sendUnregisterMail(
     const { html, text } = renderTemplate("unregister", context);
 
     const mailOptions: SendMailOptions = {
-        from: "dcc@bs.ch",
+        from: useRuntimeConfig().mailFrom,
         to: userEmail,
         subject: `Abmeldung zum ${typeLabel(course.type)} "${course.title}"`,
         html,
@@ -231,7 +231,7 @@ export async function sendCancellationMail(
     const { html, text } = renderTemplate("cancellation", context);
 
     const mailOptions: SendMailOptions = {
-        from: "dcc@bs.ch",
+        from: useRuntimeConfig().mailFrom,
         to: userEmail,
         subject: `Absage: ${typeLabel(course.type)} "${course.title}"`,
         html,
@@ -306,7 +306,7 @@ export async function sendCustomNotificationMail(
     const { html, text } = renderTemplate("custom-notification", context);
 
     const mailOptions: SendMailOptions = {
-        from: "dcc@bs.ch",
+        from: useRuntimeConfig().mailFrom,
         to: userEmail,
         subject: `Update: ${typeLabel(course.type)} "${course.title}"`,
         html,
