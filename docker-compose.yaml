@@ -1,9 +1,10 @@
 version: '3'
 services:
-  coursebooker:
-    restart: always
-    build: .
-    volumes:
-      - ./data:/app/data
-    ports:
-      - 8502:3000
+    coursebooker:
+        restart: always
+        build: .
+        volumes:
+            - ./data:/data
+        ports:
+            - 8502:3000
+        env_file: .env
