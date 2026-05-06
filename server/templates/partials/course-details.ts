@@ -52,12 +52,12 @@ export const courseDetailsText = `{{courseTypeLabel}}details:
 export const signatureHtml = `<table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #333333; line-height: 1.6;">
   <tr>
     <td style="padding: 16px 0; border-top: 1px solid #E5E7EB; font-size: 13px; color: #888888;">
-      <p style="margin: 0;">Liebe Gr&uuml;sse,<br><strong>DCC - Data Competence Center</strong><br>
-      <a href="mailto:dcc@bs.ch" style="color: #0063C6;">dcc@bs.ch</a></p>
+      <p style="margin: 0;">Liebe Gr&uuml;sse,<br><strong>{{organizerName}}</strong><br>
+      <a href="mailto:{{organizerMail}}" style="color: #0063C6;">{{organizerMail}}</a></p>
     </td>
   </tr>
 </table>`;
 
 export const signatureText = `Liebe Grüsse,
-DCC - Data Competence Center
-dcc@bs.ch`;
+{{organizerName}}
+{{organizerMail}}`;

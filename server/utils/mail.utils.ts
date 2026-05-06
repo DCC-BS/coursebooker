@@ -149,6 +149,8 @@ function buildCourseContext(
         siteUrl: config.siteUrl,
         courseId: course.id,
         sessionId: session.id,
+        organizerName: course.organizer_name,
+        organizerMail: course.organizer_mail,
         ...extras,
     };
 }
@@ -167,10 +169,10 @@ export async function sendRegistrationMail(
 ): Promise<boolean> {
     const attachment = ics_file
         ? {
-              filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
-              contentType: "text/calendar",
-              content: ics_file,
-          }
+            filename: `invite-${Math.random().toString(36).substring(2, 15)}.ics`,
+            contentType: "text/calendar",
+            content: ics_file,
+        }
         : createIcsAttachment(course, session);
 
     const context = buildCourseContext(givenName, familyName, course, session, {
