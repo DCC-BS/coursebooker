@@ -3,6 +3,7 @@ FROM node:24-alpine AS build
 
 ENV DATABASE_URL=data/coursebooker.db
 ENV NODE_ENV=production
+ENV APP_MODE=build
 
 RUN apk update && apk add git
 
@@ -31,6 +32,7 @@ FROM node:24-alpine
 
 ENV DATABASE_URL=data/coursebooker.db
 ENV TZ=Europe/Zurich
+ENV APP_MODE=prod
 
 RUN apk update && apk add git
 
