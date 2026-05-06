@@ -1,0 +1,28 @@
+name: Build & Test
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+env:
+    AUTH_MODE: "none"
+    APP_MODE: "ci"
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: DCC-BS/ci-workflows/actions/node-bun-biome-playwright@814649735835a84a3d0d6c8d6e6db87dfeb8b348 # v8
+
+              with:
+                  node_version: "25.x"
+                  working_directory: "."
+                  run_biome: "true"
+                  run_playwright: "false"
+                  install_method: "bun"
+                  build_command: "bun run build"
+                  artifact_retention_days: 30

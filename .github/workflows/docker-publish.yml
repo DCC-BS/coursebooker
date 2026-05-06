@@ -1,0 +1,19 @@
+name: Build and Publish Docker Image
+on:
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    packages: write
+
+jobs:
+    publish:
+        uses: DCC-BS/ci-workflows/.github/workflows/publish-docker.yml@814649735835a84a3d0d6c8d6e6db87dfeb8b348 # v8
+        secrets: inherit
+        with:
+            registry: ghcr.io
+            image_name: ghcr.io/${{ github.repository }}
+            context: .
+            dockerfile: ./Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
