@@ -45,6 +45,7 @@
         "evening": "Abend (18:00 - 24:00)",
         "loadingCourses": "Kurse & Events werden geladen...",
         "foundCourses": "Keine Kurse oder Events gefunden | 1 Kurs/Event gefunden | {count} Kurse/Events gefunden",
+        "noCourses": "Keine Kurse oder Events gefunden",
         "noCoursesMessage": "Versuchen Sie, Ihre Suchkriterien anzupassen oder Ihre Filter zu löschen.",
         "clearAllFilters": "Alle Filter löschen",
         "sessions": "Verfügbare Termine",
@@ -65,6 +66,7 @@
         "noSessionsThisWeekMessage": "",
         "browseCourses": "Kurse & Events durchsuchen",
         "noUpcomingSessions": "Keine kommenden Kurse oder Events",
+        "noUpcomingSessionsMessage": "Sie sind für die nahe Zukunft bestens gerüstet!",
         "allSetForNearFuture": "Sie sind für die nahe Zukunft bestens gerüstet!",
         "unknownCourse": "Unbekannter Kurs",
         "startingNow": "Beginnt jetzt",
@@ -232,7 +234,7 @@
             }
         },
         "courseCard": {
-            "edit ": "Kurs bearbeiten",
+            "editCourse": "Kurs bearbeiten",
             "manageSessions": "Durchführungen verwalten",
             "duplicateCourse": "Kurs duplizieren",
             "deleteCourse": "Kurs löschen",

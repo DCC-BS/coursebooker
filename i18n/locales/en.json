@@ -8,13 +8,13 @@
         "azureAdDescription": "We're securely connecting you to Azure Active Directory. This will only take a moment."
     },
     "navigation": {
-        "app": "Kurse & Events",
+        "app": "Courses & Events",
         "languages": "Languages",
         "signOut": "Sign Out",
         "myCourses": "My Courses & Events"
     },
     "home": {
-        "welcome": "Welcome to Kurse & Events",
+        "welcome": "Welcome to Courses & Events",
         "subtitle": "Book courses and events here",
         "searchAndFilter": "Search & Filter",
         "searchCourses": "Search Courses & Events",
@@ -114,8 +114,8 @@
     "admin": {
         "dashboard": {
             "title": "Admin Dashboard",
-            "pageTitle": "Admin Dashboard - Kurse & Events",
-            "coursebookerAdmin": "Kurse & Events Admin",
+            "pageTitle": "Admin Dashboard - Courses & Events",
+            "coursebookerAdmin": "Courses & Events Admin",
             "viewSite": "View Site",
             "manageCourses": "Manage Courses & Events",
             "loadingCourses": "Loading courses & events...",
