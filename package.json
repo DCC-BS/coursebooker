@@ -29,7 +29,7 @@
         "@nuxt/ui": "^4.0.0",
         "@nuxtjs/i18n": "^10.1.0",
         "@nuxtjs/mdc": "0.17.4",
-        "@sidebase/nuxt-auth": "1.1.0",
+        "@sidebase/nuxt-auth": "1.2.0",
         "@types/better-sqlite3": "^7.6.13",
         "@varlock/proton-pass-plugin": "^1.0.0",
         "@varlock/vite-integration": "^1.1.0",
