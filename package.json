@@ -37,7 +37,7 @@
         "better-sqlite3": "^12.4.1",
         "caniuse-lite": "^1.0.30001791",
         "date-fns": "^4.1.0",
-        "drizzle-orm": "^0.44.5",
+        "drizzle-orm": "^0.45.0",
         "drizzle-zod": "^0.8.3",
         "estree-walker": "^3.0.3",
         "handlebars": "^4.7.9",
