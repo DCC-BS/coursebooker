@@ -77,20 +77,6 @@ export default defineNuxtConfig({
         defaultLocale: "de",
         strategy: "no_prefix",
     },
-    auth: {
-        isEnabled: true,
-        globalAppMiddleware: true,
-        originEnvKey: "AUTH_ORIGIN",
-        provider: {
-            type: "authjs",
-            defaultProvider: "azureAd",
-            addDefaultCallbackUrl: true,
-        },
-        sessionRefresh: {
-            enablePeriodically: 10000,
-            enableOnWindowFocus: true,
-        },
-    },
     nitro: {
         experimental: {
             openAPI: true,
