@@ -48,7 +48,12 @@ async function handleSignOut(): Promise<void> {
         </ULink>
 
         <div class="flex items-center gap-2">
-            <UButton to="/me" color="primary" variant="ghost" icon="i-lucide-graduation-cap">
+            <UButton
+                to="/me"
+                color="primary"
+                variant="ghost"
+                icon="i-lucide-graduation-cap"
+            >
                 {{ t("navigation.myCourses") }}
             </UButton>
 
@@ -58,8 +63,17 @@ async function handleSignOut(): Promise<void> {
             </UDropdownMenu>
 
             <UDropdownMenu :items="logoutItems" arrow>
-                <img v-if="userImage" :src="userImage" alt="User Image" class="w-8 h-8 rounded-full" />
-                <UIcon v-else name="i-lucide-user" class="h-6 w-6 rounded-full" />
+                <img
+                    v-if="userImage"
+                    :src="userImage"
+                    alt="User Image"
+                    class="w-8 h-8 rounded-full"
+                />
+                <UIcon
+                    v-else
+                    name="i-lucide-user"
+                    class="h-6 w-6 rounded-full"
+                />
             </UDropdownMenu>
         </div>
     </div>
