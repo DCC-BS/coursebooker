@@ -5,8 +5,7 @@ const { t, locale, locales, setLocale } = useI18n();
 const { data, signOut } = useAppAuth();
 
 const userImage = computed(() => {
-    const base64 = data.value?.user?.image;
-    return base64 ? base64 : "/LucideCircleUserRound.png";
+    return data.value?.user?.image;
 });
 
 const availableLocales = computed(() => {
@@ -59,7 +58,8 @@ async function handleSignOut(): Promise<void> {
             </UDropdownMenu>
 
             <UDropdownMenu :items="logoutItems" arrow>
-                <img :src="userImage" alt="User Image" class="w-8 h-8 rounded-full" />
+                <img v-if="userImage" :src="userImage" alt="User Image" class="w-8 h-8 rounded-full" />
+                <UIcon v-else name="i-lucide-user" class="h-6 w-6 rounded-full" />
             </UDropdownMenu>
         </div>
     </div>
