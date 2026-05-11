@@ -35,6 +35,7 @@ const logoutItems = computed<DropdownMenuItem[]>(() => [
 ]);
 
 async function handleSignOut(): Promise<void> {
+    await navigateTo("/api/auth/authorize", { external: true });
     await signOut();
 }
 </script>
