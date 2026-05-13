@@ -4,6 +4,12 @@ import { varlockVitePlugin } from "@varlock/vite-integration";
 export default defineNuxtConfig({
     vite: {
         plugins: [varlockVitePlugin({ ssrInjectMode: "resolved-env" })],
+        optimizeDeps: {
+            include: [
+                "@formkit/core",
+                "@formkit/i18n",
+            ]
+        }
     },
     compatibilityDate: "2024-11-01",
     build: {

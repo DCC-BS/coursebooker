@@ -4,6 +4,7 @@ FROM node:24-alpine AS build
 ENV DATABASE_URL=data/coursebooker.db
 ENV NODE_ENV=production
 ENV APP_MODE=build
+ENV AUTH_MODE=azure
 
 RUN apk update && apk add git
 
