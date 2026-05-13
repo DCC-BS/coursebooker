@@ -17,7 +17,6 @@ export default defineNuxtConfig({
     },
     extends: [
         ["github:DCC-BS/nuxt-layers/auth"],
-        ["github:DCC-BS/nuxt-layers/azure-auth", { install: true }],
         ["github:DCC-BS/nuxt-layers/logger"],
     ],
     runtimeConfig: {

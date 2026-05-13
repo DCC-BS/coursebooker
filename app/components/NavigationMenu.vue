@@ -2,7 +2,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const { t, locale, locales, setLocale } = useI18n();
-const { data, signOut } = useAppAuth();
+const { data, signOut, isAuthEnabled } = useAppAuth();
 
 const userImage = computed(() => {
     return data.value?.user?.image;
@@ -35,7 +35,6 @@ const logoutItems = computed<DropdownMenuItem[]>(() => [
 ]);
 
 async function handleSignOut(): Promise<void> {
-    await navigateTo("/api/auth/authorize", { external: true });
     await signOut();
 }
 </script>
@@ -63,7 +62,7 @@ async function handleSignOut(): Promise<void> {
                 </UButton>
             </UDropdownMenu>
 
-            <UDropdownMenu :items="logoutItems" arrow>
+            <UDropdownMenu v-if="isAuthEnabled" :items="logoutItems" arrow>
                 <img
                     v-if="userImage"
                     :src="userImage"

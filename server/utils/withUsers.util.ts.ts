@@ -11,7 +11,7 @@ export async function getWithUsers(event: H3Event) {
 
         const user = await db.query.userTable.findFirst({
             where: (users, { eq }) =>
-                eq(users.email, session?.user?.email?.trim() ?? ""),
+                eq(users.email, session?.email?.trim() ?? ""),
         });
 
         const isAdmin = user?.isAdmin ?? false;

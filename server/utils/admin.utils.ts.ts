@@ -1,6 +1,5 @@
 import type { H3Event } from "h3";
 import { useDb } from "../composables/db.composable";
-import { getUserSession } from "./getUserSession.utils";
 
 export async function isAdmin(event: H3Event) {
     const { db } = useDb();
@@ -8,7 +7,7 @@ export async function isAdmin(event: H3Event) {
 
     const user = await db.query.userTable.findFirst({
         where: (users, { eq }) =>
-            eq(users.email, session?.user?.email?.trim() ?? ""),
+            eq(users.email, session?.email?.trim() ?? ""),
     });
 
     return user?.isAdmin ?? false;
