@@ -19,7 +19,7 @@ const { registerForSession, unregisterFromSession } = useSetSession(
     props.courseId,
     props.session.id,
 );
-const { showSuccess, showError } = useUserFeedback();
+const { showToast } = useUserFeedback();
 
 const addRegistrationSchema = z.object({
     email: z.email(),
@@ -34,12 +34,9 @@ const formState = reactive<Schema>({
 async function removeRegistration(email: string) {
     try {
         await unregisterFromSession(email);
-        showSuccess({ title: "Registration removed successfully" });
+        showToast("Registration removed successfully", "success");
     } catch (error) {
-        showError({
-            title: "Failed to remove registration",
-            description: (error as Error).message,
-        });
+        showToast(`Failed to remove registration: ${(error as Error).message}`);
     } finally {
         await props.refreshSession();
     }
@@ -49,13 +46,10 @@ async function submitAddRegistration(event: FormSubmitEvent<Schema>) {
     event.preventDefault();
     try {
         await registerForSession(formState.email);
-        showSuccess({ title: "Registration added successfully" });
+        showToast("Registration added successfully", "success");
         formState.email = "";
     } catch (error) {
-        showError({
-            title: "Failed to add registration",
-            description: (error as Error).message,
-        });
+        showToast(`Failed to add registration: ${(error as Error).message}`);
     } finally {
         await props.refreshSession();
     }

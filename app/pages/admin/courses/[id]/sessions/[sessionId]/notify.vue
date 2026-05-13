@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { format } from "date-fns";
 import type { Session } from "#shared/models/index";
-import type { ChangeDescription } from "~~/server/utils/icsVersion.utils";
+import type { ChangeDescription } from "#shared/schema";
 
 definePageMeta({
     layout: "admin",
@@ -10,7 +10,7 @@ definePageMeta({
 
 const { t } = useI18n();
 const route = useRoute();
-const feedback = useUserFeedback();
+const { showToast } = useUserFeedback();
 
 const courseId = route.params.id as string;
 const sessionId = route.params.sessionId as string;
@@ -147,14 +147,12 @@ function toggleUser(email: string) {
 
 async function sendNotification() {
     if (!message.value.trim()) {
-        feedback.showError({ title: "Bitte geben Sie eine Nachricht ein" });
+        showToast("Bitte geben Sie eine Nachricht ein", "error");
         return;
     }
 
     if (selectedEmails.value.size === 0) {
-        feedback.showError({
-            title: "Bitte wählen Sie mindestens einen Empfänger aus",
-        });
+        showToast("Bitte wählen Sie mindestens einen Empfänger aus", "error");
         return;
     }
 
@@ -173,18 +171,14 @@ async function sendNotification() {
             },
         );
 
-        feedback.showSuccess({
-            title: `Benachrichtigung an ${(result as { sentCount: number }).sentCount} Personen gesendet`,
-        });
+        showToast(`Benachrichtigung an ${(result as { sentCount: number }).sentCount} Personen gesendet`, "success");
 
         message.value = "";
         selectedEmails.value = new Set();
         await refresh();
     } catch (error) {
         console.error("Error sending notification:", error);
-        feedback.showError({
-            title: "Fehler beim Senden der Benachrichtigung",
-        });
+        showToast("Fehler beim Senden der Benachrichtigung", "error");
     } finally {
         isSending.value = false;
     }
@@ -209,9 +203,7 @@ async function loadPreview() {
         previewData.value = result;
     } catch (error) {
         console.error("Error loading preview:", error);
-        feedback.showError({
-            title: "Fehler beim Laden der Vorschau",
-        });
+        showToast("Fehler beim Laden der Vorschau", "error");
     } finally {
         isLoadingPreview.value = false;
     }
@@ -253,13 +245,13 @@ function switchTab(tab: "compose" | "preview") {
                                 Registrierungen:
                                 <strong>{{
                                     versionData.totalRegistrations
-                                }}</strong>
+                                    }}</strong>
                             </div>
                             <div class="text-sm text-gray-600">
                                 Veraltet/Ohne ICS:
                                 <strong class="text-amber-600">{{
                                     versionData.outdatedCount
-                                }}</strong>
+                                    }}</strong>
                             </div>
                         </div>
                     </div>
@@ -269,26 +261,16 @@ function switchTab(tab: "compose" | "preview") {
                             Versionsverlauf
                         </h2>
 
-                        <div
-                            v-if="versionData.versions.length === 0"
-                            class="text-sm text-gray-500"
-                        >
+                        <div v-if="versionData.versions.length === 0" class="text-sm text-gray-500">
                             Noch keine Versionen vorhanden
                         </div>
 
                         <div v-else class="space-y-4">
-                            <div
-                                v-for="version in versionData.versions"
-                                :key="version.id"
-                                class="border border-gray-200 rounded-lg p-4"
-                            >
-                                <div
-                                    class="flex items-center justify-between mb-2"
-                                >
+                            <div v-for="version in versionData.versions" :key="version.id"
+                                class="border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-2">
-                                        <UBadge color="primary"
-                                            >v{{ version.version }}</UBadge
-                                        >
+                                        <UBadge color="primary">v{{ version.version }}</UBadge>
                                         <span class="text-sm text-gray-500">
                                             {{ formatDate(version.createdAt) }}
                                         </span>
@@ -297,25 +279,16 @@ function switchTab(tab: "compose" | "preview") {
                                         {{ version.createdBy }}
                                     </span>
                                 </div>
-                                <div
-                                    v-if="version.changesParsed.length > 0"
-                                    class="text-sm text-gray-600"
-                                >
+                                <div v-if="version.changesParsed.length > 0" class="text-sm text-gray-600">
                                     <ul class="list-disc list-inside">
-                                        <li
-                                            v-for="(
-                                                change, idx
-                                            ) in version.changesParsed"
-                                            :key="idx"
-                                        >
+                                        <li v-for="(
+change, idx
+                                            ) in version.changesParsed" :key="idx">
                                             {{ formatChange(change) }}
                                         </li>
                                     </ul>
                                 </div>
-                                <div
-                                    v-else
-                                    class="text-sm text-gray-400 italic"
-                                >
+                                <div v-else class="text-sm text-gray-400 italic">
                                     Keine Änderungsbeschreibung
                                 </div>
                             </div>
@@ -328,49 +301,29 @@ function switchTab(tab: "compose" | "preview") {
                         </h2>
 
                         <div class="flex flex-wrap gap-3 mb-4">
-                            <USelect
-                                v-model="statusFilter"
-                                :items="[
-                                    { label: 'Alle Status', value: 'all' },
-                                    { label: 'Aktuell', value: 'current' },
-                                    { label: 'Veraltet', value: 'outdated' },
-                                    { label: 'Kein ICS', value: 'none' },
-                                ]"
-                                class="w-40"
-                                placeholder="Status filtern"
-                            />
-                            <USelect
-                                v-model="versionFilter"
-                                :items="[
-                                    { label: 'Alle Versionen', value: 'all' },
-                                    { label: 'Kein ICS', value: 'none' },
-                                    ...availableVersions.map((v) => ({
-                                        label: `v${v}`,
-                                        value: String(v),
-                                    })),
-                                ]"
-                                class="w-44"
-                                placeholder="Version filtern"
-                            />
-                            <UInput
-                                v-model="emailSearch"
-                                icon="i-lucide-search"
-                                placeholder="E-Mail suchen..."
-                                class="w-64"
-                            />
+                            <USelect v-model="statusFilter" :items="[
+                                { label: 'Alle Status', value: 'all' },
+                                { label: 'Aktuell', value: 'current' },
+                                { label: 'Veraltet', value: 'outdated' },
+                                { label: 'Kein ICS', value: 'none' },
+                            ]" class="w-40" placeholder="Status filtern" />
+                            <USelect v-model="versionFilter" :items="[
+                                { label: 'Alle Versionen', value: 'all' },
+                                { label: 'Kein ICS', value: 'none' },
+                                ...availableVersions.map((v) => ({
+                                    label: `v${v}`,
+                                    value: String(v),
+                                })),
+                            ]" class="w-44" placeholder="Version filtern" />
+                            <UInput v-model="emailSearch" icon="i-lucide-search" placeholder="E-Mail suchen..."
+                                class="w-64" />
                         </div>
 
-                        <div
-                            v-if="versionData.users.length === 0"
-                            class="text-sm text-gray-500"
-                        >
+                        <div v-if="versionData.users.length === 0" class="text-sm text-gray-500">
                             Keine Registrierungen vorhanden
                         </div>
 
-                        <div
-                            v-else-if="filteredUsers.length === 0"
-                            class="text-sm text-gray-500"
-                        >
+                        <div v-else-if="filteredUsers.length === 0" class="text-sm text-gray-500">
                             Keine Empfänger entsprechen den Filterkriterien
                         </div>
 
@@ -379,86 +332,56 @@ function switchTab(tab: "compose" | "preview") {
                                 <thead>
                                     <tr>
                                         <th
-                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10"
-                                        >
-                                            <UCheckbox
-                                                :model-value="
-                                                    allFilteredSelected
-                                                "
-                                                :indeterminate="
-                                                    someFilteredSelected
-                                                "
-                                                @update:model-value="
-                                                    toggleSelectAll
-                                                "
-                                            />
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
+                                            <UCheckbox :model-value="allFilteredSelected
+                                                " :indeterminate="someFilteredSelected
+                                                    " @update:model-value="
+                                                        toggleSelectAll
+                                                    " />
                                         </th>
                                         <th
-                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             E-Mail
                                         </th>
                                         <th
-                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Erhaltene Version
                                         </th>
                                         <th
-                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody
-                                    class="bg-white divide-y divide-gray-200"
-                                >
-                                    <tr
-                                        v-for="user in filteredUsers"
-                                        :key="user.userEmail"
-                                        :class="{
-                                            'bg-primary-50': selectedEmails.has(
-                                                user.userEmail,
-                                            ),
-                                        }"
-                                        class="cursor-pointer hover:bg-gray-50"
-                                        @click="toggleUser(user.userEmail)"
-                                    >
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr v-for="user in filteredUsers" :key="user.userEmail" :class="{
+                                        'bg-primary-50': selectedEmails.has(
+                                            user.userEmail,
+                                        ),
+                                    }" class="cursor-pointer hover:bg-gray-50" @click="toggleUser(user.userEmail)">
                                         <td class="px-4 py-3" @click.stop>
-                                            <UCheckbox
-                                                :model-value="
-                                                    selectedEmails.has(
-                                                        user.userEmail,
-                                                    )
-                                                "
-                                                @update:model-value="
+                                            <UCheckbox :model-value="selectedEmails.has(
+                                                user.userEmail,
+                                            )
+                                                " @update:model-value="
                                                     toggleUser(user.userEmail)
-                                                "
-                                            />
+                                                    " />
                                         </td>
-                                        <td
-                                            class="px-4 py-3 text-sm text-gray-900"
-                                        >
+                                        <td class="px-4 py-3 text-sm text-gray-900">
                                             {{ user.userEmail }}
                                         </td>
-                                        <td
-                                            class="px-4 py-3 text-sm text-gray-500"
-                                        >
+                                        <td class="px-4 py-3 text-sm text-gray-500">
                                             {{
                                                 user.ics_version_received !==
-                                                null
+                                                    null
                                                     ? `v${user.ics_version_received}`
                                                     : "-"
                                             }}
                                         </td>
                                         <td class="px-4 py-3 text-sm">
-                                            <UBadge
-                                                :color="
-                                                    getStatusBadge(user.status)
-                                                        .color
-                                                "
-                                                size="sm"
-                                            >
+                                            <UBadge :color="getStatusBadge(user.status)
+                                                .color
+                                                " size="sm">
                                                 {{
                                                     getStatusBadge(user.status)
                                                         .label
@@ -479,52 +402,29 @@ function switchTab(tab: "compose" | "preview") {
 
                     <div class="bg-white shadow rounded-lg p-6">
                         <div class="flex items-center gap-1 mb-4 border-b border-gray-200 pb-3">
-                            <button
-                                class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors"
-                                :class="
-                                    activeTab === 'compose'
-                                        ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                "
-                                @click="switchTab('compose')"
-                            >
-                                <UIcon
-                                    name="i-lucide-pen-line"
-                                    class="mr-1.5 inline-block align-text-bottom"
-                                />
+                            <button class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors" :class="activeTab === 'compose'
+                                ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
+                                : 'text-gray-500 hover:text-gray-700'
+                                " @click="switchTab('compose')">
+                                <UIcon name="i-lucide-pen-line" class="mr-1.5 inline-block align-text-bottom" />
                                 Verfassen
                             </button>
-                            <button
-                                class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors"
-                                :class="
-                                    activeTab === 'preview'
-                                        ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                "
-                                :disabled="!message.trim()"
-                                @click="switchTab('preview')"
-                            >
-                                <UIcon
-                                    name="i-lucide-eye"
-                                    class="mr-1.5 inline-block align-text-bottom"
-                                />
+                            <button class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors" :class="activeTab === 'preview'
+                                ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
+                                : 'text-gray-500 hover:text-gray-700'
+                                " :disabled="!message.trim()" @click="switchTab('preview')">
+                                <UIcon name="i-lucide-eye" class="mr-1.5 inline-block align-text-bottom" />
                                 Vorschau
                             </button>
                         </div>
 
                         <div v-if="activeTab === 'compose'" class="space-y-4">
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 mb-1"
-                                >
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Nachricht an die ausgewählten Personen
                                 </label>
-                                <UTextarea
-                                    v-model="message"
-                                    :rows="4"
-                                    placeholder="Geben Sie hier Ihre Nachricht ein..."
-                                    class="w-full"
-                                />
+                                <UTextarea v-model="message" :rows="4"
+                                    placeholder="Geben Sie hier Ihre Nachricht ein..." class="w-full" />
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -534,23 +434,15 @@ function switchTab(tab: "compose" | "preview") {
                                 </label>
                             </div>
 
-                            <div
-                                class="flex justify-between items-center pt-4 border-t"
-                            >
+                            <div class="flex justify-between items-center pt-4 border-t">
                                 <div class="text-sm text-gray-500">
                                     Empfänger:
                                     {{ selectedEmails.size }} Personen
                                     ausgewählt
                                 </div>
-                                <UButton
-                                    color="primary"
-                                    :loading="isSending"
-                                    :disabled="
-                                        !message.trim() ||
-                                        selectedEmails.size === 0
-                                    "
-                                    @click="sendNotification"
-                                >
+                                <UButton color="primary" :loading="isSending" :disabled="!message.trim() ||
+                                    selectedEmails.size === 0
+                                    " @click="sendNotification">
                                     Benachrichtigung senden
                                 </UButton>
                             </div>
@@ -565,91 +457,60 @@ function switchTab(tab: "compose" | "preview") {
                             <div v-else-if="previewData">
                                 <div class="mb-4">
                                     <label
-                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1"
-                                    >
+                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                                         Betreff
                                     </label>
-                                    <div
-                                        class="text-sm font-semibold text-gray-900 bg-gray-50 rounded-lg px-4 py-2"
-                                    >
+                                    <div class="text-sm font-semibold text-gray-900 bg-gray-50 rounded-lg px-4 py-2">
                                         {{ previewData.subject }}
                                     </div>
                                 </div>
 
                                 <div class="mb-4">
                                     <label
-                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1"
-                                    >
+                                        class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                                         Empfänger (Beispiel)
                                     </label>
-                                    <div
-                                        class="text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-2"
-                                    >
+                                    <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-2">
                                         firstname.lastname@example.com
                                     </div>
                                 </div>
 
                                 <div class="mb-4">
                                     <div class="flex items-center justify-between mb-1">
-                                        <label
-                                            class="block text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Nachricht
                                         </label>
-                                        <UBadge
-                                            v-if="previewData.includeIcs"
-                                            color="primary"
-                                            size="sm"
-                                        >
-                                            <UIcon
-                                                name="i-lucide-paperclip"
-                                                class="mr-1"
-                                            />
+                                        <UBadge v-if="previewData.includeIcs" color="primary" size="sm">
+                                            <UIcon name="i-lucide-paperclip" class="mr-1" />
                                             ICS-Anhang
                                         </UBadge>
                                     </div>
                                     <div
-                                        class="text-sm text-gray-800 bg-gray-50 rounded-lg px-4 py-3 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200"
-                                    >
+                                        class="text-sm text-gray-800 bg-gray-50 rounded-lg px-4 py-3 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200">
                                         {{ previewData.body }}
                                     </div>
                                 </div>
 
-                                <div
-                                    class="flex justify-between items-center pt-4 border-t"
-                                >
+                                <div class="flex justify-between items-center pt-4 border-t">
                                     <div class="text-sm text-gray-500">
                                         Empfänger:
                                         {{ selectedEmails.size }} Personen
                                         ausgewählt
                                     </div>
                                     <div class="flex gap-2">
-                                        <UButton
-                                            color="neutral"
-                                            variant="outline"
-                                            @click="switchTab('compose')"
-                                        >
+                                        <UButton color="neutral" variant="outline" @click="switchTab('compose')">
                                             Bearbeiten
                                         </UButton>
-                                        <UButton
-                                            color="primary"
-                                            :loading="isSending"
-                                            :disabled="
-                                                !message.trim() ||
-                                                selectedEmails.size === 0
-                                            "
-                                            @click="sendNotification"
-                                        >
+                                        <UButton color="primary" :loading="isSending" :disabled="!message.trim() ||
+                                            selectedEmails.size === 0
+                                            " @click="sendNotification">
                                             Benachrichtigung senden
                                         </UButton>
                                     </div>
                                 </div>
                             </div>
 
-                            <div
-                                v-else
-                                class="text-center text-sm text-gray-500 py-8"
-                            >
+                            <div v-else class="text-center text-sm text-gray-500 py-8">
                                 Geben Sie eine Nachricht ein und wechseln Sie
                                 zur Vorschau, um eine Vorschau der E-Mail zu
                                 sehen.
@@ -661,16 +522,9 @@ function switchTab(tab: "compose" | "preview") {
 
             <div v-else class="bg-white shadow rounded-lg p-6">
                 <div class="text-center">
-                    <UIcon
-                        name="i-lucide-alert-circle"
-                        class="h-12 w-12 text-red-500 mx-auto mb-4"
-                    />
+                    <UIcon name="i-lucide-alert-circle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
                     <p class="text-gray-600">Session nicht gefunden</p>
-                    <UButton
-                        :to="`/admin/courses/${courseId}/sessions`"
-                        color="primary"
-                        class="mt-4"
-                    >
+                    <UButton :to="`/admin/courses/${courseId}/sessions`" color="primary" class="mt-4">
                         Zurück zu Sessions
                     </UButton>
                 </div>

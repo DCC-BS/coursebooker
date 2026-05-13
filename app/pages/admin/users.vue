@@ -7,7 +7,7 @@ definePageMeta({
     title: "Manage Users",
 });
 
-const feedback = useUserFeedback();
+const { showToast } = useUserFeedback();
 const { t } = useI18n();
 
 // Reactive data
@@ -72,9 +72,7 @@ const handleCreateUser = async () => {
             isAdmin: newUserIsAdmin.value,
         });
 
-        feedback.showSuccess({
-            title: t("admin.users.userCreatedSuccessfully"),
-        });
+        showToast(t("admin.users.userCreatedSuccessfully"), "success");
 
         // Reset form
         newUserEmail.value = "";
@@ -93,9 +91,7 @@ const handleCreateUser = async () => {
                 err.message ??
                 t("admin.users.unknownError");
         }
-        feedback.showError({
-            title: t("admin.users.failedToCreateUser", { message: msg }),
-        });
+        showToast(t("admin.users.failedToCreateUser", { message: msg }), "error");
     } finally {
         isCreatingUser.value = false;
     }
@@ -108,9 +104,7 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
         const action = isAdmin
             ? t("admin.users.promotedTo")
             : t("admin.users.demotedFrom");
-        feedback.showSuccess({
-            title: t("admin.users.userPromotedToDemoted", { action }),
-        });
+        showToast(t("admin.users.userPromotedToDemoted", { action }), "success");
         await refresh();
     } catch (error: unknown) {
         console.error("Failed to update user role:", error);
@@ -124,9 +118,7 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
                 t("admin.users.unknownError");
         }
 
-        feedback.showError({
-            title: t("admin.users.failedToUpdateUserRole", { message: msg }),
-        });
+        showToast(t("admin.users.failedToUpdateUserRole", { message: msg }), "error");
     }
 };
 

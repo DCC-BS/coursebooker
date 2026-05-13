@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const { showError, showSuccess } = useUserFeedback();
+const { showToast } = useUserFeedback();
 const router = useRouter();
 
 const submitting = ref(false);
@@ -73,40 +73,34 @@ async function submitForm(event: FormSubmitEvent<Schema>) {
 
         if (!props.courseId) {
             const createdCourse = await createCourse(data);
-            showSuccess({ title: t("admin.courseForm.courseCreated") });
+            showToast(t("admin.courseForm.courseCreated"), "success");
             await router.push(`/admin/courses/${createdCourse.id}/edit`);
             return;
         }
 
         await updateCourse(props.courseId, data);
         await props.refresh?.();
-        showSuccess({ title: t("admin.courseForm.courseUpdated") });
+        showToast(t("admin.courseForm.courseUpdated"), "success");
     } catch (error) {
         console.error("Error updating course:", error);
-        showError({
-            title: t("admin.courseForm.failedToUpdateCourse"),
-            description: (error as Error).message,
-        });
+        showToast(`${t("admin.courseForm.failedToUpdateCourse")}: ${(error as Error).message}`);
     } finally {
         submitting.value = false;
     }
 }
 
 async function onDeleteCourse() {
-    if (!props.course) return;
+    if (!props.course || !props.courseId) return;
 
     deleting.value = true;
     try {
         await deleteCourse(props.courseId);
 
         await navigateTo("/admin/courses");
-        showSuccess({ title: t("admin.courseForm.courseDeleted") });
+        showToast(t("admin.courseForm.courseDeleted"), "success");
     } catch (error) {
         console.error("Error deleting course:", error);
-        showError({
-            title: t("admin.courseForm.failedToDeleteCourse"),
-            description: (error as Error).message,
-        });
+        showToast(`${t("admin.courseForm.failedToDeleteCourse")} : ${(error as Error).message}`);
     } finally {
         deleting.value = false;
         showDeleteModal.value = false;

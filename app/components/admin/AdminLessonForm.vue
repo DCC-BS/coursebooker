@@ -21,7 +21,7 @@ const emit = defineEmits<{
     updated: [];
 }>();
 
-const feedback = useUserFeedback();
+const { showToast } = useUserFeedback();
 const isSubmitting = ref(false);
 const fromDuration = ref("");
 
@@ -63,7 +63,7 @@ function endFromDuration() {
     const parts = fromDuration.value.match(/(\d+)\s*(m|h)/g);
     if (!parts) {
         console.error("Invalid duration format");
-        feedback.showError({ title: "Invalid duration format" });
+        showToast("Invalid duration format", "error");
         return;
     }
 
@@ -73,7 +73,7 @@ function endFromDuration() {
         const match = part.match(/(\d+)\s*(m|h)/);
         if (!match) {
             console.error("Invalid duration format");
-            feedback.showError({ title: "Invalid duration format" });
+            showToast("Invalid duration format", "error");
             return;
         }
 
@@ -115,12 +115,12 @@ async function createLesson(data: Schema) {
         },
     )
         .then(() => {
-            feedback.showSuccess({ title: "Lesson created successfully" });
+            showToast("Lesson created successfully", "success");
             emit("created");
         })
         .catch((error) => {
             console.error(error);
-            feedback.showError({ title: "Failed to create lesson" });
+            showToast("Failed to create lesson", "error");
         })
         .finally(() => {
             isSubmitting.value = false;
@@ -147,12 +147,12 @@ async function updateLesson(data: Schema) {
         },
     )
         .then(() => {
-            feedback.showSuccess({ title: "Lesson updated successfully" });
+            showToast("Lesson updated successfully", "success");
             emit("updated");
         })
         .catch((error) => {
             console.error(error);
-            feedback.showError({ title: "Failed to update lesson" });
+            showToast("Failed to update lesson", "error");
         })
         .finally(() => {
             isSubmitting.value = false;
