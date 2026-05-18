@@ -190,8 +190,6 @@ export async function sendRegistrationMail(
         attachments: [attachment],
     };
 
-    console.log("Sending registration email:", mailOptions);
-
     return sendMail(mailOptions);
 }
 
@@ -253,7 +251,6 @@ const sharedTransporter = createTransport({
 async function sendMail(mailOptions: SendMailOptions): Promise<boolean> {
     try {
         const info = await sharedTransporter.sendMail(mailOptions);
-        console.log("Email sent:", info.response);
         return true;
     } catch (error: unknown) {
         console.error("Error sending email:", error);

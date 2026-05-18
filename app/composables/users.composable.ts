@@ -10,9 +10,7 @@ export function useUsers(options: useUsersOptions = {}) {
 
     const schema = withRegistrations
         ? userSchema
-        : userSchema.extend({
-              registrations: z.undefined(),
-          });
+        : userSchema.omit({ registrations: true });
 
     const { data, error, isPending, refresh } = useSchemaFetch(
         `/api/users?withRegistrations=${withRegistrations}`,
