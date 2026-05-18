@@ -124,7 +124,7 @@ async function duplicateCourse(course: Course) {
         showToast("Course duplicated successfully", "success");
     } catch (error) {
         console.error("Error duplicating course:", error);
-        const msg = ("message" in error ? error.message : String(error));
+        const msg = "message" in error ? error.message : String(error);
         showToast(`failed to duplicate course: ${msg}`, "error");
     } finally {
         refresh();
@@ -154,7 +154,9 @@ async function confirmDelete() {
                 "Cannot delete course/event when there are still active sessions",
             )
         ) {
-            showToast(`${t("admin.course.cannotDeleteWithActiveSessions")}: ${t("admin.course.deleteSessionsFirst")}`);
+            showToast(
+                `${t("admin.course.cannotDeleteWithActiveSessions")}: ${t("admin.course.deleteSessionsFirst")}`,
+            );
         } else {
             showToast(`Failed to delete course: ${errorMessage}`);
         }

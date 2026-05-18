@@ -81,7 +81,10 @@ async function confirmDeleteSession() {
         showToast(t("admin.course.sessionDeletedSuccessfully"), "success");
     } catch (error) {
         console.error("Error deleting session:", error);
-        showToast(`${t("admin.course.failedToDeleteSession")}: ${(error as Error).message}`, "error");
+        showToast(
+            `${t("admin.course.failedToDeleteSession")}: ${(error as Error).message}`,
+            "error",
+        );
     } finally {
         deleting.value = false;
     }
@@ -96,8 +99,8 @@ useHead({
     title: computed(() =>
         course.value
             ? t("admin.course.manageSessionsTitle", {
-                title: course.value.title,
-            })
+                  title: course.value.title,
+              })
             : t("admin.course.manageSessionsGeneric"),
     ),
 });

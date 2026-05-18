@@ -171,7 +171,10 @@ async function sendNotification() {
             },
         );
 
-        showToast(`Benachrichtigung an ${(result as { sentCount: number }).sentCount} Personen gesendet`, "success");
+        showToast(
+            `Benachrichtigung an ${(result as { sentCount: number }).sentCount} Personen gesendet`,
+            "success",
+        );
 
         message.value = "";
         selectedEmails.value = new Set();

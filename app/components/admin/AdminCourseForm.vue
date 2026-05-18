@@ -83,7 +83,9 @@ async function submitForm(event: FormSubmitEvent<Schema>) {
         showToast(t("admin.courseForm.courseUpdated"), "success");
     } catch (error) {
         console.error("Error updating course:", error);
-        showToast(`${t("admin.courseForm.failedToUpdateCourse")}: ${(error as Error).message}`);
+        showToast(
+            `${t("admin.courseForm.failedToUpdateCourse")}: ${(error as Error).message}`,
+        );
     } finally {
         submitting.value = false;
     }
@@ -100,7 +102,9 @@ async function onDeleteCourse() {
         showToast(t("admin.courseForm.courseDeleted"), "success");
     } catch (error) {
         console.error("Error deleting course:", error);
-        showToast(`${t("admin.courseForm.failedToDeleteCourse")} : ${(error as Error).message}`);
+        showToast(
+            `${t("admin.courseForm.failedToDeleteCourse")} : ${(error as Error).message}`,
+        );
     } finally {
         deleting.value = false;
         showDeleteModal.value = false;

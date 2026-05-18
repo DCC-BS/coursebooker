@@ -36,7 +36,10 @@ const handleSubmit = async () => {
             isAdmin: formData.isAdmin,
         });
 
-        showToast(`User created successfully ${formData.email} has been added ${formData.isAdmin ? "as an admin" : "as a regular user"}`, "success");
+        showToast(
+            `User created successfully ${formData.email} has been added ${formData.isAdmin ? "as an admin" : "as a regular user"}`,
+            "success",
+        );
 
         // Reset form
         formData.email = "";
@@ -46,7 +49,10 @@ const handleSubmit = async () => {
     } catch (error) {
         console.error("Failed to create user:", error);
         if (error.message?.includes("already exists")) {
-            showToast("User already exists: A user with this email address already exists", "error");
+            showToast(
+                "User already exists: A user with this email address already exists",
+                "error",
+            );
         } else {
             showToast("Failed to create user. Please try again.", "error");
         }

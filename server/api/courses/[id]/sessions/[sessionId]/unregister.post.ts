@@ -89,7 +89,9 @@ export default defineEventHandler(async (event) => {
         : firstCharToUpper(values.userEmail.split(".")[0] ?? "");
 
     const family_name = registrationIsForMe
-        ? (session?.family_name as string) || session?.name?.split(" ").slice(1).join(" ") || ""
+        ? (session?.family_name as string) ||
+          session?.name?.split(" ").slice(1).join(" ") ||
+          ""
         : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
     await sendUnregisterMail(

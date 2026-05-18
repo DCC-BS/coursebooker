@@ -6,8 +6,7 @@ export async function isAdmin(event: H3Event) {
     const session = await getUserSession(event);
 
     const user = await db.query.userTable.findFirst({
-        where: (users, { eq }) =>
-            eq(users.email, session?.email?.trim() ?? ""),
+        where: (users, { eq }) => eq(users.email, session?.email?.trim() ?? ""),
     });
 
     return user?.isAdmin ?? false;

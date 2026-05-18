@@ -250,7 +250,7 @@ const sharedTransporter = createTransport({
 
 async function sendMail(mailOptions: SendMailOptions): Promise<boolean> {
     try {
-        const info = await sharedTransporter.sendMail(mailOptions);
+        await sharedTransporter.sendMail(mailOptions);
         return true;
     } catch (error: unknown) {
         console.error("Error sending email:", error);

@@ -91,7 +91,10 @@ const handleCreateUser = async () => {
                 err.message ??
                 t("admin.users.unknownError");
         }
-        showToast(t("admin.users.failedToCreateUser", { message: msg }), "error");
+        showToast(
+            t("admin.users.failedToCreateUser", { message: msg }),
+            "error",
+        );
     } finally {
         isCreatingUser.value = false;
     }
@@ -104,7 +107,10 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
         const action = isAdmin
             ? t("admin.users.promotedTo")
             : t("admin.users.demotedFrom");
-        showToast(t("admin.users.userPromotedToDemoted", { action }), "success");
+        showToast(
+            t("admin.users.userPromotedToDemoted", { action }),
+            "success",
+        );
         await refresh();
     } catch (error: unknown) {
         console.error("Failed to update user role:", error);
@@ -118,7 +124,10 @@ const handleUpdateUserRole = async (userEmail: string, isAdmin: boolean) => {
                 t("admin.users.unknownError");
         }
 
-        showToast(t("admin.users.failedToUpdateUserRole", { message: msg }), "error");
+        showToast(
+            t("admin.users.failedToUpdateUserRole", { message: msg }),
+            "error",
+        );
     }
 };
 
