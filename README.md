@@ -28,7 +28,6 @@ The client-side application is the user-facing front-end of the Coursebook platf
 - **`motion-v`**: For creating smooth animations and transitions within the application.
 - **`@formkit/nuxt`**: For building powerful, accessible, and schema-driven forms.
 - **`@nuxtjs/i18n`**: For internationalization, allowing the application to support multiple languages.
-- **`@sidebase/nuxt-auth`**: For handling authentication, integrated with Azure AD.
 - **`@nuxtjs/mdc`**: For rendering Markdown content components.
 - **`@dcc-bs/*` libraries**: Shared packages for authentication, common UI components, dependency injection, feedback control, and logging.
 
@@ -80,7 +79,6 @@ The `app/` directory contains all the client-side code, organized to promote mod
     - **Locales**: Translation files in `i18n/locales/` (`en.json`, `de.json`). Default is German.
     - **Usage**: `useI18n()` composable for translations.
 - **Authentication & Authorization**:
-    - **Authentication**: Managed by `@sidebase/nuxt-auth` with Azure AD.
     - **Authorization**: Client-side route protection in `admin.vue` layout.
     - **User State**: `useMe` composable for managing authenticated user's state.
 - **Data Fetching & State Management**:

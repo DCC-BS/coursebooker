@@ -2,11 +2,10 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 
 const { t, locale, locales, setLocale } = useI18n();
-const { data, signOut } = useAuth();
+const { data, signOut, isAuthEnabled } = useAppAuth();
 
 const userImage = computed(() => {
-    const base64 = data.value?.user?.image;
-    return base64 ? base64 : "/LucideCircleUserRound.png";
+    return data.value?.user?.image;
 });
 
 const availableLocales = computed(() => {
@@ -49,7 +48,12 @@ async function handleSignOut(): Promise<void> {
         </ULink>
 
         <div class="flex items-center gap-2">
-            <UButton to="/me" color="primary" variant="ghost" icon="i-lucide-graduation-cap">
+            <UButton
+                to="/me"
+                color="primary"
+                variant="ghost"
+                icon="i-lucide-graduation-cap"
+            >
                 {{ t("navigation.myCourses") }}
             </UButton>
 
@@ -58,8 +62,18 @@ async function handleSignOut(): Promise<void> {
                 </UButton>
             </UDropdownMenu>
 
-            <UDropdownMenu :items="logoutItems" arrow>
-                <img :src="userImage" alt="User Image" class="w-8 h-8 rounded-full" />
+            <UDropdownMenu v-if="isAuthEnabled" :items="logoutItems" arrow>
+                <img
+                    v-if="userImage"
+                    :src="userImage"
+                    alt="User Image"
+                    class="w-8 h-8 rounded-full"
+                />
+                <UIcon
+                    v-else
+                    name="i-lucide-user"
+                    class="h-6 w-6 rounded-full"
+                />
             </UDropdownMenu>
         </div>
     </div>

@@ -1,7 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { useDb } from "~~/server/composables/db.composable";
-import { getUserSession } from "~~/server/utils/getUserSession.utils";
 import { getOrCreateCurrentVersion } from "~~/server/utils/icsVersion.utils";
 import { sendRegistrationMail } from "~~/server/utils/mail.utils";
 import { firstCharToUpper } from "~~/server/utils/string.utils";
@@ -44,18 +43,18 @@ export default defineEventHandler(async (event) => {
 
     if (values.userEmail === "me") {
         registrationIsForMe = true;
-        if (session?.user.email) {
+        if (session?.email) {
             throw createError({
                 statusCode: 401,
                 statusMessage: "Unauthorized",
             });
         }
 
-        values.userEmail = session?.user.email || "";
+        values.userEmail = session?.email || "";
     }
 
     // user can only register therself when they are not an admin
-    if (session?.user.email !== values.userEmail) {
+    if (session?.email !== values.userEmail) {
         await guardAdmin(event);
     }
 
@@ -100,11 +99,13 @@ export default defineEventHandler(async (event) => {
     });
 
     const given_name = registrationIsForMe
-        ? session?.user.given_name || ""
+        ? (session?.given_name as string) || session?.name?.split(" ")[0] || ""
         : firstCharToUpper(values.userEmail.split(".")[0] ?? "");
 
     const family_name = registrationIsForMe
-        ? session?.user.family_name || ""
+        ? (session?.family_name as string) ||
+          session?.name?.split(" ").slice(1).join(" ") ||
+          ""
         : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
     await sendRegistrationMail(

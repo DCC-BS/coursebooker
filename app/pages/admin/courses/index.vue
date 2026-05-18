@@ -15,7 +15,8 @@ definePageMeta({
     title: "Manage Courses",
 });
 
-const feedback = useUserFeedback();
+const { showToast } = useUserFeedback();
+const { t } = useI18n();
 
 // Reactive data
 const searchQuery = ref("");
@@ -120,13 +121,11 @@ async function duplicateCourse(course: Course) {
             }
         }
 
-        feedback.showSuccess({ title: "Course duplicated successfully" });
+        showToast("Course duplicated successfully", "success");
     } catch (error) {
         console.error("Error duplicating course:", error);
-        feedback.showError({
-            title: "Failed to duplicate course",
-            description: error.message,
-        });
+        const msg = "message" in error ? error.message : String(error);
+        showToast(`failed to duplicate course: ${msg}`, "error");
     } finally {
         refresh();
     }
@@ -145,7 +144,7 @@ async function confirmDelete() {
         courseToDelete.value = null;
         await refresh();
 
-        feedback.showSuccess({ title: "Course deleted successfully" });
+        showToast("Course deleted successfully", "success");
     } catch (error) {
         console.error("Error deleting course:", error);
         const errorMessage = (error as Error).message;
@@ -155,15 +154,11 @@ async function confirmDelete() {
                 "Cannot delete course/event when there are still active sessions",
             )
         ) {
-            feedback.showError({
-                title: t("admin.course.cannotDeleteWithActiveSessions"),
-                description: t("admin.course.deleteSessionsFirst"),
-            });
+            showToast(
+                `${t("admin.course.cannotDeleteWithActiveSessions")}: ${t("admin.course.deleteSessionsFirst")}`,
+            );
         } else {
-            feedback.showError({
-                title: "Failed to delete course",
-                description: errorMessage,
-            });
+            showToast(`Failed to delete course: ${errorMessage}`);
         }
     } finally {
         deleting.value = false;

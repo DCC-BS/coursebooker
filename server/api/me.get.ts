@@ -7,12 +7,12 @@ export default defineEventHandler(async (event) => {
     const session = await getUserSession(event);
     const { db } = useDb();
 
-    if (!session?.user?.email) {
+    if (!session?.email) {
         throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
     }
 
     const user = await db.query.userTable.findFirst({
-        where: eq(userTable.email, session?.user?.email),
+        where: eq(userTable.email, session.email),
         with: {
             registrations: {
                 with: {
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
     if (!user) {
         return {
-            email: session.user.email,
+            email: session.email,
             isAdmin: false,
             registrations: [],
         } as User;

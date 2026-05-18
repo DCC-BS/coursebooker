@@ -1,7 +1,6 @@
 <script setup>
 const emit = defineEmits(["userCreated", "cancel"]);
-
-const { showSuccess, showError } = useUserFeedback();
+const { showToast } = useUserFeedback();
 
 const isCreating = ref(false);
 const formData = reactive({
@@ -37,10 +36,10 @@ const handleSubmit = async () => {
             isAdmin: formData.isAdmin,
         });
 
-        showSuccess({
-            title: "User created successfully",
-            description: `${formData.email} has been added ${formData.isAdmin ? "as an admin" : "as a regular user"}`,
-        });
+        showToast(
+            `User created successfully ${formData.email} has been added ${formData.isAdmin ? "as an admin" : "as a regular user"}`,
+            "success",
+        );
 
         // Reset form
         formData.email = "";
@@ -50,16 +49,12 @@ const handleSubmit = async () => {
     } catch (error) {
         console.error("Failed to create user:", error);
         if (error.message?.includes("already exists")) {
-            showError({
-                title: "User already exists",
-                description: "A user with this email address already exists",
-            });
+            showToast(
+                "User already exists: A user with this email address already exists",
+                "error",
+            );
         } else {
-            showError({
-                title: "Failed to create user",
-                description:
-                    "There was an error creating the user. Please try again.",
-            });
+            showToast("Failed to create user. Please try again.", "error");
         }
     } finally {
         isCreating.value = false;

@@ -25,7 +25,7 @@ export default defineAdminResponseHandler(async (event) => {
     if (!body.isAdmin) {
         const session = await getUserSession(event);
 
-        if (session?.user.email?.trim() === email.trim()) {
+        if (session?.email?.trim() === email.trim()) {
             throw createError({
                 statusCode: 400,
                 statusMessage: "You cannot change your own admin status",

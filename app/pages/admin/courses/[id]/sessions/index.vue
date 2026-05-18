@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { fa } from "zod/v4/locales";
-import type { Course, CreateSession, Session } from "~/../shared/models";
+import type { Session } from "~/../shared/models";
 
 // Page meta
 definePageMeta({
@@ -22,7 +21,7 @@ const sessionToDelete = ref<Session>();
 const sessionIsPast = ref(false);
 const deleting = ref(false);
 
-const { showSuccess, showError } = useUserFeedback();
+const { showToast } = useUserFeedback();
 
 // Fetch course data
 const { course, isPending, error, refresh } = useCourse(courseId, {
@@ -79,15 +78,13 @@ async function confirmDeleteSession() {
         sessionToDelete.value = undefined;
         await refresh();
 
-        showSuccess({
-            title: t("admin.course.sessionDeletedSuccessfully"),
-        });
+        showToast(t("admin.course.sessionDeletedSuccessfully"), "success");
     } catch (error) {
         console.error("Error deleting session:", error);
-        showError({
-            title: t("admin.course.failedToDeleteSession"),
-            description: (error as Error).message,
-        });
+        showToast(
+            `${t("admin.course.failedToDeleteSession")}: ${(error as Error).message}`,
+            "error",
+        );
     } finally {
         deleting.value = false;
     }
@@ -203,7 +200,8 @@ useHead({
                     </template>
 
                     <p class="text-gray-600 mb-4">
-                        {{ t("admin.session.deleteSessionConfirm", { title: sessionToDelete?.title || "this session" }) }}
+                        {{ t("admin.session.deleteSessionConfirm", { title: sessionToDelete?.title || "this session" })
+                        }}
                     </p>
 
                     <p v-if="sessionIsPast" class="text-amber-600 mb-4">
@@ -211,9 +209,12 @@ useHead({
                         {{ t("admin.session.deleteSessionPast") }}
                     </p>
 
-                    <p v-if="sessionToDelete?.registrations && sessionToDelete.registrations.length > 0 && !sessionIsPast" class="text-amber-600 mb-4">
+                    <p v-if="sessionToDelete?.registrations && sessionToDelete.registrations.length > 0 && !sessionIsPast"
+                        class="text-amber-600 mb-4">
                         <UIcon name="i-lucide-mail" class="h-4 w-4 inline mr-1" />
-                        {{ t("admin.session.deleteSessionRegistrations", { count: sessionToDelete.registrations.length }) }}
+                        {{ t("admin.session.deleteSessionRegistrations", {
+                            count: sessionToDelete.registrations.length
+                        }) }}
                     </p>
 
                     <template #footer>

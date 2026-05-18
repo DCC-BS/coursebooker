@@ -7,13 +7,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": [
-            "**",
-            "!.nuxt",
-            "!.output",
-            "!logs",
-            "!.vscode"
-        ]
+        "includes": ["**", "!.nuxt", "!.output", "!logs", "!.vscode"]
     },
     "formatter": {
         "enabled": true,
@@ -52,9 +46,7 @@
     },
     "overrides": [
         {
-            "includes": [
-                "**/*.vue"
-            ],
+            "includes": ["**/*.vue"],
             "linter": {
                 "rules": {
                     "correctness": {

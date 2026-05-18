@@ -1,8 +1,6 @@
 import type { Course, Lesson, Session } from "~~/shared/models";
 
 export function getSessionDuration(session: Session): string {
-    console.log(session);
-
     const totalLessonDuration = session.lessons.reduce(
         (total, lesson) =>
             total + (lesson.end.getTime() - lesson.start.getTime()),

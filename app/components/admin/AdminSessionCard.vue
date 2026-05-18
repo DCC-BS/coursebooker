@@ -10,7 +10,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const feedback = useUserFeedback();
+const { showToast } = useUserFeedback();
 const { t } = useI18n();
 
 const showRegistrations = ref<string>();
@@ -59,11 +59,9 @@ async function deleteLesson(lesson: Lesson) {
         );
 
         await props.refreshSession();
-        feedback.showSuccess({
-            title: t("admin.session.lessonDeletedSuccessfully"),
-        });
+        showToast(t("admin.session.lessonDeletedSuccessfully"), "success");
     } catch (error) {
-        feedback.showError({ title: t("admin.session.failedToDeleteLesson") });
+        showToast(t("admin.session.failedToDeleteLesson"), "error");
         console.error("Error deleting lesson:", error);
     }
 }
@@ -120,8 +118,7 @@ async function deleteLesson(lesson: Lesson) {
             </h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <AdminLessonCard v-for="(lesson, index) in props.session.lessons" :key="lesson.id" :lesson="lesson"
-                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id"
-                    @delete="deleteLesson" />
+                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id" @delete="deleteLesson" />
             </div>
         </div>
 

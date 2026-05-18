@@ -12,7 +12,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { showSuccess, showError } = useUserFeedback();
+const { showToast } = useUserFeedback();
 
 const title = computed(() =>
     props.session ? `Edit Session ${props.session.id}` : "Add New Session",
@@ -77,13 +77,11 @@ function createSession() {
     })
         .then((newSession) => {
             emit("update", newSession);
-            showSuccess({ title: "Session created successfully" });
+            showToast("Session created successfully");
         })
         .catch((error) => {
             console.error("Error creating session:", error);
-            showError({
-                title: "Failed to create session. Please try again.",
-            });
+            showToast("Failed to create session. Please try again.", "error");
         })
         .finally(() => {
             creating.value = false;
@@ -111,13 +109,11 @@ function updateSession() {
     )
         .then((updatedSession) => {
             emit("update", updatedSession);
-            showSuccess({ title: "Session updated successfully" });
+            showToast("Session updated successfully");
         })
         .catch((error) => {
             console.error("Error updating session:", error);
-            showError({
-                title: "Failed to update session. Please try again.",
-            });
+            showToast("Failed to update session. Please try again.", "error");
         })
         .finally(() => {
             creating.value = false;
@@ -133,13 +129,11 @@ function removeIcsFile() {
     )
         .then((updatedSession) => {
             emit("update", updatedSession);
-            showSuccess({ title: "ICS file removed successfully" });
+            showToast("ICS file removed successfully");
         })
         .catch((error) => {
             console.error("Error removing ICS file:", error);
-            showError({
-                title: "Failed to remove ICS file. Please try again.",
-            });
+            showToast("Failed to remove ICS file. Please try again.", "error");
         });
 }
 </script>
