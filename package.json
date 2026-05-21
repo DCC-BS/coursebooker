@@ -1,6 +1,6 @@
 {
     "name": "coursebookercoursebooker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": true,
     "scripts": {
         "dev": "FORCE_COLOR=1 varlock run -- nuxt dev",
