@@ -14,6 +14,7 @@ const { showToast } = useUserFeedback();
 const { t } = useI18n();
 
 const showRegistrations = ref<string>();
+const editingLesson = ref<Lesson>();
 
 function toggleShowRegistrations(sessionId: string) {
     if (showRegistrations.value === sessionId) {
@@ -118,13 +119,18 @@ async function deleteLesson(lesson: Lesson) {
             </h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <AdminLessonCard v-for="(lesson, index) in props.session.lessons" :key="lesson.id" :lesson="lesson"
-                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id" @delete="deleteLesson" />
+                    :lesson-number="index + 1" :course-id="courseId" :session-id="session.id"
+                    @edit="editingLesson = $event" @delete="deleteLesson" />
             </div>
         </div>
 
         <div class="mt-2">
-            <AdminLessonForm :course-id="courseId" :session-id="session.id" :session="session"
-                @created="refreshSession" />
+            <AdminLessonForm :course-id="courseId" :session-id="session.id" :lesson="editingLesson"
+                @created="refreshSession" @updated="editingLesson = undefined; refreshSession()" />
+            <UButton v-if="editingLesson" size="xs" color="neutral" variant="ghost" class="mt-1"
+                @click="editingLesson = undefined">
+                {{ t("admin.lessonCard.cancelEdit") }}
+            </UButton>
         </div>
 
         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">

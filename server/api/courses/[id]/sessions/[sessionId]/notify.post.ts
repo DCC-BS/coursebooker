@@ -13,7 +13,7 @@ import type { Session } from "~~/shared/models";
 import { coursesTable, lessonsTable, sessionsTable } from "~~/shared/schema";
 
 const notifySchema = z.object({
-    message: z.string().min(1, "Message is required"),
+    message: z.string().default(""),
     includeIcs: z.boolean().default(true),
     recipients: z
         .array(z.string().email())
@@ -87,7 +87,14 @@ export default defineAdminResponseHandler(async (event) => {
     if (body.includeIcs) {
         const version = await createOrUpdateVersion(
             sessionId,
-            [{ type: "manual", description: body.message.substring(0, 100) }],
+            [
+                {
+                    type: "manual",
+                    description: body.message
+                        ? body.message.substring(0, 100)
+                        : "Manuelle Benachrichtigung",
+                },
+            ],
             "admin",
         );
         actualVersion = version.version;

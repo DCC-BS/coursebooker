@@ -8,7 +8,9 @@ export const customNotificationHtml = `<table width="100%" cellpadding="0" cells
   <tr>
     <td style="padding: 24px 0;">
       <p>Hallo {{givenName}} {{familyName}},</p>
+      {{#if customMessage}}
       <p>{{customMessage}}</p>
+      {{/if}}
       {{> courseDetailsHtml}}
       <p>Du kannst den Termin hier einsehen oder dich abmelden:<br>
       <a href="{{siteUrl}}/courses/{{courseId}}/{{sessionId}}" style="color: #0063C6;">{{siteUrl}}/courses/{{courseId}}/{{sessionId}}</a></p>
@@ -21,8 +23,10 @@ export const customNotificationHtml = `<table width="100%" cellpadding="0" cells
 </table>`;
 
 export const customNotificationText = `Hallo {{givenName}} {{familyName}},
+{{#if customMessage}}
 
 {{customMessage}}
+{{/if}}
 
 {{> courseDetailsText}}
 

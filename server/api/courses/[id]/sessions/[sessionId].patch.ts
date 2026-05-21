@@ -29,8 +29,8 @@ export default defineAdminResponseHandler(async (event) => {
 
     const formData = await readFormData(event);
     const data = {
-        location: formData.get("location"),
-        teams_link: formData.get("teams_link"),
+        location: (formData.get("location") as string)?.trim() || null,
+        teams_link: (formData.get("teams_link") as string)?.trim() || null,
         ics_file: formData.get("ics_file"),
     };
 

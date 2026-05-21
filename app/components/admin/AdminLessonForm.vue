@@ -22,6 +22,7 @@ const emit = defineEmits<{
 }>();
 
 const { showToast } = useUserFeedback();
+const { t } = useI18n();
 const isSubmitting = ref(false);
 const fromDuration = ref("");
 
@@ -142,7 +143,7 @@ async function updateLesson(data: Schema) {
     await $fetch<Lesson>(
         `/api/courses/${props.courseId}/sessions/${props.sessionId}/lessons/${props.lesson.id}`,
         {
-            method: "PUT",
+            method: "PATCH",
             body: updateLessonSchema.parse(lesson),
         },
     )
@@ -179,6 +180,8 @@ async function updateLesson(data: Schema) {
             </UPopover>
         </UFormField>
 
-        <UButton :loading="isSubmitting" type="submit" icon="i-lucide-plus" class="mt-6">Add Lesson</UButton>
+        <UButton :loading="isSubmitting" type="submit" icon="i-lucide-plus" class="mt-6">
+            {{ props.lesson ? t('admin.lessonForm.updateLesson') : t('admin.lessonForm.addLesson') }}
+        </UButton>
     </UForm>
 </template>

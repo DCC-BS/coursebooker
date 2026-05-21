@@ -146,11 +146,6 @@ function toggleUser(email: string) {
 }
 
 async function sendNotification() {
-    if (!message.value.trim()) {
-        showToast("Bitte geben Sie eine Nachricht ein", "error");
-        return;
-    }
-
     if (selectedEmails.value.size === 0) {
         showToast("Bitte wählen Sie mindestens einen Empfänger aus", "error");
         return;
@@ -188,8 +183,6 @@ async function sendNotification() {
 }
 
 async function loadPreview() {
-    if (!message.value.trim()) return;
-
     isLoadingPreview.value = true;
     try {
         const result = await $fetch<{
@@ -214,7 +207,7 @@ async function loadPreview() {
 
 function switchTab(tab: "compose" | "preview") {
     activeTab.value = tab;
-    if (tab === "preview" && message.value.trim()) {
+    if (tab === "preview") {
         loadPreview();
     }
 }
@@ -415,7 +408,7 @@ change, idx
                             <button class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors" :class="activeTab === 'preview'
                                 ? 'text-primary-700 border-b-2 border-primary-700 bg-primary-50'
                                 : 'text-gray-500 hover:text-gray-700'
-                                " :disabled="!message.trim()" @click="switchTab('preview')">
+                                " @click="switchTab('preview')">
                                 <UIcon name="i-lucide-eye" class="mr-1.5 inline-block align-text-bottom" />
                                 Vorschau
                             </button>
@@ -443,8 +436,7 @@ change, idx
                                     {{ selectedEmails.size }} Personen
                                     ausgewählt
                                 </div>
-                                <UButton color="primary" :loading="isSending" :disabled="!message.trim() ||
-                                    selectedEmails.size === 0
+                                <UButton color="primary" :loading="isSending" :disabled="selectedEmails.size === 0
                                     " @click="sendNotification">
                                     Benachrichtigung senden
                                 </UButton>
@@ -504,8 +496,7 @@ change, idx
                                         <UButton color="neutral" variant="outline" @click="switchTab('compose')">
                                             Bearbeiten
                                         </UButton>
-                                        <UButton color="primary" :loading="isSending" :disabled="!message.trim() ||
-                                            selectedEmails.size === 0
+                                        <UButton color="primary" :loading="isSending" :disabled="selectedEmails.size === 0
                                             " @click="sendNotification">
                                             Benachrichtigung senden
                                         </UButton>
@@ -514,8 +505,7 @@ change, idx
                             </div>
 
                             <div v-else class="text-center text-sm text-gray-500 py-8">
-                                Geben Sie eine Nachricht ein und wechseln Sie
-                                zur Vorschau, um eine Vorschau der E-Mail zu
+                                Wechseln Sie zur Vorschau, um eine Vorschau der E-Mail zu
                                 sehen.
                             </div>
                         </div>

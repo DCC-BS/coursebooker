@@ -63,7 +63,10 @@ export const createLessonSchema = createInsertSchema(lessonsTable, {
     end: z.coerce.date(),
 });
 
-export const updateLessonSchema = createUpdateSchema(lessonsTable);
+export const updateLessonSchema = createUpdateSchema(lessonsTable, {
+    start: z.coerce.date(),
+    end: z.coerce.date(),
+});
 
 export const userToSessionSchema = createSelectSchema(
     usersToSessionsTable,

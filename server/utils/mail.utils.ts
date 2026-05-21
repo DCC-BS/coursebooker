@@ -173,10 +173,17 @@ export async function sendRegistrationMail(
               contentType: "text/calendar",
               content: ics_file,
           }
-        : createIcsAttachment(course, session);
+        : (() => {
+              try {
+                  return createIcsAttachment(course, session);
+              } catch (error) {
+                  console.error("Error creating ICS attachment:", error);
+                  return null;
+              }
+          })();
 
     const context = buildCourseContext(givenName, familyName, course, session, {
-        hasIcsAttachment: true,
+        hasIcsAttachment: !!attachment,
     });
 
     const { html, text } = renderTemplate("registration", context);
@@ -187,7 +194,7 @@ export async function sendRegistrationMail(
         subject: `Anmeldung zum ${typeLabel(course.type)} "${course.title}"`,
         html,
         text,
-        attachments: [attachment],
+        attachments: attachment ? [attachment] : [],
     };
 
     return sendMail(mailOptions);
@@ -222,7 +229,13 @@ export async function sendCancellationMail(
     course: CourseWithoutSessions,
     session: Session,
 ): Promise<boolean> {
-    const attachment = await createCancellationIcsAttachment(course, session);
+    let attachment: Mail.Attachment | null;
+    try {
+        attachment = await createCancellationIcsAttachment(course, session);
+    } catch (error) {
+        console.error("Error creating ICS attachment:", error);
+        attachment = null;
+    }
 
     const context = buildCourseContext(givenName, familyName, course, session);
 
@@ -234,7 +247,7 @@ export async function sendCancellationMail(
         subject: `Absage: ${typeLabel(course.type)} "${course.title}"`,
         html,
         text,
-        attachments: [attachment],
+        attachments: attachment ? [attachment] : [],
     };
 
     return sendMail(mailOptions);
@@ -292,7 +305,13 @@ export async function sendCustomNotificationMail(
     const attachments = [];
 
     if (attachIcs) {
-        attachments.push(createUpdateIcsAttachment(course, session, sequence));
+        try {
+            attachments.push(
+                createUpdateIcsAttachment(course, session, sequence),
+            );
+        } catch (error) {
+            console.error("Error creating ICS attachment:", error);
+        }
     }
 
     const context = buildCourseContext(givenName, familyName, course, session, {
