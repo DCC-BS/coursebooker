@@ -39,11 +39,11 @@ function buildIcsEvents(
     let descriptionPostfix = "";
     const teams_link =
         session.teams_link && session.teams_link.length > 0
-            ? session.teams_link
+            ? session.teams_link.trim()
             : undefined;
 
     if (teams_link) {
-        descriptionPostfix += `\n\nMS Teams Meeting:: ${session.teams_link}`;
+        descriptionPostfix += `\n\nMS Teams Meeting:: ${teams_link}`;
     }
 
     const isCancel = mode === "cancel";
@@ -104,11 +104,14 @@ export function createIcsAttachment(
         contentType: "text/calendar",
     };
 
-    if (ics.error) {
-        console.error("Error creating ICS event:", ics.error);
-    } else {
-        attachment.content = ics.value;
+    if (ics.error || !ics.value) {
+        throw (
+            ics.error ??
+            new Error("Failed to create ICS event: no value returned")
+        );
     }
+
+    attachment.content = ics.value;
 
     return attachment;
 }

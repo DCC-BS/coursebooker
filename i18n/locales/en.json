@@ -245,10 +245,16 @@
             "sessions": "Sessions"
         },
         "lessonCard": {
+            "editLesson": "Edit Lesson",
+            "cancelEdit": "Cancel Edit",
             "deleteLesson": "Delete Lesson",
             "lesson": "Lesson",
             "duration": "Duration: {duration}",
             "invalid": "Invalid"
+        },
+        "lessonForm": {
+            "addLesson": "Add Lesson",
+            "updateLesson": "Update Lesson"
         },
         "courseForm": {
             "courseType": "Course Type",

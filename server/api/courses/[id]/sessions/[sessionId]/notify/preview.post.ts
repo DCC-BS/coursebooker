@@ -7,7 +7,7 @@ import type { Session } from "~~/shared/models";
 import { coursesTable, lessonsTable, sessionsTable } from "~~/shared/schema";
 
 const previewSchema = z.object({
-    message: z.string().min(1, "Message is required"),
+    message: z.string().default(""),
     includeIcs: z.boolean().default(true),
 });
 

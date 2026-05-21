@@ -25,6 +25,11 @@ const actions = computed(
         [
             [
                 {
+                    label: t("admin.lessonCard.editLesson"),
+                    icon: "i-lucide-square-pen",
+                    onSelect: () => emit("edit", props.lesson),
+                },
+                {
                     label: t("admin.lessonCard.deleteLesson"),
                     icon: "i-lucide-trash-2",
                     onSelect: () => emit("delete", props.lesson),

@@ -245,10 +245,16 @@
             "sessions": "Durchführungen"
         },
         "lessonCard": {
+            "editLesson": "Lektion bearbeiten",
+            "cancelEdit": "Bearbeitung abbrechen",
             "deleteLesson": "Lektion löschen",
             "lesson": "Lektion",
             "duration": "Dauer: {duration}",
             "invalid": "Ungültig"
+        },
+        "lessonForm": {
+            "addLesson": "Lektion hinzufügen",
+            "updateLesson": "Lektion aktualisieren"
         },
         "courseForm": {
             "courseType": "Kursart",

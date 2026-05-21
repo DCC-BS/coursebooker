@@ -77,7 +77,7 @@ function createSession() {
     })
         .then((newSession) => {
             emit("update", newSession);
-            showToast("Session created successfully");
+            showToast("Session created successfully", "success");
         })
         .catch((error) => {
             console.error("Error creating session:", error);
@@ -109,7 +109,7 @@ function updateSession() {
     )
         .then((updatedSession) => {
             emit("update", updatedSession);
-            showToast("Session updated successfully");
+            showToast("Session updated successfully", "success");
         })
         .catch((error) => {
             console.error("Error updating session:", error);
