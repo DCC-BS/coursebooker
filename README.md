@@ -11,11 +11,11 @@ The application is composed of a server-side API built with Nuxt and a client-si
 ### Server-Side (API)
 - **RESTful API**: Built with Nuxt, providing robust CRUD operations for all entities.
 - **Database Integration**: Utilizes a SQLite database with schema managed by Drizzle ORM.
-- **Authentication & Authorization**: Secure user authentication via Azure AD and role-based access control for admin functionalities.
+- **Authentication & Authorization**: Secure user authentication via the `nuxt-layers/auth` layer (supports Azure AD and no-auth modes) and role-based access control for admin functionalities.
 - **Automated Migrations**: Database migrations are automatically run on server startup using the `server/plugins/migrateDb.ts` plugin.
-- ** Services**: Transactional emails (registration confirmations, cancellations, custom notifications) rendered via Handlebars templates in `server/templates/`.
+- **Email Services**: Transactional emails (registration confirmations, cancellations, custom notifications) rendered via Handlebars templates in `server/templates/`.
 - **ICS Calendar Support**: Generates and versions iCalendar files for session bookings.
-- **OpenAPI Documentation**: Auto-generated API docs available at `/_openapi.json`, `/_scalar`, and `/_swagger`.
+- **OpenAPI Documentation**: Auto-generated API docs available at `/_openapi.json`, `/_scalar`, and `/_swagger` (ReDoc).
 
 ### Client-Side (Application)
 The client-side application is the user-facing front-end of the Coursebook platform, built as a Single Page Application (SPA) using Nuxt 4, Vue 3, and TypeScript. It is responsible for presenting data, handling user interactions, managing authentication state, and providing an intuitive interface.
@@ -29,7 +29,8 @@ The client-side application is the user-facing front-end of the Coursebook platf
 - **`@formkit/nuxt`**: For building powerful, accessible, and schema-driven forms.
 - **`@nuxtjs/i18n`**: For internationalization, allowing the application to support multiple languages.
 - **`@nuxtjs/mdc`**: For rendering Markdown content components.
-- **`@dcc-bs/*` libraries**: Shared packages for authentication, common UI components, dependency injection, feedback control, and logging.
+- **`@dcc-bs/*` libraries**: Shared packages for common UI components (`@dcc-bs/common-ui.bs.js`) and dependency injection (`@dcc-bs/dependency-injection.bs.js`).
+- **DCC-BS Nuxt Layers**: Remote layers providing authentication (`DCC-BS/nuxt-layers/auth`) and logging (`DCC-BS/nuxt-layers/logger`).
 
 The client-side application communicates with the backend API (also part of the Nuxt project) to fetch and manipulate data, ensuring a seamless full-stack experience.
 
@@ -47,19 +48,19 @@ The `app/` directory contains all the client-side code, organized to promote mod
         - `FormEditor.vue` — Custom registration form editor.
         - `NotifyConfirmModal.vue` — Confirmation modal for session notifications.
     - **Shared Components**: `DateTime.vue`, `ErrorView.vue`, `LoadingView.vue`, `NavigationMenu.vue`, `SessionView.vue` (handles registration/unregistration).
-- **`composables/`**: Vue composables for state management and logic reuse (`courses.composable.ts`, `sessions.composable.ts`, `me.composable.ts`, `users.composable.ts`, `useApiFetch.composable.ts`, `userFeedback.ts`).
+- **`composables/`**: Vue composables for state management and logic reuse (`courses.composable.ts`, `sessions.composable.ts`, `me.composable.ts`, `users.composable.ts`, `useApiFetch.composable.ts`).
 - **`layouts/`**: Different page structures.
     - `default.vue`: Standard layout for public pages.
-    - `admin.vue`: Admin layout with role-based access control (checks `isAdmin`).
-    - `auth.vue`: Layout for authentication pages.
+    - `admin.vue`: Admin layout with role-based access control (checks `isAdmin` via `fetchMe()`).
+    - `auth.vue`: Pass-through layout wrapper (slot only) for authentication pages provided by the `nuxt-layers/auth` layer.
 - **`pages/`**: File-based routing.
     - **Public/User-Facing Pages**:
         - `index.vue`: Homepage with course listing, search, and filtering.
         - `courses/[id].vue`: Course detail page with session information.
         - `courses/[courseId]/[sessionId].vue`: Session detail page.
         - `me.vue`: User profile/dashboard showing registrations and upcoming sessions.
-    - **Auth Pages**:
-        - `auth/signIn.vue`: Sign-in page.
+    - **Auth Pages** (provided by `nuxt-layers/auth` layer, not in `app/pages/`):
+        - Sign-in page is handled by the remote auth layer.
     - **Admin Pages (`/admin/`)**:
         - `index.vue`: Admin dashboard with statistics and quick actions.
         - `users.vue`: User management.
@@ -67,7 +68,7 @@ The `app/` directory contains all the client-side code, organized to promote mod
         - `courses/[id]/sessions/`: Session management for a course.
         - `courses/[id]/sessions/[sessionId]/notify.vue`: Send notifications to registered users.
 - **`types/`**: TypeScript type definitions.
-- **`utils/`**: Client-side utility functions (e.g., `course.utils.ts`, `dateFormat.utils.ts`).
+- **`utils/`**: Client-side utility functions (e.g., `course.utils.ts`, `dateFormat.utils.ts.ts`).
 
 #### Key Features and Functionality
 - **User Interface (UI)**:
@@ -82,9 +83,9 @@ The `app/` directory contains all the client-side code, organized to promote mod
     - **Authorization**: Client-side route protection in `admin.vue` layout.
     - **User State**: `useMe` composable for managing authenticated user's state.
 - **Data Fetching & State Management**:
-    - **Composables**: Data fetching logic encapsulated in composables (`useCourses`, `useSessions`, `useMe`, `useUsers`).
+    - **Composables**: Data fetching logic encapsulated in composables (`useCourses`, `useCourse`, `useSession`, `useSetSession`, `useMe`, `useUsers`).
     - **State**: Managed via reactive references (`ref`, `computed`) and Nuxt's `useState`.
-    - **API Interaction**: `useApiFetch` composable or direct `useFetch`/`$fetch` for API calls.
+    - **API Interaction**: `useSchemaFetch`/`fetchWithSchema` composables (from `useApiFetch.composable.ts`) for schema-validated API calls, or direct `useFetch`/`$fetch` for unvalidated calls.
 - **Forms**:
     - **Form Building**: Using `@formkit/nuxt` and `@nuxt/ui`.
     - **Validation**: Zod schemas for form data validation.
@@ -108,7 +109,7 @@ The `app/` directory contains all the client-side code, organized to promote mod
 
 #### Admin Managing a Course
 1.  **Login**: Admin logs in with Azure AD credentials.
-2.  **Admin Dashboard**: Admin is redirected to `/admin/index.vue`.
+2.  **Admin Dashboard**: Admin is redirected to `/admin`.
 3.  **Course Management**: Admin navigates to `/admin/courses` to list courses.
 4.  **Create/Edit Course**:
     - **Create**: Admin goes to `/admin/courses/create`, fills out `AdminCourseForm.vue`, and submits to create via API.
@@ -132,20 +133,22 @@ Copy the `.env.schema` file to `.env` and fill in the required values. The proje
 
 | Variable | Required | Description |
 |---|---|---|
+| `APP_MODE` | Yes | Application mode: `dev`, `build`, `ci`, or `prod` |
+| `AUTH_MODE` | Yes | Authentication mode: `none` (no auth) or `azure` (Azure AD) |
 | `DATABASE_URL` | Yes | SQLite database path (e.g., `data/coursebooker.db`) |
-| `NUXT_AUTH_SECRET` | Yes | Secret key for authentication |
-| `AZURE_AD_TENANT_ID` | Yes | Azure AD tenant ID |
-| `AZURE_AD_CLIENT_ID` | Yes | Azure AD client ID |
-| `AZURE_AD_CLIENT_SECRET` | Yes | Azure AD client secret |
-| `AUTH_ORIGIN` | No | Auth origin URL |
+| `NUXT_AZURE_AUTH_SECRET` | Yes* | Secret key for Azure AD session encryption (required when `AUTH_MODE=azure`) |
+| `NUXT_AZURE_AUTH_CLIENT_ID` | Yes* | Azure AD client ID (required when `AUTH_MODE=azure`) |
+| `NUXT_AZURE_AUTH_TENANT_ID` | Yes* | Azure AD tenant ID (required when `AUTH_MODE=azure`) |
+| `NUXT_AZURE_AUTH_CLIENT_SECRET` | Yes* | Azure AD client secret (required when `AUTH_MODE=azure`) |
+| `NUXT_AZURE_AUTH_ORIGIN` | No* | Auth origin URL for Azure AD (required when `AUTH_MODE=azure`) |
 | `SMTP_HOST` | No | SMTP server host (default: `localhost`) |
 | `SMTP_PORT` | No | SMTP server port (default: `1030`) |
-| `GITHUB_TOKEN` | No | GitHub token for feedback control integration |
 | `MAIL_FROM` | No | Sender email address for outgoing mails (default: `noreply@example.com`) |
-| `DEFAULT_ADMIN` | No | Default admin user email (build time) |
-| `NUXT_DEFAULT_ADMIN` | No | Default admin user email (runtime, overrides `DEFAULT_ADMIN`) |
+| `DEFAULT_ADMIN` | No | Default admin user email |
 | `NUXT_SITE_URL` | No | Site URL (default: `http://localhost:3000`) |
 | `LOG_LEVEL` | No | Log level: `trace`, `debug`, `info`, `warn`, `error`, `fatal` |
+
+\* Required only when `AUTH_MODE=azure`.
 
 ### Development
 ```bash
@@ -153,7 +156,7 @@ bun run dev
 ```
 
 ### Default Admin User
-On initial setup and after running database migrations, a default admin user is automatically created to facilitate access to the admin panel. Set the `DEFAULT_ADMIN` (at build time) or `NUXT_DEFAULT_ADMIN` (at runtime) environment variable to a valid email that exists in the Entra organization.
+On initial setup and after running database migrations, a default admin user is automatically created to facilitate access to the admin panel. Set the `DEFAULT_ADMIN` environment variable to a valid email that exists in the Entra organization.
 
 ### How to Change the Database Schema
 1. Make changes to the database schema in `shared/schema/`.
@@ -178,6 +181,78 @@ bun run docker:dev
 ## Mail
 
 - To test email sending locally: Run `bun run docker:dev` and open [http://localhost:1080](http://localhost:1080) to access the mail testing interface.
+
+## Mail Templates
+
+All mail templates live in `server/templates/` and use [Handlebars](https://handlebarsjs.com/) syntax. Each template exports an `html` and a `text` variant (for rich and plain-text email clients respectively).
+
+### Template Files
+
+| File | Purpose |
+|---|---|
+| `server/templates/registration.ts` | Sent when a user registers for a session |
+| `server/templates/unregister.ts` | Sent when a user unregisters from a session |
+| `server/templates/cancellation.ts` | Sent when a session is cancelled by an admin |
+| `server/templates/custom-notification.ts` | Sent when an admin sends a custom message to registered users |
+| `server/templates/partials/course-details.ts` | Shared partials: course details block and signature (used by all templates) |
+
+### Editing an Existing Template
+
+1. Open the template file in `server/templates/` (e.g., `registration.ts`).
+2. Edit the exported `xxxHtml` string for the HTML variant and the `xxxText` string for the plain-text variant. Both must always be kept in sync.
+3. You can use any Handlebars syntax (`{{variable}}`, `{{#if condition}}...{{/if}}`, `{{> partialName}}`).
+4. Restart the dev server to pick up changes: `bun run dev`.
+
+### Available Template Variables
+
+All templates receive a context built by `buildCourseContext()` (defined in `server/utils/mail.utils.ts`). The following variables are available in every template:
+
+| Variable | Type | Description |
+|---|---|---|
+| `givenName` | string | Recipient's first name |
+| `familyName` | string | Recipient's last name |
+| `courseTitle` | string | Title of the course/event |
+| `courseTypeLabel` | string | Localized label: "Kurs" or "Event" |
+| `dateStr` | string | Formatted date(s) of lessons (e.g., `01.06.2026` or numbered list) |
+| `timeStr` | string or null | Formatted time range for single-lesson sessions (e.g., `09:00 - 17:00`) |
+| `isSingleLesson` | boolean | Whether the session has only one lesson |
+| `location` | string | Session location (defaults to "Nicht bekannt") |
+| `teamsLink` | string or null | MS Teams link if set |
+| `siteUrl` | string | Base URL of the application |
+| `courseId` | string | Course ID (for building links) |
+| `sessionId` | string | Session ID (for building links) |
+| `organizerName` | string | Name of the course organizer |
+| `organizerMail` | string | Email of the course organizer |
+
+Some templates receive additional variables:
+
+| Variable | Template(s) | Type | Description |
+|---|---|---|---|
+| `hasIcsAttachment` | registration, custom-notification | boolean | Whether an ICS calendar file is attached |
+| `customMessage` | custom-notification | string | Admin-written custom message |
+
+### Adding a New Template
+
+1. Create a new file in `server/templates/` (e.g., `server/templates/my-template.ts`).
+2. Export two strings: `myTemplateHtml` and `myTemplateText` using Handlebars syntax. Reuse the shared partials:
+   ```typescript
+   import { courseDetailsHtml, courseDetailsText, signatureHtml, signatureText } from "./partials/course-details";
+   export { courseDetailsHtml, courseDetailsText, signatureHtml, signatureText };
+   export const myTemplateHtml = `...{{> courseDetailsHtml}}...{{> signatureHtml}}...`;
+   export const myTemplateText = `...{{> courseDetailsText}}...{{> signatureText}}...`;
+   ```
+3. Register the template in `server/utils/template.utils.ts`:
+   - Add the new template name to the `TemplateName` union type.
+   - Import and add the HTML/text sources to the `templateSources` record.
+4. Call `renderTemplate("my-template", context)` from `server/utils/mail.utils.ts` in a new or existing send function.
+5. If the template uses new context variables, extend the `extras` parameter in `buildCourseContext()`.
+
+### Testing Mail Template Changes
+
+1. Start the mail dev container: `bun run docker:dev`
+2. Start the dev server: `bun run dev`
+3. Trigger the email you want to test (e.g., register for a session via the UI or API).
+4. Open [http://localhost:1080](http://localhost:1080) to view the sent emails (HTML and plain text) in the MailDev interface.
 
 ## Drizzle Studio
 
