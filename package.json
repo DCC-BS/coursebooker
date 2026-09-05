@@ -29,7 +29,7 @@
         "@types/better-sqlite3": "^7.6.13",
         "@varlock/proton-pass-plugin": "^1.0.0",
         "@varlock/vite-integration": "^1.1.0",
-        "baseline-browser-mapping": "2.10.29",
+        "baseline-browser-mapping": "2.11.21",
         "better-sqlite3": "12.10.0",
         "caniuse-lite": "^1.0.30001791",
         "date-fns": "^4.1.0",
