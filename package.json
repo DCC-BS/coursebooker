@@ -18,7 +18,7 @@
         "docker:dev:down": "docker compose -f ./docker-compose-dev.yaml down -v"
     },
     "dependencies": {
-        "@dcc-bs/common-ui.bs.js": "1.2.6",
+        "@dcc-bs/common-ui.bs.js": "1.4.2",
         "@dcc-bs/dependency-injection.bs.js": "0.0.16",
         "@formkit/i18n": "2.0.0",
         "@formkit/nuxt": "2.0.0",
