@@ -25,7 +25,7 @@
         "@libsql/client": "0.17.3",
         "@nuxt/ui": "^4.0.0",
         "@nuxtjs/i18n": "10.3.0",
-        "@nuxtjs/mdc": "0.22.0",
+        "@nuxtjs/mdc": "0.22.1",
         "@types/better-sqlite3": "^7.6.13",
         "@varlock/proton-pass-plugin": "^1.0.0",
         "@varlock/vite-integration": "^1.1.0",
