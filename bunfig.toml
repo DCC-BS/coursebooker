@@ -1,0 +1,4 @@
+[install]
+# CI writes a GitHub Packages .npmrc (setup-node registry-url); all deps,
+# including @dcc-bs/*, come from npmjs.
+registry = "https://registry.npmjs.org/"
