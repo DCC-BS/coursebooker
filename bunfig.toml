@@ -1,4 +1,0 @@
-[install.scopes]
-# CI (setup-node registry-url) maps @dcc-bs to GitHub Packages; the packages
-# are published on npmjs.
-"@dcc-bs" = "https://registry.npmjs.org/"

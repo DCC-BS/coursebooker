@@ -24,5 +24,9 @@ jobs:
                   run_biome: "true"
                   run_playwright: "false"
                   install_method: "bun"
+                  # setup-node's registry-url maps @dcc-bs to GitHub Packages (403 since
+                  # bun 1.4.4, also for the Nuxt layer installs during the build); the
+                  # @dcc-bs packages are published on npmjs.
+                  install_command: 'rm -f "$NPM_CONFIG_USERCONFIG" && bun install'
                   build_command: "bun run build"
                   artifact_retention_days: 30
