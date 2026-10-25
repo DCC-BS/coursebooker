@@ -1,0 +1,16 @@
+[tools]
+bun = "1.4.3"
+node = "24.21.0" # same major as the Dockerfile (node:24-alpine)
+
+[tasks.install]
+description = "install dependencies"
+run = "bun install"
+
+[tasks.build]
+description = "build the app (CI: no auth, CI env schema)"
+env = { APP_MODE = "ci", AUTH_MODE = "none" }
+run = "bunx nuxt build"
+
+[tasks.ci-check]
+description = "lint and format check"
+run = "bunx biome ci ."
