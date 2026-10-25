@@ -17,7 +17,7 @@
         "@varlock/proton-pass-plugin": "^1.0.0",
         "@varlock/vite-integration": "^1.1.0",
         "baseline-browser-mapping": "2.11.32",
-        "better-sqlite3": "12.10.0",
+        "better-sqlite3": "12.11.1",
         "caniuse-lite": "^1.0.30001791",
         "date-fns": "^4.1.0",
         "drizzle-orm": "0.45.4",
@@ -876,7 +876,7 @@
 
     "baseline-browser-mapping": ["baseline-browser-mapping@2.11.32", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-UvuxFU9P3hM29LrQdwu0cD6w6/+SFr+UlB9s/knI7+O2rK9xFxKUwSDWxGdbbqQ9/V7BJ5s0NI5nQAE4uJp3gQ=="],
 
-    "better-sqlite3": ["better-sqlite3@12.10.0", "", { "dependencies": { "bindings": "^1.5.0", "prebuild-install": "^7.1.1" } }, "sha512-CyzaZRQKyHkB2ZInfTTl2nvT33EbDpjkLEbE8/Zck3Ll6O0qqvuGdrJ45HgtH+HykRg88ITY3AdreBGN70aBSQ=="],
+    "better-sqlite3": ["better-sqlite3@12.11.1", "", { "dependencies": { "bindings": "^1.5.0", "prebuild-install": "^7.1.1" }, "hasInstallScript": true }, "sha512-dq9AtApgg5PGFtBzPFSBl3HZQjHok5gaQCM6zh2Yk0aSmDCs1CbnVI8/HgASQkNKsWFpseIO9beg5xxpYhbIfA=="],
 
     "bindings": ["bindings@1.5.0", "", { "dependencies": { "file-uri-to-path": "1.0.0" } }, "sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ=="],
 
