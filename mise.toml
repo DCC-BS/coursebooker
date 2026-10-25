@@ -2,6 +2,9 @@
 bun = "1.4.3"
 node = "24.21.0" # same major as the Dockerfile (node:24-alpine)
 
+[hooks]
+postinstall = { task = "install" }
+
 [tasks.install]
 description = "install dependencies"
 run = "bun install"
