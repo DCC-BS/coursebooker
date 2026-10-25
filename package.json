@@ -22,7 +22,7 @@
         "@dcc-bs/dependency-injection.bs.js": "0.0.16",
         "@formkit/i18n": "2.0.0",
         "@formkit/nuxt": "2.0.0",
-        "@libsql/client": "0.17.3",
+        "@libsql/client": "0.18.0",
         "@nuxt/ui": "^4.0.0",
         "@nuxtjs/i18n": "10.6.0",
         "@nuxtjs/mdc": "0.22.1",
