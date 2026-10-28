@@ -1,0 +1,28 @@
+name: Dependency Graph
+
+# GitHub's dependency graph does not parse bun.lock. This submits the resolved dependencies
+# so Dependabot alerts track the packages that bun actually installs.
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - bun.lock
+            - .github/scripts/bun-lock-snapshot.mjs
+            - .github/workflows/dependency-graph.yml
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    submit:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+            - name: Submit bun.lock snapshot
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  node .github/scripts/bun-lock-snapshot.mjs "$GITHUB_SHA" "$GITHUB_REF" "$GITHUB_WORKFLOW-$GITHUB_JOB" "$GITHUB_RUN_ID" > snapshot.json
+                  gh api -X POST "repos/$GITHUB_REPOSITORY/dependency-graph/snapshots" --input snapshot.json
