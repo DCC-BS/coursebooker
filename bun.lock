@@ -5,8 +5,8 @@
     "": {
       "name": "coursebookercoursebooker",
       "dependencies": {
-        "@dcc-bs/common-ui.bs.js": "2.2.1",
-        "@dcc-bs/dependency-injection.bs.js": "0.0.16",
+        "@dcc-bs/common-ui.bs.js": "2.2.3",
+        "@dcc-bs/dependency-injection.bs.js": "0.0.18",
         "@formkit/i18n": "2.1.2",
         "@formkit/nuxt": "2.1.2",
         "@libsql/client": "0.18.0",
@@ -140,9 +140,9 @@
 
     "@csstools/css-tokenizer": ["@csstools/css-tokenizer@4.0.2", "", {}, "sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw=="],
 
-    "@dcc-bs/common-ui.bs.js": ["@dcc-bs/common-ui.bs.js@2.2.1", "", { "dependencies": { "defu": "^6.1.4", "driver.js": "^1.6.0", "gray-matter": "^4.0.3", "markdown-it": "14.3.2", "pdfjs-dist": "6.3.289", "semver": "7.8.5", "tailwind-merge": "3.7.0", "vue-pdf-embed": "^2.1.6" }, "peerDependencies": { "@nuxt/icon": "^2.2.1", "@nuxt/kit": "^4.0.0", "@nuxt/ui": "^4.5.1", "@nuxtjs/i18n": "^10.0.0", "motion-v": "^2.0.1", "nuxt": "^4.4.2", "typescript": "^5.9.0", "zod": "^4.3.6" } }, "sha512-UYVVb7QD8xHIUI1McYQRFonkUG8ANjMx0Ca9+6HG3zquyXX4zNbVHQfsvk6OqxVoHz2OF3Fbs0sc0AKDwpSv5A=="],
+    "@dcc-bs/common-ui.bs.js": ["@dcc-bs/common-ui.bs.js@2.2.3", "", { "dependencies": { "defu": "^6.1.4", "driver.js": "^1.6.0", "gray-matter": "^4.0.3", "markdown-it": "15.0.3", "pdfjs-dist": "6.4.299", "semver": "7.8.5", "tailwind-merge": "3.7.0", "vue-pdf-embed": "^2.1.6" }, "peerDependencies": { "@nuxt/icon": "^2.2.1", "@nuxt/kit": "^4.0.0", "@nuxt/ui": "^4.5.1", "@nuxtjs/i18n": "^10.0.0", "motion-v": "^2.0.1", "nuxt": "^4.4.2", "typescript": "^5.9.0", "zod": "^4.3.6" } }, "sha512-TOJH3Fvin+S8TaYfgipJtqbIRmhu4r08NTojIHUXvHf27FrujXCkxs0+bg+U/gVIBxRu9Oco+Nz9GJf60k04ow=="],
 
-    "@dcc-bs/dependency-injection.bs.js": ["@dcc-bs/dependency-injection.bs.js@0.0.16", "", { "dependencies": { "@nuxt/kit": "^4.0.2" } }, "sha512-CwikPgYCPNckx6IZLNcWoPB21pWcivRtZ8jj/+wRmbnJ5G3n61WWlB+/1RIgicifPJN8Qf8zPABWLnuZ+CF4yA=="],
+    "@dcc-bs/dependency-injection.bs.js": ["@dcc-bs/dependency-injection.bs.js@0.0.18", "", { "dependencies": { "@nuxt/kit": "4.6.2" } }, "sha512-AvZYA2W/7qTVgiB9pWx+SQhcu09O1Kiq6moATr7inkp2owz/DtJzlwDFNJZA0uJB7Gq0vqEiKqhrU6HKpupQ8g=="],
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
@@ -1656,7 +1656,7 @@
 
     "pathe": ["pathe@2.0.3", "", {}, "sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w=="],
 
-    "pdfjs-dist": ["pdfjs-dist@6.3.289", "", { "optionalDependencies": { "@napi-rs/canvas": "^1.0.0" } }, "sha512-ZHjSVpDa3D6izMq8/04lvkhkATUmL9px6ChPaXc1k6nU2Mrhlg1/7F0bdUqCwUjw3NsPTfPZsMDUU6ZIcRaeQw=="],
+    "pdfjs-dist": ["pdfjs-dist@6.4.299", "", { "optionalDependencies": { "@napi-rs/canvas": "^1.0.10" } }, "sha512-AVl138zALtfaAPvADulE0PZThbYzCBS79nL4pOSL/6Sm/4AH5A21BD9VHt97OlCuzJuCpmeZtAtkinisF4Vb1g=="],
 
     "perfect-debounce": ["perfect-debounce@2.1.0", "", {}, "sha512-LjgdTytVFXeUgtHZr9WYViYSM/g8MkcTPYDlPa3cDqMirHjKiSZPYd6DoL7pK8AJQr+uWkQvCjHNdiMqsrJs+g=="],
 
@@ -2401,8 +2401,6 @@
     "vite-plugin-inspect/error-stack-parser-es": ["error-stack-parser-es@1.0.5", "", {}, "sha512-5qucVt2XcuGMcEGgWI7i+yZpmpByQ8J1lHhcL7PwqCwu9FPP3VUXzT4ltHe5i2z9dePwEHcDVOAfSnHsOlCXRA=="],
 
     "vue-i18n/@vue/devtools-api": ["@vue/devtools-api@6.6.4", "", {}, "sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g=="],
-
-    "vue-pdf-embed/pdfjs-dist": ["pdfjs-dist@6.4.299", "", { "optionalDependencies": { "@napi-rs/canvas": "^1.0.10" } }, "sha512-AVl138zALtfaAPvADulE0PZThbYzCBS79nL4pOSL/6Sm/4AH5A21BD9VHt97OlCuzJuCpmeZtAtkinisF4Vb1g=="],
 
     "vue-router/chokidar": ["chokidar@5.0.0", "", { "dependencies": { "readdirp": "^5.0.0" } }, "sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw=="],
 
