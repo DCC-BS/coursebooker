@@ -1,6 +1,6 @@
 {
     "name": "coursebookercoursebooker",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "private": true,
     "scripts": {
         "dev": "FORCE_COLOR=1 varlock run -- nuxt dev",
@@ -18,8 +18,8 @@
         "docker:dev:down": "docker compose -f ./docker-compose-dev.yaml down -v"
     },
     "dependencies": {
-        "@dcc-bs/common-ui.bs.js": "2.2.1",
-        "@dcc-bs/dependency-injection.bs.js": "0.0.16",
+        "@dcc-bs/common-ui.bs.js": "2.2.3",
+        "@dcc-bs/dependency-injection.bs.js": "0.0.18",
         "@formkit/i18n": "2.1.2",
         "@formkit/nuxt": "2.1.2",
         "@libsql/client": "0.18.0",
@@ -41,7 +41,7 @@
         "maska": "^3.2.0",
         "motion-v": "^2.0.0",
         "nodemailer": "10.1.7",
-        "nuxt": "4.6.2",
+        "nuxt": "4.6.3",
         "pino": "^10.3.1",
         "uuid": "14.0.3",
         "varlock": "1.23.0",
