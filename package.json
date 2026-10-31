@@ -1,6 +1,6 @@
 {
     "name": "coursebookercoursebooker",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "private": true,
     "scripts": {
         "dev": "FORCE_COLOR=1 varlock run -- nuxt dev",
@@ -41,7 +41,7 @@
         "maska": "^3.2.0",
         "motion-v": "^2.0.0",
         "nodemailer": "10.1.7",
-        "nuxt": "4.6.2",
+        "nuxt": "4.6.3",
         "pino": "^10.3.1",
         "uuid": "14.0.3",
         "varlock": "1.23.0",

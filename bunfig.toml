@@ -5,4 +5,8 @@ minimumReleaseAgeExcludes = ["@types/bun", "@dcc-bs/audio-recorder.bs.js", "@dcc
     # TEMPORARY until 2026-11-03: node-forge 1.4.2 fixes GHSA-86w9-cpqp-85rv but is younger than the
     # 7-day cooldown. The weekly dependency routine removes this entry once 1.4.2 is 7 days old.
     "node-forge",
+    # TEMPORARY until 2026-11-03: nuxt 4.6.3 fixes GHSA-9v7c-q64q-vv33 (dot segments bypass server/middleware
+    # path checks) and three dev-server advisories but is younger than the 7-day cooldown. The weekly
+    # dependency routine removes these entries once 4.6.3 is 7 days old.
+    "nuxt", "@nuxt/kit", "@nuxt/schema", "@nuxt/vite-builder", "@nuxt/vite-server", "@nuxt/nitro-server",
 ]
