@@ -40,7 +40,7 @@
         "ics": "^3.8.1",
         "maska": "^3.2.0",
         "motion-v": "^2.0.0",
-        "nodemailer": "10.1.7",
+        "nodemailer": "10.2.1",
         "nuxt": "4.6.3",
         "pino": "^10.3.1",
         "uuid": "14.0.3",
@@ -50,10 +50,10 @@
         "zod": "^4.1.11"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.5.15",
+        "@biomejs/biome": "2.6.2",
         "@iconify-json/lucide": "1.2.147",
-        "@nuxt/fonts": "1.0.1",
-        "@types/bun": "1.4.3",
+        "@nuxt/fonts": "1.1.0",
+        "@types/bun": "1.4.4",
         "@types/nodemailer": "8.0.2",
         "drizzle-kit": "^0.31.5",
         "jiti": "^2.6.1",
