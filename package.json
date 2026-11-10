@@ -1,6 +1,6 @@
 {
     "name": "coursebookercoursebooker",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "private": true,
     "scripts": {
         "dev": "FORCE_COLOR=1 varlock run -- nuxt dev",
@@ -18,7 +18,7 @@
         "docker:dev:down": "docker compose -f ./docker-compose-dev.yaml down -v"
     },
     "dependencies": {
-        "@dcc-bs/common-ui.bs.js": "2.2.3",
+        "@dcc-bs/common-ui.bs.js": "2.2.4",
         "@dcc-bs/dependency-injection.bs.js": "0.0.18",
         "@formkit/i18n": "2.1.2",
         "@formkit/nuxt": "2.1.2",

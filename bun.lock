@@ -5,7 +5,7 @@
     "": {
       "name": "coursebookercoursebooker",
       "dependencies": {
-        "@dcc-bs/common-ui.bs.js": "2.2.3",
+        "@dcc-bs/common-ui.bs.js": "2.2.4",
         "@dcc-bs/dependency-injection.bs.js": "0.0.18",
         "@formkit/i18n": "2.1.2",
         "@formkit/nuxt": "2.1.2",
@@ -144,7 +144,7 @@
 
     "@csstools/css-tokenizer": ["@csstools/css-tokenizer@4.0.2", "", {}, "sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw=="],
 
-    "@dcc-bs/common-ui.bs.js": ["@dcc-bs/common-ui.bs.js@2.2.3", "", { "dependencies": { "defu": "^6.1.4", "driver.js": "^1.6.0", "gray-matter": "^4.0.3", "markdown-it": "15.0.3", "pdfjs-dist": "6.4.299", "semver": "7.8.5", "tailwind-merge": "3.7.0", "vue-pdf-embed": "^2.1.6" }, "peerDependencies": { "@nuxt/icon": "^2.2.1", "@nuxt/kit": "^4.0.0", "@nuxt/ui": "^4.5.1", "@nuxtjs/i18n": "^10.0.0", "motion-v": "^2.0.1", "nuxt": "^4.4.2", "typescript": "^5.9.0", "zod": "^4.3.6" } }, "sha512-TOJH3Fvin+S8TaYfgipJtqbIRmhu4r08NTojIHUXvHf27FrujXCkxs0+bg+U/gVIBxRu9Oco+Nz9GJf60k04ow=="],
+    "@dcc-bs/common-ui.bs.js": ["@dcc-bs/common-ui.bs.js@2.2.4", "", { "dependencies": { "defu": "^6.1.4", "driver.js": "^1.6.0", "gray-matter": "^4.0.3", "markdown-it": "15.0.3", "pdfjs-dist": "6.4.299", "semver": "7.8.5", "tailwind-merge": "3.7.0", "vue-pdf-embed": "^2.1.6" }, "peerDependencies": { "@nuxt/icon": "^2.2.1", "@nuxt/kit": "^4.0.0", "@nuxt/ui": "^4.5.1", "@nuxtjs/i18n": "^10.0.0", "motion-v": "^2.0.1", "nuxt": "^4.4.2", "typescript": "^5.9.0", "zod": "^4.3.6" } }, "sha512-jHy/ZL1PBgDCTIV44T7AfaZlkDD7I/lEfyNFUGcMoK2sGI5Q/XiPLk/X9BGav4SMSahl4GcUbo4I3c3Z3tKc0Q=="],
 
     "@dcc-bs/dependency-injection.bs.js": ["@dcc-bs/dependency-injection.bs.js@0.0.18", "", { "dependencies": { "@nuxt/kit": "4.6.2" } }, "sha512-AvZYA2W/7qTVgiB9pWx+SQhcu09O1Kiq6moATr7inkp2owz/DtJzlwDFNJZA0uJB7Gq0vqEiKqhrU6HKpupQ8g=="],
 
