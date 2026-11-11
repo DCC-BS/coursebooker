@@ -1,6 +1,6 @@
 [tools]
 bun = "1.4.4"
-node = "24.22.1" # same version as the Dockerfile (node:24.22.1-alpine)
+node = "26.13.0" # same version as the Dockerfile (node:24.22.1-alpine)
 
 [hooks]
 postinstall = { task = "install" }
