@@ -119,6 +119,7 @@ export default defineAdminResponseHandler(async (event) => {
                 );
 
                 const success = await sendCustomNotificationMail(
+                    getEventLogger(event),
                     familyName,
                     givenName,
                     userEmail,

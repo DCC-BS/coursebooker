@@ -95,6 +95,7 @@ export default defineEventHandler(async (event) => {
         : firstCharToUpper(values.userEmail.split(".")[1]?.split("@")[0] ?? "");
 
     await sendUnregisterMail(
+        getEventLogger(event),
         family_name,
         given_name,
         values.userEmail,

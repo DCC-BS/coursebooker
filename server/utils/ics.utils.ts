@@ -138,6 +138,7 @@ export function createUpdateIcsAttachment(
 }
 
 export function generateIcsBuffer(
+    logger: ReturnType<typeof getEventLogger>,
     course: CourseWithoutSessions,
     session: Session,
     sequence: number,
@@ -149,7 +150,7 @@ export function generateIcsBuffer(
     const ics = createEvents(events);
 
     if (ics.error) {
-        console.error("Error creating ICS events:", ics.error);
+        logger.error({ error: ics.error.message }, "Error creating ICS events");
         return null;
     }
 
