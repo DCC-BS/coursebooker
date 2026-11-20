@@ -150,7 +150,7 @@ export function generateIcsBuffer(
     const ics = createEvents(events);
 
     if (ics.error) {
-        logger.error({ error: ics.error.message }, "Error creating ICS events");
+        logger.error({ err: ics.error }, "Error creating ICS events");
         return null;
     }
 

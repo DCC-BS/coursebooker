@@ -16,9 +16,24 @@ import { renderTemplate } from "./template.utils";
 
 type Logger = ReturnType<typeof getEventLogger>;
 
-/** The caught value as the log contract's `error` string. */
-function errorText(error: unknown): string {
-    return error instanceof Error ? error.message : String(error);
+/**
+ * Log fields for a caught error. The logger turns `err` into the contract's
+ * `error` / `error_type` / `exception`; nodemailer's SMTP codes are added as
+ * flat scalars. Its `response` text is left out: it can name recipients.
+ */
+function errorFields(error: unknown): Record<string, unknown> {
+    const { code, responseCode } = (error ?? {}) as {
+        code?: unknown;
+        responseCode?: unknown;
+    };
+
+    return {
+        err: error,
+        ...(typeof code === "string" ? { smtp_code: code } : {}),
+        ...(typeof responseCode === "number"
+            ? { smtp_response_code: responseCode }
+            : {}),
+    };
 }
 
 export interface SessionChanges {
@@ -186,7 +201,7 @@ export async function sendRegistrationMail(
                   return createIcsAttachment(course, session);
               } catch (error) {
                   logger.error(
-                      { error: errorText(error) },
+                      errorFields(error),
                       "Error creating ICS attachment",
                   );
                   return null;
@@ -246,10 +261,7 @@ export async function sendCancellationMail(
     try {
         attachment = await createCancellationIcsAttachment(course, session);
     } catch (error) {
-        logger.error(
-            { error: errorText(error) },
-            "Error creating ICS attachment",
-        );
+        logger.error(errorFields(error), "Error creating ICS attachment");
         attachment = null;
     }
 
@@ -285,7 +297,7 @@ async function sendMail(
         await sharedTransporter.sendMail(mailOptions);
         return true;
     } catch (error: unknown) {
-        logger.error({ error: errorText(error) }, "Error sending email");
+        logger.error(errorFields(error), "Error sending email");
         return false;
     }
 }
@@ -330,10 +342,7 @@ export async function sendCustomNotificationMail(
                 createUpdateIcsAttachment(course, session, sequence),
             );
         } catch (error) {
-            logger.error(
-                { error: errorText(error) },
-                "Error creating ICS attachment",
-            );
+            logger.error(errorFields(error), "Error creating ICS attachment");
         }
     }
 
