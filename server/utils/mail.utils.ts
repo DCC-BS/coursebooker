@@ -14,6 +14,28 @@ import {
 } from "./ics.utils";
 import { renderTemplate } from "./template.utils";
 
+type Logger = ReturnType<typeof getEventLogger>;
+
+/**
+ * Log fields for a caught error. The logger turns `err` into the contract's
+ * `error` / `error_type` / `exception`; nodemailer's SMTP codes are added as
+ * flat scalars. Its `response` text is left out: it can name recipients.
+ */
+function errorFields(error: unknown): Record<string, unknown> {
+    const { code, responseCode } = (error ?? {}) as {
+        code?: unknown;
+        responseCode?: unknown;
+    };
+
+    return {
+        err: error,
+        ...(typeof code === "string" ? { smtp_code: code } : {}),
+        ...(typeof responseCode === "number"
+            ? { smtp_response_code: responseCode }
+            : {}),
+    };
+}
+
 export interface SessionChanges {
     location?: { old: string | null; new: string | null };
     teams_link?: { old: string | null; new: string | null };
@@ -160,6 +182,7 @@ function typeLabel(type: string): string {
 }
 
 export async function sendRegistrationMail(
+    logger: Logger,
     familyName: string,
     givenName: string,
     userEmail: string,
@@ -177,7 +200,10 @@ export async function sendRegistrationMail(
               try {
                   return createIcsAttachment(course, session);
               } catch (error) {
-                  console.error("Error creating ICS attachment:", error);
+                  logger.error(
+                      errorFields(error),
+                      "Error creating ICS attachment",
+                  );
                   return null;
               }
           })();
@@ -197,10 +223,11 @@ export async function sendRegistrationMail(
         attachments: attachment ? [attachment] : [],
     };
 
-    return sendMail(mailOptions);
+    return sendMail(logger, mailOptions);
 }
 
 export async function sendUnregisterMail(
+    logger: Logger,
     familyName: string,
     givenName: string,
     userEmail: string,
@@ -219,10 +246,11 @@ export async function sendUnregisterMail(
         text,
     };
 
-    return sendMail(mailOptions);
+    return sendMail(logger, mailOptions);
 }
 
 export async function sendCancellationMail(
+    logger: Logger,
     familyName: string,
     givenName: string,
     userEmail: string,
@@ -233,7 +261,7 @@ export async function sendCancellationMail(
     try {
         attachment = await createCancellationIcsAttachment(course, session);
     } catch (error) {
-        console.error("Error creating ICS attachment:", error);
+        logger.error(errorFields(error), "Error creating ICS attachment");
         attachment = null;
     }
 
@@ -250,7 +278,7 @@ export async function sendCancellationMail(
         attachments: attachment ? [attachment] : [],
     };
 
-    return sendMail(mailOptions);
+    return sendMail(logger, mailOptions);
 }
 
 const sharedTransporter = createTransport({
@@ -261,12 +289,15 @@ const sharedTransporter = createTransport({
     rateLimit: 10,
 });
 
-async function sendMail(mailOptions: SendMailOptions): Promise<boolean> {
+async function sendMail(
+    logger: Logger,
+    mailOptions: SendMailOptions,
+): Promise<boolean> {
     try {
         await sharedTransporter.sendMail(mailOptions);
         return true;
     } catch (error: unknown) {
-        console.error("Error sending email:", error);
+        logger.error(errorFields(error), "Error sending email");
         return false;
     }
 }
@@ -293,6 +324,7 @@ export function buildCustomNotificationMailContent(
 }
 
 export async function sendCustomNotificationMail(
+    logger: Logger,
     familyName: string,
     givenName: string,
     userEmail: string,
@@ -310,7 +342,7 @@ export async function sendCustomNotificationMail(
                 createUpdateIcsAttachment(course, session, sequence),
             );
         } catch (error) {
-            console.error("Error creating ICS attachment:", error);
+            logger.error(errorFields(error), "Error creating ICS attachment");
         }
     }
 
@@ -330,7 +362,7 @@ export async function sendCustomNotificationMail(
         attachments,
     };
 
-    return sendMail(mailOptions);
+    return sendMail(logger, mailOptions);
 }
 
 export function generateIcsAttachment(

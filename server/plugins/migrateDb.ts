@@ -14,9 +14,7 @@ export default defineNitroPlugin(async () => {
     });
 
     if (!admin) {
-        console.log(
-            `No admin user found, creating default admin user ${config.defaultAdmin}`,
-        );
+        console.log("No admin user found, creating the default admin user");
         await db.insert(userTable).values({
             email: config.defaultAdmin,
             isAdmin: true,

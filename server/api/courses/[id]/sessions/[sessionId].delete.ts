@@ -74,6 +74,7 @@ export default defineAdminResponseHandler(async (event) => {
             );
 
             await sendCancellationMail(
+                getEventLogger(event),
                 family_name,
                 given_name,
                 userEmail,
