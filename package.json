@@ -20,8 +20,8 @@
     "dependencies": {
         "@dcc-bs/common-ui.bs.js": "2.2.5",
         "@dcc-bs/dependency-injection.bs.js": "0.0.19",
-        "@formkit/i18n": "2.1.2",
-        "@formkit/nuxt": "2.1.2",
+        "@formkit/i18n": "2.4.0",
+        "@formkit/nuxt": "2.4.0",
         "@libsql/client": "0.18.0",
         "@nuxt/ui": "^4.0.0",
         "@nuxtjs/i18n": "10.6.0",
@@ -29,7 +29,7 @@
         "@types/better-sqlite3": "^9.0.0",
         "@varlock/proton-pass-plugin": "^2.0.0",
         "@varlock/vite-integration": "^1.1.0",
-        "baseline-browser-mapping": "2.11.34",
+        "baseline-browser-mapping": "2.11.35",
         "better-sqlite3": "13.0.3",
         "caniuse-lite": "^1.0.30001791",
         "date-fns": "^4.1.0",
@@ -50,8 +50,8 @@
         "zod": "^4.1.11"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.6.4",
-        "@iconify-json/lucide": "1.2.150",
+        "@biomejs/biome": "2.6.6",
+        "@iconify-json/lucide": "1.2.152",
         "@nuxt/fonts": "1.2.0",
         "@types/bun": "1.4.4",
         "@types/nodemailer": "8.0.2",
