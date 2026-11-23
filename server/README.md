@@ -663,11 +663,13 @@ These endpoints are typically served from the root of your local development ser
 Uses SQLite database for persistent storage. The database location is configured via the `DATABASE_URL` environment variable (e.g., `data/coursebooker.db`).
 
 **Database Configuration:**
+
 - **Default:** SQLite database.
 - **Environment Variable:**
   - `DATABASE_URL`: Path or URL to the database (e.g., `data/coursebooker.db` for local SQLite).
 
 **Database Features:**
+
 - **Schema Management:** Automatic schema creation and migration via Drizzle ORM and the Nuxt plugin (`server/plugins/migrateDb.ts`).
 - **Data Integrity:** Enforces schema constraints, unique keys, and data types.
 
