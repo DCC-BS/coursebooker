@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@dcc-bs/common-ui.bs.js": "2.2.5",
-        "@dcc-bs/dependency-injection.bs.js": "0.0.19",
+        "@dcc-bs/dependency-injection.bs.js": "0.0.20",
         "@formkit/i18n": "2.5.0",
         "@formkit/nuxt": "2.5.0",
         "@libsql/client": "0.18.0",
