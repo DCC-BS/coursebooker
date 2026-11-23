@@ -181,12 +181,14 @@ The `server/plugins/migrateDb.ts` plugin will automatically run the migrations o
 ### Docker Deployment
 
 **Production:**
+
 ```bash
 docker compose up -d
 ```
 The app is exposed on port `8502` (mapped to internal port `3000`). Data is persisted in the `./data` volume.
 
 **Development (mail testing):**
+
 ```bash
 bun run docker:dev
 ```
